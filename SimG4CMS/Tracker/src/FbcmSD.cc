@@ -87,7 +87,7 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	// Assuing 4 Sensors per Row. 
 	int SensorPadID=SensorRowNo*4+SensorPadNo; // (0-7): 2(rows)x4(cols)
 
-    detId = 1000 * VolumeNo + 10 * SilcionDieNo + SensorPadID;
+    detId = 100 * VolumeNo + 10 * SilcionDieNo + SensorPadID;
   }
   return detId;
 }
