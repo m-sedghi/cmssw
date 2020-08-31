@@ -11,6 +11,7 @@ from SimGeneral.MixingModule.pileupVtxDigitizer_cfi import *
 from SimGeneral.MixingModule.trackingTruthProducerSelection_cfi import *
 from SimGeneral.MixingModule.caloTruthProducer_cfi import *
 from FastSimulation.Tracking.recoTrackAccumulator_cfi import *
+from SimGeneral.MixingModule.SiPadDigitizer_cfi import *
 
 theDigitizers = cms.PSet(
   pixel = cms.PSet(
@@ -34,6 +35,16 @@ theDigitizers = cms.PSet(
   mergedtruth = cms.PSet(
     trackingParticles
   )
+)
+
+
+  # SiPad = cms.PSet(
+    # SiPadDigitizer
+  # ),
+
+from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
+fbcmDigi.toModify( theDigitizers,
+					SiPad = cms.PSet(SiPadDigitizer),
 )
 
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
