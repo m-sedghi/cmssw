@@ -1,0 +1,31 @@
+<lcgdict>
+ <class name="SiPadAmplitude"/>
+ <class name="SiPadAmplitudeCollection"/>
+ 
+ 
+ 
+ 
+ <class name="edm::DetSet<SiPadAmplitude>"/>
+ <class name="std::vector<SiPadAmplitude>"/>
+ <class name="edm::DetSetVector<SiPadAmplitude>"/>
+ <class name="std::vector<edm::DetSet<SiPadAmplitude> >"/>
+ 
+ <class name="edm::Wrapper<std::vector<SiPadAmplitude> >" splitLevel="0"/>
+ <class name="edm::Wrapper< std::vector<edm::DetSet<SiPadAmplitude> > >" splitLevel="0"/>
+ <class name="edm::Wrapper<edm::DetSetVector<SiPadAmplitude>>" splitLevel="0"/>
+ <class name="edm::Wrapper<SiPadAmplitudeCollection>" splitLevel="0"/>
+ 
+ <class name="edm::Wrapper< edm::DetSet<SiPadAmplitude> >" splitLevel="0"/>
+ 
+ 
+ 
+   <class name="std::vector<FbcmDetId>"/>
+   <class name="std::vector<std::pair<FbcmDetId,float> >"/>  
+  <class name="std::pair<FbcmDetId,float>"/>               
+  <class name="std::map<FbcmDetId, std::pair<unsigned int, unsigned int> >"/>
+  <class name="std::map<FbcmDetId, std::pair<unsigned long, unsigned long> >"/>
+  <class name="std::pair<const FbcmDetId,float>"/>
+  <class name="std::map<FbcmDetId,float>"/>
+  <class name="edm::Wrapper<std::map<FbcmDetId,float> >"/>
+ 
+</lcgdict> 
