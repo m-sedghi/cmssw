@@ -6,7 +6,6 @@
 //  Date created: September 2020
 ///-------------------------------------------
 
-
 #include <map>
 #include <memory>
 #include <string>

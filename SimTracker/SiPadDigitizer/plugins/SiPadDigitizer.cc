@@ -7,7 +7,8 @@
 #include <memory>
 #include <set>
 
-// user include files
+
+
 #include "SiPadDigitizer.h"
 #include "SiPadDigitizerAlgorithm.h"
 
