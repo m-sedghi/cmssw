@@ -1,7 +1,7 @@
 #ifndef Tracker_FbcmSD_H
 #define Tracker_FbcmSD_H
 #include "SimG4CMS/Forward/interface/TimingSD.h"
-
+#include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
 
 #include <string>
 

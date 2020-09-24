@@ -8,7 +8,7 @@
     <Constant name="FBCM_Thickness"      value="([FBCM_Z2]-[FBCM_Z1])"></Constant>
     <Constant name="FBCM_InnerRadius"    value="62.38*mm"><!--should be similar to pixel:Disc12--></Constant>
     <Constant name="FBCM_OuterRadius"    value="255.101*mm"><!--should be similar to pixel:Disc12--></Constant>
-    <Constant name="NumOfStations" value="8"></Constant>
+    <Constant name="NumOfStations" value="4"></Constant>
     <Constant name="NumOfPadRows" value="4"></Constant>
     <Constant name="NumOfPadCols" value="2"></Constant>
     <Constant name="ReductionFactor" value="1"><!--This factor determines the effective sensitive area (metallized), typically=0.975; One can assume =1 for initial estimation--></Constant>
@@ -111,11 +111,9 @@
        <Numeric name="StartAngle" value="45.*deg"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
-       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg
-       </Vector>
+       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg</Vector>
     </Algorithm>
     
   

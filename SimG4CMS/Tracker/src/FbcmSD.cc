@@ -47,7 +47,9 @@ FbcmSD::~FbcmSD() {}
 
 uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
   uint32_t detId = 0;
-
+	
+	
+	
   //Find number of levels
   const G4VTouchable* touch = aStep->GetPreStepPoint()->GetTouchable();
 //  int level = (touch) ? ((touch->GetHistoryDepth()) + 1) : 0;
@@ -60,34 +62,58 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
     G4String SensorPadName = touch->GetVolume(0)->GetName();
     G4String SensorRowName = touch->GetVolume(1)->GetName();
 	G4String SiliconDieName = touch->GetVolume(2)->GetName();
-    G4String DetectorName = touch->GetVolume(3)->GetName();
-    G4String volumeName = touch->GetVolume(4)->GetName();
+	G4String StationName = touch->GetVolume(3)->GetName();
+    G4String DetectorName = touch->GetVolume(4)->GetName();
+    G4String volumeName = touch->GetVolume(5)->GetName();
 
+	//edm::LogWarning("FBCM-w-levelNames") << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
+	//edm::LogInfo("FBCM-I-levelNames") << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
+	
+	
     if (SensorPadName != "FBCM_SensorPad") {
-      edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- Sensor name is not FBCM_SensorPad ";
+      edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SensorPadName is not FBCM_SensorPad ";
+    }
+	if (SensorRowName != "FBCM_SensorRow") {
+      edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SensorRowName is not FBCM_SensorRow ";
+    }
+	if (SiliconDieName != "FBCM_SiliconDie") {
+      edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SiliconDieName is not FBCM_SiliconDie ";
+    }
+	if (StationName != "FBCM_Station") {
+      edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- StationName is not FBCM_Station ";
     }
     if (DetectorName != "FBCM") {
-      edm::LogWarning("FBCMSim") << " FbcmSD::setDetUnitId -w- Detector name is not FBCM ";
+      edm::LogWarning("FBCMSim") << " FbcmSD::setDetUnitId -w- DetectorName is not FBCM ";
+    }
+	if (volumeName != "Phase2PixelEndcap") {
+      edm::LogWarning("FBCMSim") << " FbcmSD::setDetUnitId -w- volumeName is not Phase2PixelEndcap ";
     }
 	
 	// get the copyNumbers in the Geom. XML
-    int SensorPadNo = touch->GetReplicaNumber(0); // 0-3
-    int SensorRowNo = touch->GetReplicaNumber(1); // 0-1
-	int SilcionDieNo = touch->GetReplicaNumber(1); //1-4
-    int VolumeNo = touch->GetReplicaNumber(4); // 1-2
+    int SensorPadNo = touch->GetReplicaNumber(0); // 0-1
+    int SensorRowNo = touch->GetReplicaNumber(1); // 0-3
+	int SilcionDieNo = touch->GetReplicaNumber(2); //0
+	int StationNo = touch->GetReplicaNumber(3); //0-3
+    int VolumeNo = touch->GetReplicaNumber(5); // 1-2
 
     // Detector ID definition
     // detId = ABC
     // A  = Phase2PixelEndcap_1 or _2,  1: +Z, 2: -Z
-    // B = SilcionDieNo --> refers to the Station Number, 0 @45_deg, 
+    // B = StationNo --> refers to the Station Number, 0 @45_deg, 
 	//                      anticlockwise increment when looking toward to the IP
 	//                      or eqivalenty clockwise when looking from the IP
+	// SilcionDieNo=0
     // Z  = SensorPadID,  0-7 (increament like a 2D array)
 
-	// Assuing 4 Sensors per Row. 
-	int SensorPadID=SensorRowNo*4+SensorPadNo; // (0-7): 2(rows)x4(cols)
+	// Assuming 2 Sensors per Row. and 4 Rows
+	int SensorPadID=SensorRowNo*2+SensorPadNo; // (0-7): 4(rows)x2(cols)
+	//each Station comprises one SilcionDie
+	
+	//New FbcmsDetID assignment:
+	FbcmDetId fbcmdet1(VolumeNo,StationNo,SilcionDieNo,SensorPadID);
 
-    detId = 100 * VolumeNo + 10 * SilcionDieNo + SensorPadID;
+    detId = fbcmdet1.rawId();
+	std::cout << "--**-- FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 ;
   }
   return detId;
 }
