@@ -15,6 +15,11 @@
 <use   name="SimTracker/Common"/>
 <use   name="CalibTracker/SiPixelESProducers"/>
 <use   name="RecoLocalTracker/SiPixelRecHits"/>
+<use   name="Geometry/FbcmGeometry"/>
+<use   name="Geometry/FbcmGeometryBuilder"/>
+<use   name="DataFormats/FbcmDetId"/>
+<use   name="DataFormats/FbcmDigi"/>
+
 <use   name="gsl"/>
 <use   name="clhep"/>
 <export>

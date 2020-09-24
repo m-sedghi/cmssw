@@ -1,6 +1,13 @@
 #ifndef _FBCM_SiPadDigitizerAlgorithm_h
 #define _FBCM_SiPadDigitizerAlgorithm_h
 
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+//  Adopted and modified form Phase2Tkdigitizer
+///-------------------------------------------
+
 #include <map>
 #include <memory>
 #include <vector>
@@ -16,7 +23,8 @@
 #include "DataFormats/SiPixelDigi/interface/PixelDigi.h"
 #include "DataFormats/Phase2TrackerDigi/interface/Phase2TrackerDigi.h"
 #include "SimDataFormats/TrackerDigiSimLink/interface/PixelDigiSimLink.h"
-
+#include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
+#include "Geometry/FbcmGeometry/interface/FbcmSiPadGeom.h"
 #include "SimTracker/SiPhase2Digitizer/plugins/DigitizerUtility.h"
 
 
@@ -27,11 +35,12 @@ class PixelTopology;
 
 //typedef PixelDigi Phase2TrackerDigi;
 //typedef PixelDigiSimLink Phase2TrackerDigiSimLink;
-using Phase2TrackerGeomDetUnit = PixelGeomDetUnit;
-using Phase2TrackerTopology = PixelTopology;
+//using FbcmSiPadGeom = PixelGeomDetUnit;
+//using Phase2TrackerTopology = PixelTopology;
 ////---------------- end ---------------------------------------------------
 
-
+using SiPadDigi = PixelDigi;
+using SiPadDigiSimLink = PixelDigiSimLink;
 
 // forward declarations
 // For the random numbers
@@ -72,9 +81,9 @@ public:
                                  const std::vector<PSimHit>::const_iterator inputEnd,
                                  const size_t inputBeginGlobalIndex,
                                  const unsigned int tofBin,
-                                 const Phase2TrackerGeomDetUnit* pixdet,
+                                 const FbcmSiPadGeom* SiPadGeom,
                                  const GlobalVector& bfield);
-  void digitize(const Phase2TrackerGeomDetUnit* pixdet,
+  void digitize(const FbcmSiPadGeom* SiPadGeom,
                         std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
                         const TrackerTopology* tTopo);
 
@@ -193,14 +202,14 @@ protected:
   void primary_ionization(const PSimHit& hit,
                           std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points) const;
   void drift(const PSimHit& hit,
-             const Phase2TrackerGeomDetUnit* pixdet,
+             const FbcmSiPadGeom* SiPadGeom,
              const GlobalVector& bfield,
              const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points,
              std::vector<DigitizerUtility::SignalPoint>& collection_points) const;
   void induce_signal(const PSimHit& hit,
                      const size_t hitIndex,
                      const unsigned int tofBin,
-                     const Phase2TrackerGeomDetUnit* pixdet,
+                     const FbcmSiPadGeom* SiPadGeom,
                      const std::vector<DigitizerUtility::SignalPoint>& collection_points);
   void fluctuateEloss(int particleId,
                       float momentum,
@@ -208,18 +217,18 @@ protected:
                       float length,
                       int NumberOfSegments,
                       std::vector<float>& elossVector) const;
-  virtual void add_noise(const Phase2TrackerGeomDetUnit* pixdet);
-  virtual void add_cross_talk(const Phase2TrackerGeomDetUnit* pixdet);
-  virtual void add_noisy_cells(const Phase2TrackerGeomDetUnit* pixdet, float thePixelThreshold);
+  virtual void add_noise(const FbcmSiPadGeom* SiPadGeom);
+  virtual void add_cross_talk(const FbcmSiPadGeom* SiPadGeom);
+  virtual void add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, float thePixelThreshold);
   virtual void pixel_inefficiency(const SubdetEfficiencies& eff,
-                                  const Phase2TrackerGeomDetUnit* pixdet,
+                                  const FbcmSiPadGeom* SiPadGeom,
                                   const TrackerTopology* tTopo);
 
   virtual void pixel_inefficiency_db(uint32_t detID);
 
   // access to the gain calibration payloads in the db. Only gets initialized if check_dead_pixels_ is set to true.
   const std::unique_ptr<SiPixelGainCalibrationOfflineSimService> theSiPixelGainCalibrationService_;
-  LocalVector DriftDirection(const Phase2TrackerGeomDetUnit* pixdet,
+  LocalVector DriftDirection(const FbcmSiPadGeom* SiPadGeom,
                              const GlobalVector& bfield,
                              const DetId& detId) const;
 

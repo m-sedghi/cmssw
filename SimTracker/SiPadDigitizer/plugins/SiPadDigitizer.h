@@ -1,9 +1,11 @@
 #ifndef SiPadDigitizer_h
 #define SiPadDigitizer_h
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+///-------------------------------------------
 
-/** \class SiPadDigitizer
-
- ************************************************************/
 
 #include <map>
 #include <memory>
@@ -16,14 +18,20 @@
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "FWCore/Framework/interface/ESWatcher.h"
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 #include "SimTracker/SiPhase2Digitizer/plugins/DigitizerUtility.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
+
+#include "Geometry/Records/interface/TrackerTopologyRcd.h"
+#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+//#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+
+#include "Geometry/Records/interface/FbcmGeometryRecord.h"
+#include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
+
+
 
 namespace CLHEP {
   class HepRandomEngine;
@@ -45,13 +53,13 @@ class PileUpEventPrincipal;
 class PSimHit;
 
 class SiPadDigitizerAlgorithm;
-class TrackerDigiGeometryRecord;
+class FbcmGeometryRecord;
 
-class PixelGeomDetUnit;
-class TrackerGeometry;
+class FbcmSiPadGeom;
+class FbcmGeometry;
+class FbcmSiPadTopology;
 
-class PixelTopology;
-using SiPadTopology = PixelTopology; // Typedef SiPad
+
 
 namespace cms {
   class SiPadDigitizer : public DigiAccumulatorMixMod {
@@ -87,21 +95,12 @@ namespace cms {
 
   private:
     void accumulateSiPadHits(edm::Handle<std::vector<PSimHit> >,
-                             size_t globalSimHitIndex,
-                             const unsigned int tofBin);
+                             size_t globalSimHitIndex);
 
     bool firstInitializeEvent_;
     bool firstFinalizeEvent_;
     std::unique_ptr<SiPadDigitizerAlgorithm> SiPadDigiAlgo;
-	
-    /** @brief Offset to add to the index of each sim hit to account for which crossing it's in.
-*
-* I need to know what each sim hit index will be when the hits from all crossing frames are merged into
-* one collection (assuming the MixingModule is configured to create the crossing frame for all sim hits).
-* To do this I'll record how many hits were in each crossing, and then add that on to the index for a given
-* hit in a given crossing. This assumes that the crossings are processed in the same order here as they are
-* put into the crossing frame, which I'm pretty sure is true.<br/>
-* The key is the name of the sim hit collection. */
+
 
     std::map<std::string, size_t> crossingSimHitIndexOffset_;
 
@@ -110,11 +109,15 @@ namespace cms {
 	const std::string SubdetName_;
     const vstring trackerContainers_;
     const std::string geometryType_;
-    edm::ESHandle<TrackerGeometry> pDD_;
-    edm::ESHandle<MagneticField> pSetup;
-    std::map<unsigned int, PixelGeomDetUnit const*> detectorUnits;
+	
+    edm::ESHandle<FbcmGeometry> theFbcmGeom;
+    edm::ESHandle<MagneticField> pSetup; // OK
+    std::map<unsigned int, FbcmSiPadGeom const*> SiPadsIdGeomMap;
+	
 	edm::ESHandle<TrackerTopology> tTopoHand;
-	edm::ESWatcher<TrackerDigiGeometryRecord> theDigiGeomWatcher;
+	//edm::ESWatcher<TrackerDigiGeometryRecord> theDigiGeomWatcher;
+	edm::ESWatcher<FbcmGeometryRecord> theGeomWatcher;
+	
     //CLHEP::HepRandomEngine* randomEngine_ = nullptr;
     std::unique_ptr<PileupMixingContent> PileupInfo_;
 

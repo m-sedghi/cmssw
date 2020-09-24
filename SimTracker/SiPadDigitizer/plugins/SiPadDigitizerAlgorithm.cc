@@ -1,3 +1,10 @@
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+//  Adopted and modified form Phase2Tkdigitizer
+///-------------------------------------------
+
 #include <typeinfo>
 #include <iostream>
 #include <cmath>
@@ -201,12 +208,14 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
                                               std::vector<PSimHit>::const_iterator inputEnd,
                                               const size_t inputBeginGlobalIndex,
                                               const unsigned int tofBin,
-                                              const Phase2TrackerGeomDetUnit* pixdet,
+                                              const FbcmSiPadGeom* SiPadGeom,
                                               const GlobalVector& bfield) 
 {
+	
+	std::cout << "Hello from accumulateSimHits in digitizer algorithem \n";
   // produce SignalPoint's for all SimHit's in detector
   // Loop over hits
-  uint32_t detId = pixdet->geographicalId().rawId();
+  uint32_t detId = SiPadGeom->geographicalId().rawId();
   size_t simHitGlobalIndex = inputBeginGlobalIndex;  // This needs to be stored to create the digi-sim link later
   for (auto it = inputBegin; it != inputEnd; ++it, ++simHitGlobalIndex) {
     // skip hits not in this detector.
@@ -216,21 +225,26 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
     LogDebug("PSPDigitizerAlgorithm") << (*it).particleType() << " " << (*it).pabs() << " " << (*it).energyLoss() << " "
                                       << (*it).tof() << " " << (*it).trackId() << " " << (*it).processType() << " "
                                       << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint();
+									  
+									  
+      std::cout <<"algo-PSimHits:" << (*it).particleType() << " " << (*it).pabs() << " " << (*it).energyLoss() << " "
+                                      << (*it).tof() << " " << (*it).trackId() << " " << (*it).processType() << " "
+                                      << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint() << "\n";
 
     std::vector<DigitizerUtility::EnergyDepositUnit> ionization_points;
     std::vector<DigitizerUtility::SignalPoint> collection_points;
 
     // fill collection_points for this SimHit, indpendent of topology
     // Check the TOF cut
-    if (((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
-        ((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
+    if (((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
+        ((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
       primary_ionization(*it, ionization_points);  // fills _ionization_points
       // transforms _ionization_points to collection_points
-      drift(*it, pixdet, bfield, ionization_points, collection_points);
+      drift(*it, SiPadGeom, bfield, ionization_points, collection_points);
 
       // compute induced signal on readout elements and add to _signal
       // *ihit needed only for SimHit<-->Digi link
-      induce_signal(*it, simHitGlobalIndex, tofBin, pixdet, collection_points);
+      induce_signal(*it, simHitGlobalIndex, tofBin, SiPadGeom, collection_points);
     }
   }
 }
@@ -365,14 +379,14 @@ void SiPadDigitizerAlgorithm::fluctuateEloss(int pid,
 //
 // =====================================================================
 void SiPadDigitizerAlgorithm::drift(const PSimHit& hit,
-                                            const Phase2TrackerGeomDetUnit* pixdet,
+                                            const FbcmSiPadGeom* SiPadGeom,
                                             const GlobalVector& bfield,
                                             const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points,
                                             std::vector<DigitizerUtility::SignalPoint>& collection_points) const {
   LogDebug("SiPadDigitizerAlgorithm") << "enter drift ";
 
   collection_points.resize(ionization_points.size());                      // set size
-  LocalVector driftDir = DriftDirection(pixdet, bfield, hit.detUnitId());  // get the charge drift direction
+  LocalVector driftDir = DriftDirection(SiPadGeom, bfield, hit.detUnitId());  // get the charge drift direction
   if (driftDir.z() == 0.) {
     LogWarning("SiPadDigitizerAlgorithm") << " pxlx: drift in z is zero ";
     return;
@@ -393,8 +407,8 @@ void SiPadDigitizerAlgorithm::drift(const PSimHit& hit,
     CosLorenzAngleY = 1.;
   }
 
-  float moduleThickness = pixdet->specificSurface().bounds().thickness();
-  float stripPitch = pixdet->specificTopology().pitch().first;
+  float moduleThickness = SiPadGeom->specificSurface().bounds().thickness();
+  float stripPitch = SiPadGeom->SiPadTopology().pitch().first;
 
   LogDebug("SiPadDigitizerAlgorithm")
       << " Lorentz Tan " << TanLorenzAngleX << " " << TanLorenzAngleY << " " << CosLorenzAngleX << " "
@@ -451,7 +465,7 @@ void SiPadDigitizerAlgorithm::drift(const PSimHit& hit,
 
     // pseudoRadDamage
     if (pseudoRadDamage >= 0.001) {
-      float moduleRadius = pixdet->surface().position().perp();
+      float moduleRadius = SiPadGeom->surface().position().perp();
       if (moduleRadius <= pseudoRadDamageRadius) {
         float kValue = pseudoRadDamage / (moduleRadius * moduleRadius);
         energyOnCollector = energyOnCollector * exp(-1 * kValue * DriftDistance / moduleThickness);
@@ -473,12 +487,12 @@ void SiPadDigitizerAlgorithm::induce_signal(
     const PSimHit& hit,
     const size_t hitIndex,
     const unsigned int tofBin,
-    const Phase2TrackerGeomDetUnit* pixdet,
+    const FbcmSiPadGeom* SiPadGeom,
     const std::vector<DigitizerUtility::SignalPoint>& collection_points) {
   // X  - Rows, Left-Right, 160, (1.6cm)   for barrel
   // Y  - Columns, Down-Up, 416, (6.4cm)
-  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
-  uint32_t detID = pixdet->geographicalId().rawId();
+  const FbcmSiPadTopology* topol = &SiPadGeom->SiPadTopology();
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   signal_map_type& theSignal = _signal[detID];
 
   LogDebug("SiPadDigitizerAlgorithm")
@@ -611,7 +625,7 @@ void SiPadDigitizerAlgorithm::induce_signal(
         float ChargeFraction = Charge * x[ix] * y[iy];
         if (ChargeFraction > 0.) {
           chan =
-              (pixelFlag) ? PixelDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);  // Get index
+              (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);  // Get index
           // Load the amplitude
           hit_signal[chan] += ChargeFraction;
         }
@@ -642,8 +656,8 @@ void SiPadDigitizerAlgorithm::induce_signal(
 //  Add electronic noise to pixel charge
 //
 // ======================================================================
-void SiPadDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* pixdet) {
-  uint32_t detID = pixdet->geographicalId().rawId();
+void SiPadDigitizerAlgorithm::add_noise(const FbcmSiPadGeom* SiPadGeom) {
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   signal_map_type& theSignal = _signal[detID];
   for (auto& s : theSignal) {
     float noise = gaussDistribution_->fire();
@@ -658,11 +672,11 @@ void SiPadDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* pixdet) 
 //  Add  Cross-talk contribution
 //
 // ======================================================================
-void SiPadDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pixdet) {
-  uint32_t detID = pixdet->geographicalId().rawId();
+void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   signal_map_type& theSignal = _signal[detID];
   signal_map_type signalNew;
-  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
+  const FbcmSiPadTopology* topol = &SiPadGeom->SiPadTopology();
   int numRows = topol->nrows();
 
   for (auto& s : theSignal) {
@@ -670,7 +684,7 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
 
     std::pair<int, int> hitChan;
     if (pixelFlag)
-      hitChan = PixelDigi::channelToPixel(s.first);
+      hitChan = SiPadDigi::channelToPixel(s.first);
     else
       hitChan = Phase2TrackerDigi::channelToPixel(s.first);
 
@@ -680,13 +694,13 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
 
     if (hitChan.first != 0) {
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
-      int chanXtalkPrev = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
+      int chanXtalkPrev = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                       : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
       signalNew.emplace(chanXtalkPrev, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
     if (hitChan.first < (numRows - 1)) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
-      int chanXtalkNext = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
+      int chanXtalkNext = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                       : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
       signalNew.emplace(chanXtalkNext, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
@@ -707,10 +721,10 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
 //  Add noise on non-hit cells
 //
 // ======================================================================
-void SiPadDigitizerAlgorithm::add_noisy_cells(const Phase2TrackerGeomDetUnit* pixdet, float thePixelThreshold) {
-  uint32_t detID = pixdet->geographicalId().rawId();
+void SiPadDigitizerAlgorithm::add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, float thePixelThreshold) {
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   signal_map_type& theSignal = _signal[detID];
-  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
+  const FbcmSiPadTopology* topol = &SiPadGeom->SiPadTopology();
   int numColumns = topol->ncolumns();  // det module number of cols&rows
   int numRows = topol->nrows();
 
@@ -739,7 +753,7 @@ void SiPadDigitizerAlgorithm::add_noisy_cells(const Phase2TrackerGeomDetUnit* pi
       LogWarning("SiPadDigitizerAlgorithm") << " error in ix " << ix;
 
     int chan;
-    chan = (pixelFlag) ? PixelDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);
+    chan = (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);
 
     LogDebug("SiPadDigitizerAlgorithm")
         << " Storing noise = " << (*mapI).first << " " << (*mapI).second << " " << ix << " " << iy << " " << chan;
@@ -755,9 +769,9 @@ void SiPadDigitizerAlgorithm::add_noisy_cells(const Phase2TrackerGeomDetUnit* pi
 // Simulate the readout inefficiencies.
 // Delete a selected number of single pixels, dcols and rocs.
 void SiPadDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencies& eff,
-                                                         const Phase2TrackerGeomDetUnit* pixdet,
+                                                         const FbcmSiPadGeom* SiPadGeom,
                                                          const TrackerTopology* tTopo) {
-  uint32_t detID = pixdet->geographicalId().rawId();
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
 
   signal_map_type& theSignal = _signal[detID];  // check validity
 
@@ -766,6 +780,7 @@ void SiPadDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencies& eff,
 
   // setup the chip indices conversion
   unsigned int Subid = DetId(detID).subdetId();
+  
   if (Subid == PixelSubdetector::PixelBarrel || Subid == StripSubdetector::TOB) {  // barrel layers
     unsigned int layerIndex = tTopo->pxbLayer(detID);
     if (layerIndex - 1 < eff.barrel_efficiencies.size())
@@ -811,10 +826,10 @@ void SiPadDigitizerAlgorithm::initializeEvent(CLHEP::HepRandomEngine& eng) {
 // Configurations for barrel and foward pixels possess different tanLorentzAngleperTesla
 // parameter value
 
-LocalVector SiPadDigitizerAlgorithm::DriftDirection(const Phase2TrackerGeomDetUnit* pixdet,
+LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGeom,
                                                             const GlobalVector& bfield,
                                                             const DetId& detId) const {
-  Frame detFrame(pixdet->surface().position(), pixdet->surface().rotation());
+  Frame detFrame(SiPadGeom->surface().position(), SiPadGeom->surface().rotation());
   LocalVector Bfield = detFrame.toLocal(bfield);
   float alpha2_Endcap;
   float alpha2_Barrel;
@@ -825,7 +840,7 @@ LocalVector SiPadDigitizerAlgorithm::DriftDirection(const Phase2TrackerGeomDetUn
   float dir_z = 0.0;
   float scale = 0.0;
 
-  uint32_t detID = pixdet->geographicalId().rawId();
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   unsigned int Sub_detid = DetId(detID).subdetId();
 
   // Read Lorentz angle from cfg file:
@@ -878,7 +893,7 @@ void SiPadDigitizerAlgorithm::pixel_inefficiency_db(uint32_t detID) {
   for (auto& s : theSignal) {
     std::pair<int, int> ip;
     if (pixelFlag)
-      ip = PixelDigi::channelToPixel(s.first);  //get pixel pos
+      ip = SiPadDigi::channelToPixel(s.first);  //get pixel pos
     else
       ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
     int row = ip.first;                                 // X in row
@@ -913,7 +928,7 @@ void SiPadDigitizerAlgorithm::module_killing_conf(uint32_t detID) {
   for (auto& s : theSignal) {
     std::pair<int, int> ip;
     if (pixelFlag)
-      ip = PixelDigi::channelToPixel(s.first);
+      ip = SiPadDigi::channelToPixel(s.first);
     else
       ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
 
@@ -971,7 +986,7 @@ void SiPadDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
     for (auto& s : theSignal) {
       std::pair<int, int> ip;
       if (pixelFlag)
-        ip = PixelDigi::channelToPixel(s.first);
+        ip = SiPadDigi::channelToPixel(s.first);
       else
         ip = Phase2TrackerDigi::channelToPixel(s.first);
 
@@ -990,7 +1005,7 @@ void SiPadDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
 // For premixing
 void SiPadDigitizerAlgorithm::loadAccumulator(unsigned int detId, const std::map<int, float>& accumulator) {
   auto& theSignal = _signal[detId];
-  // the input channel is always with PixelDigi definition
+  // the input channel is always with SiPadDigi definition
   // if needed, that has to be converted to Phase2TrackerDigi convention
   for (const auto& elem : accumulator) {
     auto inserted = theSignal.emplace(elem.first, DigitizerUtility::Amplitude(elem.second, nullptr));
@@ -1000,10 +1015,10 @@ void SiPadDigitizerAlgorithm::loadAccumulator(unsigned int detId, const std::map
   }
 }
 
-void SiPadDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* pixdet,
+void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
                                                std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
                                                const TrackerTopology* tTopo) {
-  uint32_t detID = pixdet->geographicalId().rawId();
+  uint32_t detID = SiPadGeom->geographicalId().rawId();
   auto it = _signal.find(detID);
   if (it == _signal.end())
     return;
@@ -1029,20 +1044,20 @@ void SiPadDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* pixdet,
     theHIPThresholdInE = theHIPThresholdInE_Endcap;
   }
 
-  //  if (addNoise) add_noise(pixdet, theThresholdInE/theNoiseInElectrons);  // generate noise
+  //  if (addNoise) add_noise(SiPadGeom, theThresholdInE/theNoiseInElectrons);  // generate noise
   if (addNoise)
-    add_noise(pixdet);  // generate noise
+    add_noise(SiPadGeom);  // generate noise
   if (addXtalk)
-    add_cross_talk(pixdet);
+    add_cross_talk(SiPadGeom);
   if (addNoisyPixels)
-    add_noisy_cells(pixdet, theHIPThresholdInE / theElectronPerADC);
+    add_noisy_cells(SiPadGeom, theHIPThresholdInE / theElectronPerADC);
 
   // Do only if needed
   if (AddPixelInefficiency && !theSignal.empty()) {
     if (use_ineff_from_db_)
       pixel_inefficiency_db(detID);
     else
-      pixel_inefficiency(subdetEfficiencies_, pixdet, tTopo);
+      pixel_inefficiency(subdetEfficiencies_, SiPadGeom, tTopo);
   }
   if (use_module_killing_) {
     if (use_deadmodule_DB_)  // remove dead modules using DB

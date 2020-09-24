@@ -1,5 +1,9 @@
-//
-// system include files
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+///-------------------------------------------
+
 #include <memory>
 #include <set>
 
@@ -13,32 +17,33 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "DataFormats/SiPixelDigi/interface/PixelDigi.h"
-#include "SimDataFormats/TrackerDigiSimLink/interface/PixelDigiSimLink.h"
 #include "DataFormats/Common/interface/DetSet.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
-#include "DataFormats/SiPixelDigi/interface/PixelDigi.h"
-#include "DataFormats/SiPixelDigi/interface/PixelDigiCollection.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
 #include "DataFormats/GeometryVector/interface/LocalPoint.h"
 #include "DataFormats/GeometryVector/interface/LocalVector.h"
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
-#include "Geometry/CommonDetUnit/interface/PixelGeomDetUnit.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 
+
+#include "Geometry/Records/interface/FbcmGeometryRecord.h"
+#include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
+
+#include "DataFormats/SiPixelDigi/interface/PixelDigi.h"
+#include "SimDataFormats/TrackerDigiSimLink/interface/PixelDigiSimLink.h"
+#include "DataFormats/SiPixelDigi/interface/PixelDigiCollection.h"
+
+#include "DataFormats/FbcmDigi/interface/SiPadAmplitude.h"
+#include "DataFormats/FbcmDigi/interface/SiPadAmplitudeCollection.h"
 
 #include "Geometry/CommonTopologies/interface/PixelTopology.h"
 #include "Geometry/CommonDetUnit/interface/PixelGeomDetType.h"
-
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
-
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
 
@@ -51,6 +56,8 @@
 #include "FWCore/Utilities/interface/StreamID.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
+#include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
+
 //
 // constants, enums and typedefs
 //
@@ -59,6 +66,10 @@
 // static data member definitions
 //
 
+
+
+//using SiPadDigi = PixelDigi;
+//using SiPadDigiSimLink = PixelDigiSimLink;
 //
 // constructors and destructor
 //
@@ -82,20 +93,22 @@ namespace cms {
         //NumberOfEndcapDisks(iConfig.exists("NumPixelEndcap") ? iConfig.getParameter<int>("NumPixelEndcap") : 2) 
 		{
     edm::LogInfo("SiPadDigitizer ") << "Enter the SiPad Digitizer";
+	//std::cout << "SiPadDigitizer-Constructor " << "\n"; // call 0
 	
-    const std::string alias("simSiPadDigis");
+    const std::string alias("simSiPadAmpl");
 	
-    producesCollector.produces<edm::DetSetVector<PixelDigi> >("SiPad").setBranchAlias(alias);
-	producesCollector.produces<edm::DetSetVector<PixelDigi> >("SiPadOverT").setBranchAlias(alias);
+    producesCollector.produces<edm::DetSetVector<SiPadAmplitude> >("SiPad").setBranchAlias(alias);
+	producesCollector.produces<edm::DetSetVector<PixelDigi> >("SiPad2").setBranchAlias(alias);
+	//producesCollector.produces<edm::DetSetVector<SiPadAmplitude> >("SiPadOverT").setBranchAlias(alias);
     if (makeDigiSimLinks_) {
-      producesCollector.produces<edm::DetSetVector<PixelDigiSimLink> >("SiPadSimLink").setBranchAlias(alias);
+      //producesCollector.produces<edm::DetSetVector<SiPadDigiSimLink> >("SiPadSimLink").setBranchAlias(alias);
     }
 	
 	
 	
 	edm::InputTag tag(hitsProducer_, SubdetName_);
 	iC.consumes<std::vector<PSimHit> >(tag);
-	//iC.consumes<edm::DetSetVector<PixelDigiSimLink> >(edm::InputTag("simSiPadDigis", "SiPad"));
+	//iC.consumes<edm::DetSetVector<SiPadDigiSimLink> >(edm::InputTag("simSiPadDigis", "SiPad"));
 	
     edm::Service<edm::RandomNumberGenerator> rng;
     if (!rng.isAvailable()) {
@@ -113,24 +126,38 @@ namespace cms {
 
  void SiPadDigitizer::beginLuminosityBlock(edm::LuminosityBlock const& lumi, edm::EventSetup const& iSetup) 
   {    
-  //std::cout << "SiPadDigitizer--LumiBlock " << "\n";
-    iSetup.get<IdealMagneticFieldRecord>().get(pSetup);
-    iSetup.get<TrackerTopologyRcd>().get(tTopoHand);
-
-    if (theDigiGeomWatcher.check(iSetup)) {
-      iSetup.get<TrackerDigiGeometryRecord>().get(geometryType_, pDD_);
-      //reset cache
-      ModuleTypeCache().swap(moduleTypeCache_);
-      detectorUnits.clear();
-      for (auto const& det_u : pDD_->detUnits()) {
-        unsigned int detId_raw = det_u->geographicalId().rawId();
-        DetId detId = DetId(detId_raw);
-        if (DetId(detId).det() == DetId::Detector::Tracker) {
-          const Phase2TrackerGeomDetUnit* pixdet = dynamic_cast<const Phase2TrackerGeomDetUnit*>(det_u);
-          assert(pixdet);
-          detectorUnits.insert(std::make_pair(detId_raw, pixdet));
-        }
+    //std::cout << "SiPadDigitizer-LumiBlock " << "\n"; //call 1
+	iSetup.get<IdealMagneticFieldRecord>().get(pSetup);
+    ///edm::ESTransientHandle<FbcmGeometry> FbcmGeom;
+		
+	// for this version, Ideal fro Digi and Alignment have not been implemented. 
+	if (theGeomWatcher.check(iSetup)) {
+      //iSetup.get<FbcmGeometryRecord>().get(geometryType_, theFbcmGeom);
+	  iSetup.get<FbcmGeometryRecord>().get(theFbcmGeom);
+	  SiPadsIdGeomMap.clear();
+//	  std::cout <<"Indide the theGeomWatcher\n"; 
+	  
+      for (auto const& SiPadUnit : theFbcmGeom->SiPads()) {
+	    unsigned int detId_raw = SiPadUnit->geographicalId().rawId(); 
+		FbcmDetId DetID_Fbcm(detId_raw); // FbcmDetId class itself checks if it is a valid ID for FBMC or not!
+		//The other way is as the following:
+		//FbcmDetId DetID_Fbcm = SiPadUnit->id();		
+		
+		//const FbcmSiPadGeom* SiPadDetptr = dynamic_cast<const FbcmSiPadGeom*>(SiPadUnit);
+		  const FbcmSiPadGeom* SiPadDetptr = SiPadUnit;
+          assert(SiPadDetptr);
+          SiPadsIdGeomMap.insert(std::make_pair(DetID_Fbcm.rawId(), SiPadDetptr));
+        
       }
+	  
+	  // for (auto const& it : SiPadsIdGeomMap)
+		// {
+			// std::cout << it.first << ":  "; 
+			// std::cout << it.second->id();
+		// }
+	  
+	  // throw cms::Exception("Manual Stop im LuminosityBlock: ") << " After the for-loop";
+	  
     }
 	
   }
@@ -138,29 +165,61 @@ namespace cms {
 
   
   void SiPadDigitizer::accumulateSiPadHits(edm::Handle<std::vector<PSimHit> > hSimHits,
-                                                   size_t globalSimHitIndex,
-                                                   const unsigned int tofBin)
+                                                   size_t globalSimHitIndex)
   {
+	 //std::cout << "SiPadDigitizer-accumulateSiPadHits " << "\n"; // call 4
      if (hSimHits.isValid()) {
+		 
+		 
+		 
       std::set<unsigned int> detIds;
       std::vector<PSimHit> const& simHits = *hSimHits.product();
+	  
+	  //std::cout << "A hSimHits found in accumulateSiPadHits. Size= " << simHits.size()  << "\n";
+	  
       int indx = 0;
       for (auto it = simHits.begin(), itEnd = simHits.end(); it != itEnd; ++it, ++globalSimHitIndex)
 	  {
         unsigned int detId_raw = (*it).detUnitId();
-        if (detectorUnits.find(detId_raw) == detectorUnits.end())
+			
+			
+			//FbcmDetId fbdetId(detId_raw);
+			std::cout << "--New SimHits found: " << detId_raw << ", i.e.: ";
+		
+        if (SiPadsIdGeomMap.find(detId_raw) == SiPadsIdGeomMap.end())
           continue;
-        if (detIds.insert(detId_raw).second) 
+        if (detIds.insert(detId_raw).second) // if it is a new detId_raw
 		{
+			FbcmDetId dc(detId_raw);
+			std::cout << dc; 
           // The insert succeeded, so this detector element has not yet been processed.
-          const Phase2TrackerGeomDetUnit* phase2det = detectorUnits[detId_raw];
+          const FbcmSiPadGeom* SiPadSensorGeom = SiPadsIdGeomMap[detId_raw];
           
+		  std::cout <<"Read From retured FbcmSiPadGeom: " << SiPadSensorGeom->id(); 
+		  std::cout << SiPadSensorGeom->surface().position(); 
+		  std::cout << "B-Field(T)" << pSetup->inTesla(SiPadSensorGeom->surface().position()) << "\n"; 
+		  
+		  std::cout << "tof:" << it->timeOfFlight() << ", "
+					<< "pabs:" << it->pabs() << ", "
+					<< "energyLoss:" << it->energyLoss() << ", "
+					<< "trackId:" << it->trackId() << ", "
+					<< "exitPoint:" << it->exitPoint() << ", "
+					<< "localPosition:" << it->localPosition() << "\n";
+					
+		  std::cout << (*it) << "\n";
+		  
+		  
 		  // access to magnetic field in global coordinates
-          GlobalVector bfield = pSetup->inTesla(phase2det->surface().position());
-          LogDebug("PixelDigitizer") << "B-field(T) at " << phase2det->surface().position()
-                                     << "(cm): " << pSetup->inTesla(phase2det->surface().position());
-          //next line temporarily was disabled for compilation
-		  SiPadDigiAlgo->accumulateSimHits(it, itEnd, globalSimHitIndex, tofBin, phase2det, bfield);
+		  // next line temporarily disabled
+          GlobalVector bfield = pSetup->inTesla(SiPadSensorGeom->surface().position());
+		  
+          LogDebug("PixelDigitizer") << "B-field(T) at " << SiPadSensorGeom->surface().position()
+                                     << "(cm): " << pSetup->inTesla(SiPadSensorGeom->surface().position());
+          
+		  	enum { LowTof, HighTof };
+			unsigned int tofBin = HighTof;
+		  //next line temporarily was disabled for compilation
+		 SiPadDigiAlgo->accumulateSimHits(it, itEnd, globalSimHitIndex, tofBin, SiPadSensorGeom, bfield);
 		  
         }
         indx++;
@@ -172,8 +231,9 @@ namespace cms {
 
 
 
-  void SiPadDigitizer::initializeEvent(edm::Event const& e, edm::EventSetup const& iSetup) {
-	  
+  void SiPadDigitizer::initializeEvent(edm::Event const& e, edm::EventSetup const& iSetup) 
+  {
+	  //std::cout << "SiPadDigitizer-initializeEvent " << "\n"; // call 2
 	  // Cache random number engine
     edm::Service<edm::RandomNumberGenerator> rng;
 	if (!rng.isAvailable()) {
@@ -204,8 +264,11 @@ namespace cms {
 
   }
 
-  void SiPadDigitizer::accumulate(edm::Event const& iEvent, edm::EventSetup const& iSetup) {
-    // Step A: Get Inputs
+  void SiPadDigitizer::accumulate(edm::Event const& iEvent, edm::EventSetup const& iSetup) 
+  {
+  //std::cout << "SiPadDigitizer-accumulate-Event " << "\n"; // call 3-1
+
+  // Step A: Get Inputs
 
 	  edm::Handle<std::vector<PSimHit> > simHits;
       edm::InputTag tag(hitsProducer_, SubdetName_);
@@ -215,9 +278,19 @@ namespace cms {
 	  
       iEvent.getByLabel(tag, simHits);
 	  
-      unsigned int tofBin = PixelDigiSimLink::LowTof;
+	  //enum { LowTof, HighTof };
+	  
+      //unsigned int tofBin = PixelDigiSimLink::LowTof;
+	  //tofBin= PixelDigiSimLink:HighTof; 
+	  //std::cout << "LowTof=" << tofBin << ", " << "HighTof=" << PixelDigiSimLink::HighTof << "\n"; 
+	  
 
-      accumulateSiPadHits(simHits, crossingSimHitIndexOffset_[tag.encode()], tofBin);
+	// from other refrecens: 36 ns ~ 3*12.06 ns where, 12.06 ns is sigam of gausian spread of electrons
+	//https://indico.cern.ch/event/7522/contributions/1248050/subcontributions/112540/attachments/1048712/1494938/IEEE2006CMSTkSimulation.pdf
+	// ToF < 36 ns ==> LowToF
+	// ToF > 36 ns ==> HighToF
+	// for Fbcm, we should consider HighToF, becuase Tof~59.8 ns
+      accumulateSiPadHits(simHits, crossingSimHitIndexOffset_[tag.encode()]);
       // Now that the hits have been processed, I'll add the amount of hits in this crossing on to
       // the global counter. Next time accumulateStripHits() is called it will count the sim hits
       // as though they were on the end of this collection.
@@ -225,6 +298,8 @@ namespace cms {
       //       std::cout << "index offset, current hit count = " << crossingSimHitIndexOffset_[tag.encode()] << ", " << simHits->size() << std::endl;
       if (simHits.isValid())
         crossingSimHitIndexOffset_[tag.encode()] += simHits->size();
+	
+	
     
   }
 
@@ -232,6 +307,8 @@ namespace cms {
                                     edm::EventSetup const& iSetup,
                                     edm::StreamID const& streamID) 
 	{
+		//std::cout << "SiPadDigitizer-accumulate-PileUpEvent " << "\n"; // call 3-2
+		
        edm::Handle<std::vector<PSimHit> > simHits;
        edm::InputTag tag(hitsProducer_, SubdetName_);
 		
@@ -240,9 +317,9 @@ namespace cms {
       iEvent.getByLabel(tag, simHits);
 	  
 	  
-      unsigned int tofBin = PixelDigiSimLink::LowTof;
+      //unsigned int tofBin = PixelDigiSimLink::LowTof;
 
-      accumulateSiPadHits(simHits, crossingSimHitIndexOffset_[tag.encode()], tofBin);
+      accumulateSiPadHits(simHits, crossingSimHitIndexOffset_[tag.encode()]);
       // Now that the hits have been processed, I'll add the amount of hits in this crossing on to
       // the global counter. Next time accumulateStripHits() is called it will count the sim hits
       // as though they were on the end of this collection.
@@ -254,29 +331,35 @@ namespace cms {
 
   void SiPadDigitizer::finalizeEvent(edm::Event& iEvent, const edm::EventSetup& iSetup) 
   {
-    ///------------------------
-    //addSiPadCollection(iEvent, iSetup); // becuase in this fuction, I will call only one function, 
-	// I will ghather the code of addSiPadCollection directly inside this function. 
-    //-------- the function body of addSiPadCollection ----------
-		
-	////-------
-    const TrackerTopology* tTopo = tTopoHand.product();
-    std::vector<edm::DetSet<PixelDigi> > digiVector;
-	std::vector<edm::DetSet<PixelDigi> > digiVector_OverT;
-    std::vector<edm::DetSet<PixelDigiSimLink> > digiLinkVector;
-	
-	
-    for (auto const& det_u : pDD_->detUnits()) 
-	{
-      //DetId detId_raw = DetId(det_u->geographicalId().rawId()); // was needed for AlgoType
+    //std::cout << "SiPadDigitizer-finalizeEvent " << "\n"; // call 5, at the end of the envent
 
+    //const TrackerTopology* tTopo = tTopoHand.product();
+	const TrackerTopology* tTopo = NULL; // I don' need this 
+    std::vector<edm::DetSet<SiPadAmplitude> > AmplVector;
+	
+	//PixelDigi
+	
+	std::vector<edm::DetSet<PixelDigi> > digiVector_OverT;
+    //std::vector<edm::DetSet<SiPadDigiSimLink> > digiLinkVector;
+	
+	
+    for (auto const& SiPadUnit : theFbcmGeom->SiPads()) 
+	{
+      //DetId detId_raw = DetId(SiPadUnit->geographicalId().rawId()); // was needed for AlgoType
+		//std::cout << "Mohammad1304 first Loop\n";
+		
       std::map<int, DigitizerUtility::DigiSimInfo> digi_map;
 	  //next line temporarily was disabled for compilation
-	  SiPadDigiAlgo->digitize(dynamic_cast<const Phase2TrackerGeomDetUnit*>(det_u), digi_map, tTopo);
-      	  
-      edm::DetSet<PixelDigi> collector(det_u->geographicalId().rawId());
-	  edm::DetSet<PixelDigi> collector_OverT(det_u->geographicalId().rawId());
-      edm::DetSet<PixelDigiSimLink> linkcollector(det_u->geographicalId().rawId());
+	  SiPadDigiAlgo->digitize(SiPadUnit, digi_map, tTopo); // this fill out the digi_map
+	  //SiPadDigiAlgo->GetAmplitude(SiPadUnit, digi_map); // this fill out the digi_map
+      	  FbcmDetId SiPdetId(SiPadUnit->geographicalId().rawId());
+		  
+		  //std::cout << SiPdetId; 
+		  //std::cout << SiPadUnit->geographicalId().rawId() << "\n"; 
+		  
+      edm::DetSet<SiPadAmplitude> collector(SiPadUnit->geographicalId().rawId());
+	  edm::DetSet<PixelDigi> collector_OverT(SiPadUnit->geographicalId().rawId());
+      //edm::DetSet<SiPadDigiSimLink> linkcollector(SiPadUnit->geographicalId().rawId());
       for (auto const& digi_p : digi_map) 
 	  {
         DigitizerUtility::DigiSimInfo info = digi_p.second;
@@ -284,41 +367,71 @@ namespace cms {
 		// the following two lines are equivalent to the function: addToCollector
 		// but the diffrence is info.sig_tot or info.ot_bit
 		// edm::DetSet<Phase2TrackerDigi>& collector ----> info.ot_bit
-		// edm::DetSet<PixelDigi>& collector ------------> info.sig_tot
-		// the addToCollector function uses as tempale: DigiType for DetSet<Phase2TrackerDigi> or DetSet<PixelDigi>
+		// edm::DetSet<SiPadAmplitude>& collector ------------> info.sig_tot
+		// the addToCollector function uses as tempale: DigiType for DetSet<Phase2TrackerDigi> or DetSet<SiPadAmplitude>
+		std::cout << "Hello Mohammad\n";
+		std::cout << SiPdetId; 
+		// Not completly implemented !!!
+		collector.data.emplace_back(
+		SiPdetId.Side(),
+		SiPdetId.Station(),
+		SiPdetId.SiliconDie(),
+		SiPdetId.SiPad(),
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		info.sig_tot,
+		0.0,
+		0.0,
+		0.0,
+		SiPdetId.rawId(),
+		0);
+		
 		
         std::pair<int, int> ip = PixelDigi::channelToPixel(digi_p.first);
-        collector.data.emplace_back(ip.first, ip.second, info.sig_tot);
+        //collector.data.emplace_back(ip.first, ip.second, info.sig_tot);
 		collector_OverT.data.emplace_back(ip.first, ip.second, info.ot_bit);
 		
-        for (auto const& sim_p : info.simInfoList)
-		{
-          linkcollector.data.emplace_back(digi_p.first,
-                                          sim_p.second->trackId(),
-                                          sim_p.second->hitIndex(),
-                                          sim_p.second->tofBin(),
-                                          sim_p.second->eventId(),
-                                          sim_p.first);
-        }
+        // for (auto const& sim_p : info.simInfoList)
+		// {
+          // linkcollector.data.emplace_back(digi_p.first,
+                                          // sim_p.second->trackId(),
+                                          // sim_p.second->hitIndex(),
+                                          // sim_p.second->tofBin(),
+                                          // sim_p.second->eventId(),
+                                          // sim_p.first);
+        // }
+		
+		
       }
       if (!collector.data.empty())
-        digiVector.push_back(std::move(collector));
+	  {
+        AmplVector.push_back(std::move(collector));
+		std::cout << "AmplVector is not empty\n"; 
+	  }
+		
       if (!collector_OverT.data.empty())
-        digiVector_OverT.push_back(std::move(collector_OverT));
-      if (!linkcollector.data.empty())
-        digiLinkVector.push_back(std::move(linkcollector));
+	  {
+		  digiVector_OverT.push_back(std::move(collector_OverT));
+		  std::cout << "collector_OverT is not empty\n"; 
+	  }
+      // if (!linkcollector.data.empty())
+        // digiLinkVector.push_back(std::move(linkcollector));
     }
 
     // Step C: create collection with the cache vector of DetSet
-    std::unique_ptr<edm::DetSetVector<PixelDigi> > output(new edm::DetSetVector<PixelDigi>(digiVector));
+    std::unique_ptr<edm::DetSetVector<SiPadAmplitude> > output(new edm::DetSetVector<SiPadAmplitude>(AmplVector));
 	std::unique_ptr<edm::DetSetVector<PixelDigi> > outputOverT(new edm::DetSetVector<PixelDigi>(digiVector_OverT));
-	std::unique_ptr<edm::DetSetVector<PixelDigiSimLink> > outputlink(new edm::DetSetVector<PixelDigiSimLink>(digiLinkVector));
+	//std::unique_ptr<edm::DetSetVector<SiPadDigiSimLink> > outputlink(new edm::DetSetVector<SiPadDigiSimLink>(digiLinkVector));
 
     // Step D: write output to file
     iEvent.put(std::move(output), "SiPad");
-	iEvent.put(std::move(outputOverT), "SiPadOverT");
+	iEvent.put(std::move(outputOverT), "SiPad2");
     if (makeDigiSimLinks_) {
-      iEvent.put(std::move(outputlink), "SiPadSimLink");
+      //iEvent.put(std::move(outputlink), "SiPadSimLink");
     }
 	 
   }
