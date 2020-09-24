@@ -32,7 +32,8 @@ public:
     HGCalEE = 8,
     HGCalHSi = 9,
     HGCalHSc = 10,
-    HGCalTrigger = 11
+    HGCalTrigger = 11,
+	BRIL=12
   };
   /// Create an empty or null id (also for persistence)
   constexpr DetId() : id_(0) {}

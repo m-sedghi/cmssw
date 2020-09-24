@@ -7,11 +7,6 @@ SiPadDigitizer = cms.PSet(
     hitsProducer = cms.string('g4SimHits'),
 	SubdetName=cms.string('FBCMHits'), 
 	#'FBCMHits'
-	# RoutList = cms.vstring(
-        # 'TrackerHitsPixelBarrelLowTof', 
-        # 'TrackerHitsPixelBarrelHighTof', 
-        # 'TrackerHitsPixelEndcapLowTof', 
-        # 'TrackerHitsPixelEndcapHighTof'),
     GeometryType = cms.string('idealForDigi'),
 	SimFBCM_Tag = cms.InputTag("SimFBCM", "SiPad12"),
 	isReadoutAnalog = cms.bool(False),#set this to true if you want analog readout for OT

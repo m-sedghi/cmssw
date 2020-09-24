@@ -36,3 +36,5 @@ bool GeomDetType::isME0() const {
 bool GeomDetType::isMuon() const { return GeomDetEnumerators::isMuon(theSubDet); }
 
 bool GeomDetType::isTiming() const { return GeomDetEnumerators::isTiming(theSubDet); }
+
+bool GeomDetType::isFbcm() const { return GeomDetEnumerators::isFbcm(theSubDet); }

@@ -4,57 +4,57 @@ import FWCore.ParameterSet.Config as cms
 # scenarios, in this case for Run 2. See the code at the end of the
 # SiPadSimBlock definition.
 
-def _modifyPixelDigitizerForPhase1Pixel( digitizer ) :
-    """
-    Function that modifies the pixel digitiser for the Phase 1 pixel detector.
+# def _modifyPixelDigitizerForPhase1Pixel( digitizer ) :
+    # """
+    # Function that modifies the pixel digitiser for the Phase 1 pixel detector.
     
-    First argument is the pixelDigitizer object.
-    """
-    #use default switches, new analog respnse, d.k. 2/16
-    #digitizer.MissCalibrate = False
-    #digitizer.LorentzAngle_DB = False
-    #digitizer.killModules = False
-    #digitizer.useDB = False
-    #digitizer.DeadModules_DB = False
-    digitizer.NumPixelBarrel = cms.int32(4)
-    digitizer.NumPixelEndcap = cms.int32(3)
-    digitizer.ThresholdInElectrons_FPix = cms.double(2000.0)
-    digitizer.ThresholdInElectrons_BPix = cms.double(2000.0)
-    digitizer.ThresholdInElectrons_BPix_L1 = cms.double(3000.0)
-    digitizer.ThresholdInElectrons_BPix_L2 = cms.double(2600.0)
-    digitizer.FPix_SignalResponse_p0 = cms.double(0.00171)
-    digitizer.FPix_SignalResponse_p1 = cms.double(0.711)
-    digitizer.FPix_SignalResponse_p2 = cms.double(203.)
-    digitizer.FPix_SignalResponse_p3 = cms.double(148.)
-    digitizer.BPix_SignalResponse_p0 = cms.double(0.00171)
-    digitizer.BPix_SignalResponse_p1 = cms.double(0.711)
-    digitizer.BPix_SignalResponse_p2 = cms.double(203.)
-    digitizer.BPix_SignalResponse_p3 = cms.double(148.)
-    # gains and offsets are ints in the Clusterizer, so round to the same value
-    digitizer.ElectronsPerVcal           = cms.double(47)   # L2-4: 47  +- 4.7
-    digitizer.ElectronsPerVcal_L1        = cms.double(50)   # L1:   49.6 +- 2.6
-    digitizer.ElectronsPerVcal_Offset    = cms.double(-60)  # L2-4: -60 +- 130
-    digitizer.ElectronsPerVcal_L1_Offset = cms.double(-670) # L1:   -670 +- 220
-    digitizer.UseReweighting = cms.bool(True)
-    digitizer.KillBadFEDChannels = cms.bool(True)
+    # First argument is the pixelDigitizer object.
+    # """
+    # #use default switches, new analog respnse, d.k. 2/16
+    # #digitizer.MissCalibrate = False
+    # #digitizer.LorentzAngle_DB = False
+    # #digitizer.killModules = False
+    # #digitizer.useDB = False
+    # #digitizer.DeadModules_DB = False
+    # digitizer.NumPixelBarrel = cms.int32(4)
+    # digitizer.NumPixelEndcap = cms.int32(3)
+    # digitizer.ThresholdInElectrons_FPix = cms.double(2000.0)
+    # digitizer.ThresholdInElectrons_BPix = cms.double(2000.0)
+    # digitizer.ThresholdInElectrons_BPix_L1 = cms.double(3000.0)
+    # digitizer.ThresholdInElectrons_BPix_L2 = cms.double(2600.0)
+    # digitizer.FPix_SignalResponse_p0 = cms.double(0.00171)
+    # digitizer.FPix_SignalResponse_p1 = cms.double(0.711)
+    # digitizer.FPix_SignalResponse_p2 = cms.double(203.)
+    # digitizer.FPix_SignalResponse_p3 = cms.double(148.)
+    # digitizer.BPix_SignalResponse_p0 = cms.double(0.00171)
+    # digitizer.BPix_SignalResponse_p1 = cms.double(0.711)
+    # digitizer.BPix_SignalResponse_p2 = cms.double(203.)
+    # digitizer.BPix_SignalResponse_p3 = cms.double(148.)
+    # # gains and offsets are ints in the Clusterizer, so round to the same value
+    # digitizer.ElectronsPerVcal           = cms.double(47)   # L2-4: 47  +- 4.7
+    # digitizer.ElectronsPerVcal_L1        = cms.double(50)   # L1:   49.6 +- 2.6
+    # digitizer.ElectronsPerVcal_Offset    = cms.double(-60)  # L2-4: -60 +- 130
+    # digitizer.ElectronsPerVcal_L1_Offset = cms.double(-670) # L1:   -670 +- 220
+    # digitizer.UseReweighting = cms.bool(True)
+    # digitizer.KillBadFEDChannels = cms.bool(True)
 
-def _modifyPixelDigitizerForRun3( digitizer ):
+# def _modifyPixelDigitizerForRun3( digitizer ):
 
-    digitizer.ThresholdInElectrons_FPix = cms.double(1600.0)
-    digitizer.ThresholdInElectrons_BPix = cms.double(1600.0)
-    digitizer.ThresholdInElectrons_BPix_L1 = cms.double(2000.0)
-    digitizer.ThresholdInElectrons_BPix_L2 = cms.double(1600.0)
+    # digitizer.ThresholdInElectrons_FPix = cms.double(1600.0)
+    # digitizer.ThresholdInElectrons_BPix = cms.double(1600.0)
+    # digitizer.ThresholdInElectrons_BPix_L1 = cms.double(2000.0)
+    # digitizer.ThresholdInElectrons_BPix_L2 = cms.double(1600.0)
 
 SiPadSimBlock = cms.PSet(
 	ElectronPerAdc = cms.double(135.0),
 	DeltaProductionCut = cms.double(0.03),
 	ReadoutNoiseInElec = cms.double(200.0),#D.B.:Fill readout noise, including all readout chain, relevant for smearing
-	ThresholdInElectrons_Barrel = cms.double(6300.), #(0.4 MIP = 0.4 * 16000 e)
+	ThresholdInElectrons_Barrel = cms.double(6300.), #(0.4 MIP = 0.4 * 16000 e) ##~~##
 	ThresholdInElectrons_Endcap = cms.double(6300.), #(0.4 MIP = 0.4 * 16000 e) 
 	AddThresholdSmearing = cms.bool(True),
-    ThresholdSmearing_Barrel = cms.double(630.0),
+    ThresholdSmearing_Barrel = cms.double(630.0), ##~~##
     ThresholdSmearing_Endcap = cms.double(630.0),
-    HIPThresholdInElectrons_Barrel = cms.double(1.0e10), # very high value to avoid Over threshold bit
+    HIPThresholdInElectrons_Barrel = cms.double(1.0e10), # very high value to avoid Over threshold bit  ##~~##
     HIPThresholdInElectrons_Endcap = cms.double(1.0e10), # very high value to avoid Over threshold bit
     NoiseInElectrons = cms.double(200),	         # 30% of the readout noise (should be changed in future)
     Phase2ReadoutMode = cms.int32(0), # Flag to decide Readout Mode :Digital(0) or Analog (linear TDR (-1), dual slope with slope parameters (+1,+2,+3,+4) with threshold subtraction
@@ -71,7 +71,7 @@ SiPadSimBlock = cms.PSet(
     ClusterWidth = cms.double(3),		#D.B.: this is used as number of sigmas for charge collection (3=+-3sigmas)
     LorentzAngle_DB = cms.bool(False),			
     TanLorentzAnglePerTesla_Endcap = cms.double(0.07),
-    TanLorentzAnglePerTesla_Barrel = cms.double(0.07),
+    TanLorentzAnglePerTesla_Barrel = cms.double(0.07),  ##~~##
     KillModules = cms.bool(False),
     DeadModules_DB = cms.bool(False),
     DeadModules = cms.VPSet(),
@@ -146,8 +146,8 @@ pixel_2016.toModify(SiPadSimBlock,UseReweighting=True)
 #
 # Apply the changes for the different Run 2 running scenarios
 #
-from Configuration.Eras.Modifier_phase1Pixel_cff import phase1Pixel
-phase1Pixel.toModify( SiPadSimBlock, func=_modifyPixelDigitizerForPhase1Pixel )
+# from Configuration.Eras.Modifier_phase1Pixel_cff import phase1Pixel
+# phase1Pixel.toModify( SiPadSimBlock, func=_modifyPixelDigitizerForPhase1Pixel )
 
 # use Label 'forDigitizer' for years >= 2018
 from CalibTracker.SiPixelESProducers.SiPixelQualityESProducer_cfi import siPixelQualityESProducer
@@ -159,8 +159,8 @@ from Configuration.Eras.Modifier_run2_SiPixel_2018_cff import run2_SiPixel_2018
 # - new layer1 installed: expected improvement in timing alignment of L1 and L2
 # - update the rest of the detector to 1600e 
 
-from Configuration.Eras.Modifier_run3_common_cff import run3_common
-run3_common.toModify(SiPadSimBlock, func=_modifyPixelDigitizerForRun3)
+#from Configuration.Eras.Modifier_run3_common_cff import run3_common
+#run3_common.toModify(SiPadSimBlock, func=_modifyPixelDigitizerForRun3)
 
 from Configuration.ProcessModifiers.premix_stage1_cff import premix_stage1
 premix_stage1.toModify(SiPadSimBlock,
