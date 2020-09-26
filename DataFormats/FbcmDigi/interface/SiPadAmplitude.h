@@ -12,7 +12,7 @@
 
 class SiPadAmplitude {
 public:
-  SiPadAmplitude(
+ explicit SiPadAmplitude(
     unsigned int Side,
   unsigned int Station,
   unsigned int SiliconDie,

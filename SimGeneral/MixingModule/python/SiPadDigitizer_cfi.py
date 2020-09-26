@@ -9,7 +9,7 @@ SiPadDigitizer = cms.PSet(
 	#'FBCMHits'
     GeometryType = cms.string('idealForDigi'),
 	SimFBCM_Tag = cms.InputTag("SimFBCM", "SiPad12"),
-	isReadoutAnalog = cms.bool(False),#set this to true if you want analog readout for OT
+	isReadoutAnalog = cms.bool(True),#set this to true if you want analog readout for OT
 	makeDigiSimLinks = cms.untracked.bool(True),
 	SiPadSimParam = cms.PSet(SiPadSimBlock)
 )

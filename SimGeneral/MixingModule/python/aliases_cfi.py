@@ -29,7 +29,7 @@ _pixelCommon = cms.VPSet(
 simSiPixelDigis = cms.EDAlias(
     mix = _pixelCommon
 ) 
-simSiPadDigis = cms.EDAlias(
+simFbcmDigis = cms.EDAlias(
     mix = cms.VPSet(
       cms.PSet(type = cms.string('SiPadAmplitudeedmDetSetVector'))
     )

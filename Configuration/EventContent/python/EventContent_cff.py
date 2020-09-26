@@ -81,6 +81,8 @@ from SimCalorimetry.Configuration.SimCalorimetry_EventContent_cff import *
 from SimFastTiming.Configuration.SimFastTiming_EventContent_cff import *
 from SimGeneral.Configuration.SimGeneral_EventContent_cff import *
 from IOMC.RandomEngine.IOMC_EventContent_cff import *
+
+
 #
 #
 # HLT
@@ -908,3 +910,10 @@ _addOutputCommands(FEVTDEBUGHLTEventContent,RecoMTDFEVT)
 _addOutputCommands(FEVTEventContent,RecoMTDFEVT)
 _addOutputCommands(RECOSIMEventContent,RecoMTDRECO)
 _addOutputCommands(AODSIMEventContent,RecoMTDAOD)
+
+
+from SimGeneral.Configuration.SimFbcm_cff import SimFbcmDigiFEVTDEBUG
+from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
+
+for _entry in [FEVTDEBUGEventContent,FEVTDEBUGHLTEventContent,FEVTEventContent]:
+    fbcmDigi.toModify(_entry, outputCommands = _entry.outputCommands + SimFbcmDigiFEVTDEBUG.outputCommands)

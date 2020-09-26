@@ -218,14 +218,14 @@ protected:
                       float length,
                       int NumberOfSegments,
                       std::vector<float>& elossVector) const;
-  virtual void add_noise(const FbcmSiPadGeom* SiPadGeom);
-  virtual void add_cross_talk(const FbcmSiPadGeom* SiPadGeom);
-  virtual void add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, float thePixelThreshold);
-  virtual void pixel_inefficiency(const SubdetEfficiencies& eff,
+   void add_noise(const FbcmSiPadGeom* SiPadGeom);
+   void add_cross_talk(const FbcmSiPadGeom* SiPadGeom);
+   void add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, float thePixelThreshold);
+   void pixel_inefficiency(const SubdetEfficiencies& eff,
                                   const FbcmSiPadGeom* SiPadGeom,
                                   const TrackerTopology* tTopo);
 
-  virtual void pixel_inefficiency_db(uint32_t detID);
+   void pixel_inefficiency_db(uint32_t detID);
 
   // access to the gain calibration payloads in the db. Only gets initialized if check_dead_pixels_ is set to true.
   const std::unique_ptr<SiPixelGainCalibrationOfflineSimService> theSiPixelGainCalibrationService_;
@@ -234,8 +234,8 @@ protected:
                              const DetId& detId) const;
 
   // remove dead modules using the list in the configuration file PixelDigi_cfi.py
-  virtual void module_killing_conf(uint32_t detID);
-  virtual void module_killing_DB(uint32_t detID);  // remove dead modules uisng the list in the DB
+   void module_killing_conf(uint32_t detID);
+   void module_killing_DB(uint32_t detID);  // remove dead modules uisng the list in the DB
 
   const SubdetEfficiencies subdetEfficiencies_;
 

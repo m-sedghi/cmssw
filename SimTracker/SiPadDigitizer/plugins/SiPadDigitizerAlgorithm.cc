@@ -2,7 +2,7 @@
 //  Author: Mohammad Sedghi, msedghi@cern.ch
 //  Isfahan University of Technology
 //  Date created: September 2020
-//  Adopted and modified form Phase2Tkdigitizer
+//  Adopted and modified form SiPhase2Tkdigitizer
 ///-------------------------------------------
 
 #include <typeinfo>
@@ -238,8 +238,13 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
 
     // fill collection_points for this SimHit, indpendent of topology
     // Check the TOF cut
+	//std::cout <<"inside Algorithem, Local Tof: " << SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30. <<"\n";
+	
     if (((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
         ((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
+			
+			//std::cout <<"ToF cutoff passed!\n"; 
+			
       primary_ionization(*it, ionization_points);  // fills _ionization_points
       // transforms _ionization_points to collection_points
       drift(*it, SiPadGeom, bfield, ionization_points, collection_points);
@@ -499,6 +504,8 @@ void SiPadDigitizerAlgorithm::induce_signal(
 
   LogDebug("SiPadDigitizerAlgorithm")
       << " enter induce_signal, " << topol->pitch().first << " " << topol->pitch().second;  //OK
+	  
+	  std::cout << " enter induce_signal, pithcX,Y: " << topol->pitch().first << " " << topol->pitch().second << "\n";  //OK
 
   // local map to store pixels hit by 1 Hit.
   using hit_map_type = std::map<int, float, std::less<int> >;
@@ -522,6 +529,9 @@ void SiPadDigitizerAlgorithm::induce_signal(
 
     LogDebug("SiPadDigitizerAlgorithm") << " cloud " << v.position().x() << " " << v.position().y() << " "
                                                 << v.sigma_x() << " " << v.sigma_y() << " " << v.amplitude();
+
+    //std::cout << "inside collection_points loop:" << " cloud " << v.position().x() << " " << v.position().y() << " "
+                                                //<< v.sigma_x() << " " << v.sigma_y() << " " << v.amplitude() << "\n";
 
     // Find the maximum cloud spread in 2D plane , assume 3*sigma
     float CloudRight = CloudCenterX + ClusterWidth * SigmaX;
@@ -560,6 +570,8 @@ void SiPadDigitizerAlgorithm::induce_signal(
     // Check detector limits to correct for pixels outside range.
     int numColumns = topol->ncolumns();  // det module number of cols&rows
     int numRows = topol->nrows();
+
+	// std::cout << "numColumns:" << numColumns << ", numRows:" << numRows << "\n";
 
     IPixRightUpX = numRows > IPixRightUpX ? IPixRightUpX : numRows - 1;
     IPixRightUpY = numColumns > IPixRightUpY ? IPixRightUpY : numColumns - 1;
@@ -626,8 +638,9 @@ void SiPadDigitizerAlgorithm::induce_signal(
       for (iy = IPixLeftDownY; iy <= IPixRightUpY; iy++) {  //loope over y ind
         float ChargeFraction = Charge * x[ix] * y[iy];
         if (ChargeFraction > 0.) {
-          chan =
-              (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);  // Get index
+          //chan =
+            //  (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);  // Get index
+			chan=SiPadDigi::pixelToChannel(ix, iy);
           // Load the amplitude
           hit_signal[chan] += ChargeFraction;
         }
@@ -645,12 +658,16 @@ void SiPadDigitizerAlgorithm::induce_signal(
       }
     }
   }
+  
+  std::cout << "makeDigiSimLinks_=" <<makeDigiSimLinks_ << "\n";
   // Fill the global map with all hit pixels from this event
   for (auto const& hit_s : hit_signal) {
     int chan = hit_s.first;
     theSignal[chan] +=
         (makeDigiSimLinks_ ? DigitizerUtility::Amplitude(hit_s.second, &hit, hit_s.second, hitIndex, tofBin)
                            : DigitizerUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
+						   
+	std::cout << "Chan= " <<chan << ", Ampl= " << hit_s.second  << "\n";
   }
 }
 // ======================================================================

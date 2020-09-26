@@ -96,10 +96,11 @@ namespace cms {
     edm::LogInfo("SiPadDigitizer ") << "Enter the SiPad Digitizer";
 	//std::cout << "SiPadDigitizer-Constructor " << "\n"; // call 0
 	
-    const std::string alias("simSiPadAmpl");
+    const std::string alias("simSiPadDigis");
 	
     producesCollector.produces<edm::DetSetVector<SiPadAmplitude> >("SiPad").setBranchAlias(alias);
-	producesCollector.produces<edm::DetSetVector<PixelDigi> >("SiPad2").setBranchAlias(alias);
+	//producesCollector.produces<edm::DetSetVector<PixelDigi> >("SiPad2").setBranchAlias(alias);
+	
 	//producesCollector.produces<edm::DetSetVector<SiPadAmplitude> >("SiPadOverT").setBranchAlias(alias);
     if (makeDigiSimLinks_) {
       //producesCollector.produces<edm::DetSetVector<SiPadDigiSimLink> >("SiPadSimLink").setBranchAlias(alias);
@@ -340,10 +341,10 @@ namespace cms {
 	
 	//PixelDigi
 	
-	std::vector<edm::DetSet<PixelDigi> > digiVector_OverT;
+	//std::vector<edm::DetSet<PixelDigi> > digiVector_OverT;
     //std::vector<edm::DetSet<SiPadDigiSimLink> > digiLinkVector;
 	
-	
+		
     for (auto const& SiPadUnit : theFbcmGeom->SiPads()) 
 	{
       //DetId detId_raw = DetId(SiPadUnit->geographicalId().rawId()); // was needed for AlgoType
@@ -351,15 +352,44 @@ namespace cms {
 		
       std::map<int, DigitizerUtility::DigiSimInfo> digi_map;
 	  //next line temporarily was disabled for compilation
-	  SiPadDigiAlgo->digitize(SiPadUnit, digi_map, tTopo); // this fill out the digi_map
-	  //SiPadDigiAlgo->GetAmplitude(SiPadUnit, digi_map); // this fill out the digi_map
+	  SiPadDigiAlgo->digitize(SiPadUnit, digi_map, tTopo); // this fills out the digi_map
+	  //SiPadDigiAlgo->GetAmplitude(SiPadUnit, digi_map); // this fills out the digi_map
       	  FbcmDetId SiPdetId(SiPadUnit->geographicalId().rawId());
 		  
 		  //std::cout << SiPdetId; 
 		  //std::cout << SiPadUnit->geographicalId().rawId() << "\n"; 
 		  
       edm::DetSet<SiPadAmplitude> collector(SiPadUnit->geographicalId().rawId());
-	  edm::DetSet<PixelDigi> collector_OverT(SiPadUnit->geographicalId().rawId());
+	  //edm::DetSet<PixelDigi> collector_OverT(SiPadUnit->geographicalId().rawId());
+	  
+/* 	  edm::DetSet<unsigned int> UN_Collector(SiPadUnit->geographicalId().rawId());
+	  UN_Collector.data.emplace_back(SiPadUnit->geographicalId().rawId());
+	  if (!UN_Collector.data.empty())
+	  {
+        UI_Vector.push_back(std::move(UN_Collector));
+		std::cout << "UN_Collector is not empty\n"; 
+	  } */
+	  
+	    collector.data.emplace_back(
+		SiPdetId.Side(),
+		SiPdetId.Station(),
+		SiPdetId.SiliconDie(),
+		SiPdetId.SiPad(),
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		SiPdetId.rawId(),
+		0);
+		
+	  
+	  
       //edm::DetSet<SiPadDigiSimLink> linkcollector(SiPadUnit->geographicalId().rawId());
       for (auto const& digi_p : digi_map) 
 	  {
@@ -392,9 +422,9 @@ namespace cms {
 		0);
 		
 		
-        std::pair<int, int> ip = PixelDigi::channelToPixel(digi_p.first);
+        //std::pair<int, int> ip = PixelDigi::channelToPixel(digi_p.first);
         //collector.data.emplace_back(ip.first, ip.second, info.sig_tot);
-		collector_OverT.data.emplace_back(ip.first, ip.second, info.ot_bit);
+		//collector_OverT.data.emplace_back(ip.first, ip.second, info.ot_bit);
 		
         // for (auto const& sim_p : info.simInfoList)
 		// {
@@ -411,26 +441,32 @@ namespace cms {
       if (!collector.data.empty())
 	  {
         AmplVector.push_back(std::move(collector));
-		std::cout << "AmplVector is not empty\n"; 
+		//std::cout << "AmplVector is not empty\n"; 
 	  }
 		
-      if (!collector_OverT.data.empty())
-	  {
-		  digiVector_OverT.push_back(std::move(collector_OverT));
-		  std::cout << "collector_OverT is not empty\n"; 
-	  }
+      // if (!collector_OverT.data.empty())
+	  // {
+		  // digiVector_OverT.push_back(std::move(collector_OverT));
+		  // std::cout << "collector_OverT is not empty\n"; 
+	  // }
+	  
+	  
+	  
       // if (!linkcollector.data.empty())
         // digiLinkVector.push_back(std::move(linkcollector));
     }
 
     // Step C: create collection with the cache vector of DetSet
     std::unique_ptr<edm::DetSetVector<SiPadAmplitude> > output(new edm::DetSetVector<SiPadAmplitude>(AmplVector));
-	std::unique_ptr<edm::DetSetVector<PixelDigi> > outputOverT(new edm::DetSetVector<PixelDigi>(digiVector_OverT));
+	//std::unique_ptr<edm::DetSetVector<PixelDigi> > outputOverT(new edm::DetSetVector<PixelDigi>(digiVector_OverT));
+	
+	//std::unique_ptr<edm::DetSetVector<unsigned int> > outputUN(new edm::DetSetVector<unsigned int>(UI_Vector));
 	//std::unique_ptr<edm::DetSetVector<SiPadDigiSimLink> > outputlink(new edm::DetSetVector<SiPadDigiSimLink>(digiLinkVector));
 
     // Step D: write output to file
     iEvent.put(std::move(output), "SiPad");
-	iEvent.put(std::move(outputOverT), "SiPad2");
+	//iEvent.put(std::move(outputOverT), "SiPad2");
+	
     if (makeDigiSimLinks_) {
       //iEvent.put(std::move(outputlink), "SiPadSimLink");
     }
