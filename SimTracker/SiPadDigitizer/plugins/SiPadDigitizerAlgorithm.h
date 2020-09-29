@@ -27,7 +27,8 @@
 #include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
 #include "Geometry/FbcmGeometry/interface/FbcmSiPadGeom.h"
 #include "SimTracker/SiPhase2Digitizer/plugins/DigitizerUtility.h"
-
+#include "DataFormats/FbcmDigi/interface/SiPadAmplitude.h"
+#include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
 
 //#include "SimTracker/SiPhase2Digitizer/plugins/Phase2TrackerDigitizerFwd.h"
 ////---------------- instead of Phase2TrackerDigitizerFwd.h ----------
@@ -87,6 +88,9 @@ public:
   void digitize(const FbcmSiPadGeom* SiPadGeom,
                         std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
                         const TrackerTopology* tTopo);
+
+  void GetAmplitude(const FbcmSiPadGeom* SiPadGeom,
+                        std::map<int, SiPadAmplitude>& SiPadAmplMap);
 
   // For premixing
   void loadAccumulator(unsigned int detId, const std::map<int, float>& accumulator);

@@ -186,7 +186,7 @@ namespace cms {
 			
 			
 			//FbcmDetId fbdetId(detId_raw);
-			std::cout << "--New SimHits found: " << detId_raw << ", i.e.: ";
+			//std::cout << "--New SimHits found: " << detId_raw << ", i.e.: ";
 		
         if (SiPadsIdGeomMap.find(detId_raw) == SiPadsIdGeomMap.end())
           continue;
@@ -197,18 +197,18 @@ namespace cms {
           // The insert succeeded, so this detector element has not yet been processed.
           const FbcmSiPadGeom* SiPadSensorGeom = SiPadsIdGeomMap[detId_raw];
           
-		  std::cout <<"Read From retured FbcmSiPadGeom: " << SiPadSensorGeom->id(); 
-		  std::cout << SiPadSensorGeom->surface().position(); 
-		  std::cout << "B-Field(T)" << pSetup->inTesla(SiPadSensorGeom->surface().position()) << "\n"; 
+		  //std::cout <<"Read From retured FbcmSiPadGeom: " << SiPadSensorGeom->id(); 
+		  //std::cout << SiPadSensorGeom->surface().position(); 
+		  //std::cout << "B-Field(T)" << pSetup->inTesla(SiPadSensorGeom->surface().position()) << "\n"; 
 		  
-		  std::cout << "tof:" << it->timeOfFlight() << ", "
-					<< "pabs:" << it->pabs() << ", "
-					<< "energyLoss:" << it->energyLoss() << ", "
-					<< "trackId:" << it->trackId() << ", "
-					<< "exitPoint:" << it->exitPoint() << ", "
-					<< "localPosition:" << it->localPosition() << "\n";
+		  // std::cout << "tof:" << it->timeOfFlight() << ", "
+					// << "pabs:" << it->pabs() << ", "
+					// << "energyLoss:" << it->energyLoss() << ", "
+					// << "trackId:" << it->trackId() << ", "
+					// << "exitPoint:" << it->exitPoint() << ", "
+					// << "localPosition:" << it->localPosition() << "\n";
 					
-		  std::cout << (*it) << "\n";
+		  // std::cout << (*it) << "\n";
 		  
 		  
 		  // access to magnetic field in global coordinates
@@ -336,7 +336,7 @@ namespace cms {
     //std::cout << "SiPadDigitizer-finalizeEvent " << "\n"; // call 5, at the end of the envent
 
     //const TrackerTopology* tTopo = tTopoHand.product();
-	const TrackerTopology* tTopo = NULL; // I don' need this 
+	//const TrackerTopology* tTopo = NULL; // I don' need this 
     std::vector<edm::DetSet<SiPadAmplitude> > AmplVector;
 	
 	//PixelDigi
@@ -350,10 +350,13 @@ namespace cms {
       //DetId detId_raw = DetId(SiPadUnit->geographicalId().rawId()); // was needed for AlgoType
 		//std::cout << "Mohammad1304 first Loop\n";
 		
-      std::map<int, DigitizerUtility::DigiSimInfo> digi_map;
+      //std::map<int, DigitizerUtility::DigiSimInfo> digi_map;
+	  std::map<int, SiPadAmplitude> SiPadAmplMap;
+	  
 	  //next line temporarily was disabled for compilation
-	  SiPadDigiAlgo->digitize(SiPadUnit, digi_map, tTopo); // this fills out the digi_map
-	  //SiPadDigiAlgo->GetAmplitude(SiPadUnit, digi_map); // this fills out the digi_map
+	  //SiPadDigiAlgo->digitize(SiPadUnit, digi_map, tTopo); // this fills out the digi_map
+	  SiPadDigiAlgo->GetAmplitude(SiPadUnit, SiPadAmplMap); // this fills out the SiPadAmplMap
+	  
       	  FbcmDetId SiPdetId(SiPadUnit->geographicalId().rawId());
 		  
 		  //std::cout << SiPdetId; 
@@ -370,7 +373,7 @@ namespace cms {
 		std::cout << "UN_Collector is not empty\n"; 
 	  } */
 	  
-	    collector.data.emplace_back(
+	   /*  collector.data.emplace_back(
 		SiPdetId.Side(),
 		SiPdetId.Station(),
 		SiPdetId.SiliconDie(),
@@ -386,49 +389,56 @@ namespace cms {
 		0.0,
 		0.0,
 		SiPdetId.rawId(),
-		0);
+		0); */
 		
 	  
 	  
       //edm::DetSet<SiPadDigiSimLink> linkcollector(SiPadUnit->geographicalId().rawId());
-      for (auto const& digi_p : digi_map) 
+      for (auto const& ampl_p : SiPadAmplMap) 
 	  {
-        DigitizerUtility::DigiSimInfo info = digi_p.second;
+        SiPadAmplitude SiPadAmpl = ampl_p.second;
 		
 		// the following two lines are equivalent to the function: addToCollector
 		// but the diffrence is info.sig_tot or info.ot_bit
 		// edm::DetSet<Phase2TrackerDigi>& collector ----> info.ot_bit
 		// edm::DetSet<SiPadAmplitude>& collector ------------> info.sig_tot
 		// the addToCollector function uses as tempale: DigiType for DetSet<Phase2TrackerDigi> or DetSet<SiPadAmplitude>
-		std::cout << "Hello Mohammad\n";
-		std::cout << SiPdetId; 
+		
+		//std::cout << "Hello Mohammad\n";
+		//std::cout << SiPdetId; 
+		//std:: cout << SiPadAmpl << "\n"; 
+		
+
+		
+		
 		// Not completly implemented !!!
 		collector.data.emplace_back(
-		SiPdetId.Side(),
-		SiPdetId.Station(),
-		SiPdetId.SiliconDie(),
-		SiPdetId.SiPad(),
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		info.sig_tot,
-		0.0,
-		0.0,
-		0.0,
-		SiPdetId.rawId(),
-		0);
+					SiPadAmpl.SideId(),
+					SiPadAmpl.StationId(),
+					SiPadAmpl.SiliconDieId(),
+					SiPadAmpl.SiPadId(),
+					SiPadAmpl.AmplitudeA(),
+					SiPadAmpl.AmplitudeSP(),
+					SiPadAmpl.xPos(),
+					SiPadAmpl.yPos(),
+					SiPadAmpl.Sigma_x(),
+					SiPadAmpl.Sigma_y(),
+					SiPadAmpl.Sig_ToT(),
+					SiPadAmpl.time(),
+					SiPadAmpl.TimeOfFlight(),
+					SiPadAmpl.EnergyLoss(),
+					SiPadAmpl.RawId(),
+					SiPadAmpl.TrackId()
+		);
 		
 		
-        //std::pair<int, int> ip = PixelDigi::channelToPixel(digi_p.first);
+        //std::pair<int, int> ip = PixelDigi::channelToPixel(ampl_p.first);
         //collector.data.emplace_back(ip.first, ip.second, info.sig_tot);
 		//collector_OverT.data.emplace_back(ip.first, ip.second, info.ot_bit);
 		
         // for (auto const& sim_p : info.simInfoList)
 		// {
-          // linkcollector.data.emplace_back(digi_p.first,
+          // linkcollector.data.emplace_back(ampl_p.first,
                                           // sim_p.second->trackId(),
                                           // sim_p.second->hitIndex(),
                                           // sim_p.second->tofBin(),

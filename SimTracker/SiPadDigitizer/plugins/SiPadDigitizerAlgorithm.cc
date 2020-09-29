@@ -2,7 +2,7 @@
 //  Author: Mohammad Sedghi, msedghi@cern.ch
 //  Isfahan University of Technology
 //  Date created: September 2020
-//  Adopted and modified form SiPhase2Tkdigitizer
+//  Adopted and modified from SiPhase2Digitizer
 ///-------------------------------------------
 
 #include <typeinfo>
@@ -214,7 +214,8 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
                                               const GlobalVector& bfield) 
 {
 	
-	std::cout << "Hello from accumulateSimHits in digitizer algorithem \n";
+	//std::cout << "Hello from accumulateSimHits in digitizer algorithem \n";
+	
   // produce SignalPoint's for all SimHit's in detector
   // Loop over hits
   uint32_t detId = SiPadGeom->geographicalId().rawId();
@@ -229,9 +230,9 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
                                       << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint();
 									  
 									  
-      std::cout <<"algo-PSimHits:" << (*it).particleType() << " " << (*it).pabs() << " " << (*it).energyLoss() << " "
-                                      << (*it).tof() << " " << (*it).trackId() << " " << (*it).processType() << " "
-                                      << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint() << "\n";
+      // std::cout <<"algo-PSimHits:" << (*it).particleType() << " " << (*it).pabs() << " " << (*it).energyLoss() << " "
+                                      // << (*it).tof() << " " << (*it).trackId() << " " << (*it).processType() << " "
+                                      // << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint() << "\n";
 
     std::vector<DigitizerUtility::EnergyDepositUnit> ionization_points;
     std::vector<DigitizerUtility::SignalPoint> collection_points;
@@ -505,8 +506,9 @@ void SiPadDigitizerAlgorithm::induce_signal(
   LogDebug("SiPadDigitizerAlgorithm")
       << " enter induce_signal, " << topol->pitch().first << " " << topol->pitch().second;  //OK
 	  
-	  std::cout << " enter induce_signal, pithcX,Y: " << topol->pitch().first << " " << topol->pitch().second << "\n";  //OK
-
+	  //std::cout << " enter induce_signal, pithcX,Y: " << topol->pitch().first << " " << topol->pitch().second << "\n";  //OK
+   //std::cout << hit << "\n";
+   
   // local map to store pixels hit by 1 Hit.
   using hit_map_type = std::map<int, float, std::less<int> >;
   hit_map_type hit_signal;
@@ -530,8 +532,9 @@ void SiPadDigitizerAlgorithm::induce_signal(
     LogDebug("SiPadDigitizerAlgorithm") << " cloud " << v.position().x() << " " << v.position().y() << " "
                                                 << v.sigma_x() << " " << v.sigma_y() << " " << v.amplitude();
 
-    //std::cout << "inside collection_points loop:" << " cloud " << v.position().x() << " " << v.position().y() << " "
-                                                //<< v.sigma_x() << " " << v.sigma_y() << " " << v.amplitude() << "\n";
+    //std::cout << "size of collection_points: " << collection_points.size() << "\n";
+	//std::cout << "inside collection_points loop:" << " cloud " << v.position().x() << " " << v.position().y() << " "
+      //                                       << v.sigma_x() << " " << v.sigma_y() << " " << v.amplitude() << "\n";
 
     // Find the maximum cloud spread in 2D plane , assume 3*sigma
     float CloudRight = CloudCenterX + ClusterWidth * SigmaX;
@@ -550,11 +553,18 @@ void SiPadDigitizerAlgorithm::induce_signal(
     // But remember whatever we do here THE CHARGE OUTSIDE THE ACTIVE
     // PIXEL ARE IS LOST, it should not be collected.
 
+
+	
+
     // Convert the 2D points to pixel indices
     MeasurementPoint mp = topol->measurementPosition(PointRightUp);  //OK
 
+	//std::cout << "PointRightUp: " << PointRightUp << ", PointLeftDown: " << PointLeftDown << ", mp:" << mp <<"\n";
+
     int IPixRightUpX = int(floor(mp.x()));
     int IPixRightUpY = int(floor(mp.y()));
+
+	//std::cout << " right-up " << PointRightUp << " " << mp.x() << " " << mp.y() << " " << IPixRightUpX << " " << IPixRightUpY << "\n";
 
     LogDebug("SiPadDigitizerAlgorithm")
         << " right-up " << PointRightUp << " " << mp.x() << " " << mp.y() << " " << IPixRightUpX << " " << IPixRightUpY;
@@ -577,6 +587,8 @@ void SiPadDigitizerAlgorithm::induce_signal(
     IPixRightUpY = numColumns > IPixRightUpY ? IPixRightUpY : numColumns - 1;
     IPixLeftDownX = 0 < IPixLeftDownX ? IPixLeftDownX : 0;
     IPixLeftDownY = 0 < IPixLeftDownY ? IPixLeftDownY : 0;
+
+	//std::cout << "IPixRightUpX:" << IPixRightUpX << ", IPixRightUpY:" << IPixRightUpY << ", IPixLeftDownX:" << IPixLeftDownX << ", IPixLeftDownY:" << IPixLeftDownY <<"\n";
 
     x.clear();  // clear temporary integration array
     y.clear();
@@ -637,6 +649,9 @@ void SiPadDigitizerAlgorithm::induce_signal(
     for (ix = IPixLeftDownX; ix <= IPixRightUpX; ix++) {    // loop over x index
       for (iy = IPixLeftDownY; iy <= IPixRightUpY; iy++) {  //loope over y ind
         float ChargeFraction = Charge * x[ix] * y[iy];
+		
+		//std::cout << "ChargeFraction: " << ChargeFraction <<"\n";
+		
         if (ChargeFraction > 0.) {
           //chan =
             //  (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);  // Get index
@@ -649,17 +664,18 @@ void SiPadDigitizerAlgorithm::induce_signal(
         LocalPoint lp = topol->localPosition(mp);
         chan = topol->channel(lp);
 
-        LogDebug("SiPadDigitizerAlgorithm")
-            << " pixel " << ix << " " << iy << " - "
-            << " " << chan << " " << ChargeFraction << " " << mp.x() << " " << mp.y() << " " << lp.x() << " " << lp.y()
-            << " "    // givex edge position
-            << chan;  // edge belongs to previous ?
+        //LogDebug("SiPadDigitizerAlgorithm")
+		// std::cout 
+            // << " Ix Iy" << ix << " " << iy << " -chan: "
+            // << chan << ", ChargeFraction:" << ChargeFraction << "mp.x,y: " << mp.x() << "," << mp.y() << "lp.x,y: " << lp.x() << "," << lp.y()
+            // << "ch: "    // givex edge position
+            // << chan << "\n";  // edge belongs to previous ?
         ESum += ChargeFraction;
       }
     }
   }
   
-  std::cout << "makeDigiSimLinks_=" <<makeDigiSimLinks_ << "\n";
+  //std::cout << "makeDigiSimLinks_=" <<makeDigiSimLinks_ << "\n";
   // Fill the global map with all hit pixels from this event
   for (auto const& hit_s : hit_signal) {
     int chan = hit_s.first;
@@ -667,7 +683,7 @@ void SiPadDigitizerAlgorithm::induce_signal(
         (makeDigiSimLinks_ ? DigitizerUtility::Amplitude(hit_s.second, &hit, hit_s.second, hitIndex, tofBin)
                            : DigitizerUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
 						   
-	std::cout << "Chan= " <<chan << ", Ampl= " << hit_s.second  << "\n";
+	//std::cout << "Chan= " <<chan << ", Ampl= " << hit_s.second  << "\n";
   }
 }
 // ======================================================================
@@ -1034,6 +1050,88 @@ void SiPadDigitizerAlgorithm::loadAccumulator(unsigned int detId, const std::map
   }
 }
 
+  void SiPadDigitizerAlgorithm::GetAmplitude(const FbcmSiPadGeom* SiPadGeom,
+                        std::map<int, SiPadAmplitude>& SiPadAmplMap) {
+
+uint32_t detID = SiPadGeom->geographicalId().rawId();
+FbcmDetId SiPdetId(detID);
+  auto it = _signal.find(detID);
+  if (it == _signal.end())
+    return;
+
+  const signal_map_type& theSignal = _signal[detID];
+
+  for (auto const& s : theSignal) {
+    const DigitizerUtility::Amplitude& sig_data = s.second;
+	float signalInElectrons = sig_data.ampl();
+	  DigitizerUtility::DigiSimInfo info1;
+      if (makeDigiSimLinks_) {
+        for (auto const& l : sig_data.simInfoList()) {
+          float charge_frac = l.first / signalInElectrons;
+          if (l.first > -5.0)
+            info1.simInfoList.push_back({charge_frac, l.second.get()});
+        }
+		
+    
+    // unsigned short adc;
+    // if (signalInElectrons >= theThresholdInE) {  // check threshold
+      // adc = convertSignalToAdc(detID, signalInElectrons, theThresholdInE);
+      // DigitizerUtility::DigiSimInfo info;
+      // info.sig_tot = adc;
+      // info.ot_bit = (signalInElectrons > theHIPThresholdInE ? true : false);
+      // if (makeDigiSimLinks_) {
+        // for (auto const& l : sig_data.simInfoList()) {
+          // float charge_frac = l.first / signalInElectrons;
+          // if (l.first > -5.0)
+            // info.simInfoList.push_back({charge_frac, l.second.get()});
+        // }
+      // }
+      // digi_map.insert({s.first, info});
+    // }
+	
+	SiPadAmplitude SiPadAmpl(
+		SiPdetId.Side(),
+		SiPdetId.Station(),
+		SiPdetId.SiliconDie(),
+		SiPdetId.SiPad(),
+		sig_data.ampl(),
+		sig_data.ampl(),
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		0.0,
+		SiPdetId.rawId(),
+		0
+		);
+		
+		SiPadAmplMap.insert({s.first,SiPadAmpl});
+		
+					  // Side_=Side;
+			  // Station_=Station;
+			  // SiliconDie_=SiliconDie;
+			  // SiPad_=SiPad;
+			  // Ampl_A_=Ampl_A;
+			  // Ampl_SP_=Ampl_SP;
+			  // x_=x;
+			  // y_=y;
+			  // sigma_x_=sigma_x;
+			  // sigma_y_=sigma_y;
+			  // sig_ToT_=sig_ToT;
+			  // time_=Time;
+			  // ToF_=ToF;
+			  // energyLoss_=energyLoss;
+			  // rawId_=rawId;
+			  // trackId_=trackId;
+	
+  }							
+
+}
+
+}
 void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
                                                std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
                                                const TrackerTopology* tTopo) {
