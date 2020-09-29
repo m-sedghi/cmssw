@@ -34,6 +34,8 @@ public:
 	m_xoffset = -m_nrows / 2. * m_pitchx;
     m_yoffset = -m_ncols / 2. * m_pitchy;
 
+//std::cout << "m_xoffset:"<< m_xoffset << ", m_yoffset:"<< m_yoffset<<"\n"; 
+
     LogDebug("FbcmSiPadTopology") 		 << "nrows " << m_nrows 
 										 << ", ncols " << m_ncols 
 										 << ", pitchx " << m_pitchx

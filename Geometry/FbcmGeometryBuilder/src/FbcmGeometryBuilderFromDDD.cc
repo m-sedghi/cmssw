@@ -185,25 +185,25 @@ FbcmStationGeom* FbcmGeometryBuilderFromDDD::buildStation(DDFilteredView& fv, Fb
   // double h = dpar[1] / cm;  // halfLength
   // double t = dpar[2] / cm;  // halfThickness 
   
-    double w = solid.halfX() / cm;  //  halfWidth
-    double h = solid.halfY() / cm;  // halfLength
-    double t = solid.halfZ() / cm;  // halfThickness 
+    double w = solid.halfX() ;  //  halfWidth
+    double h = solid.halfY() ;  // halfLength
+    double t = solid.halfZ() ;  // halfThickness 
 
    // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
   // for (unsigned int i = 0; i < dpar.size(); ++i) {
-    // std::cout << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
+    // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
   // }
-  // std::cout << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+  // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
   // std::cout << "\n";
 
 #ifdef EDM_ML_DEBUG
   LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
+    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
   }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
 #endif
 
   //RectangularPlaneBounds::RectangularPlaneBounds(float w, float h, float t), halfWidth(w), halfLength(h), halfThickness(t) 
@@ -224,18 +224,18 @@ FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& 
   // double h = dpar[1] / cm;  // halfLength
   // double t = dpar[2] / cm;  // halfThickness 
   
-    double w = solid.halfX() / cm;  //  halfWidth
-    double h = solid.halfY() / cm;  // halfLength
-    double t = solid.halfZ() / cm;  // halfThickness 
+    double w = solid.halfX() ;  //  halfWidth
+    double h = solid.halfY() ;  // halfLength
+    double t = solid.halfZ() ;  // halfThickness 
   
   
   
   // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
   // for (unsigned int i = 0; i < dpar.size(); ++i) {
-    // std::cout << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
+    // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
   // }
-  // std::cout << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+  // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
   // std::cout << "\n";
   
   
@@ -243,9 +243,9 @@ FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& 
   LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
+    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] << " mm " << std::endl;
   }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
 #endif
 
   FbcmBoundPlane surf(boundPlane(fv, new RectangularPlaneBounds(w, h, t)));
@@ -265,25 +265,25 @@ FbcmSiPadGeom* FbcmGeometryBuilderFromDDD::buildSiPad(DDFilteredView& fv, FbcmDe
   // double h = dpar[1] / cm;  // halfLength
   // double t = dpar[2] / cm;  // halfThickness 
   
-    double w = solid.halfX() / cm;  //  halfWidth
-    double h = solid.halfY() / cm;  // halfLength
-    double t = solid.halfZ() / cm;  // halfThickness 
+    double w = solid.halfX() ;  //  halfWidth
+    double h = solid.halfY() ;  // halfLength
+    double t = solid.halfZ() ;  // halfThickness 
   
-   // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
+    // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
-  // for (unsigned int i = 0; i < dpar.size(); ++i) {
-    // std::cout << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
-  // }
-  // std::cout << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
-  // std::cout << "\n";
+   // for (unsigned int i = 0; i < dpar.size(); ++i) {
+   // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
+   // }
+   // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
+   // std::cout << "\n";
   
 #ifdef EDM_ML_DEBUG
   LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
+    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
   }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
 #endif
 
   std::vector<float> pars;
@@ -303,10 +303,10 @@ FbcmSiPadGeom* FbcmGeometryBuilderFromDDD::buildSiPad(DDFilteredView& fv, FbcmDe
 FbcmGeometryBuilderFromDDD::FbcmBoundPlane FbcmGeometryBuilderFromDDD::boundPlane(const DDFilteredView& fv, Bounds* bounds) const {
   // extract the position
   const DDTranslation& trans(fv.translation());
-  const Surface::PositionType posResult(float(trans.x() / cm), float(trans.y() / cm), float(trans.z() / cm));
+  const Surface::PositionType posResult(float(trans.x()), float(trans.y()), float(trans.z()));
   
   //std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
-  //std::cout << "x: " << posResult.x() << ", y: " << posResult.y() << ", z: " << posResult.z() << "\n";
+//  std::cout << "x: " << posResult.x() << ", y: " << posResult.y() << ", z: " << posResult.z() << "\n";
 
 
 
@@ -367,12 +367,12 @@ FbcmGeometryBuilderFromDDD::FbcmBoundPlane FbcmGeometryBuilderFromDDD::boundPlan
       // }
 
 //--------------------------
-  // // Change of axes for the forward for other shapse other than DBox
-  // Basic3DVector<float> newX(1., 0., 0.);
-  // Basic3DVector<float> newY(0., 0., 1.);
-  // Basic3DVector<float> newZ(0., 1., 0.);
-  // newY *= -1;
-  // rotResult.rotateAxes(newX, newY, newZ);
+   // // Change of axes for the forward for other shapse other than DBox
+   // Basic3DVector<float> newX(1., 0., 0.);
+   // Basic3DVector<float> newY(0., 0., 1.);
+   // Basic3DVector<float> newZ(0., 1., 0.);
+   // newY *= -1;
+   // rotResult.rotateAxes(newX, newY, newZ);
 //--------------------------
 
 
