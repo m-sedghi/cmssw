@@ -113,7 +113,8 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	FbcmDetId fbcmdet1(VolumeNo,StationNo,SilcionDieNo,SensorPadID);
 
     detId = fbcmdet1.rawId();
-	std::cout << "--**-- FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 ;
+	//edm::LogVerbatim("FwkReport") << "*-FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 << "\n";
+	//std::cout << "--**-- FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 ;
   }
   return detId;
 }

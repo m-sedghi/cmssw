@@ -37,15 +37,24 @@ theDigitizers = cms.PSet(
   )
 )
 
+	# tracks = None,
+	# pixel = None,
+	# strip = None,
+	# ecal = None,
+	# hcal = None,
+	# castor = None
+
 
   # SiPad = cms.PSet(
     # SiPadDigitizer
   # ),
 
 from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
-fbcmDigi.toModify( theDigitizers,
+fbcmDigi.toModify(theDigitizers,
 					SiPad = cms.PSet(SiPadDigitizer),
 )
+
+
 
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
 fastSim.toModify(theDigitizers,
@@ -139,3 +148,6 @@ premix_stage1.toModify(theDigitizersValid, _customizePremixStage1)
 def _loadPremixStage2Aliases(process):
     process.load("SimGeneral.MixingModule.aliases_PreMix_cfi")
 modifyDigitizers_loadPremixStage2Aliases = premix_stage2.makeProcessModifier(_loadPremixStage2Aliases)
+
+
+

@@ -917,3 +917,13 @@ from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
 
 for _entry in [FEVTDEBUGEventContent,FEVTDEBUGHLTEventContent,FEVTEventContent]:
     fbcmDigi.toModify(_entry, outputCommands = _entry.outputCommands + SimFbcmDigiFEVTDEBUG.outputCommands)
+
+
+from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
+for _entry in [FEVTDEBUGEventContent,FEVTDEBUGHLTEventContent,FEVTEventContent]:
+	OnlyfbcmDigi.toModify(_entry, outputCommands = _entry.outputCommands + [
+	'drop *',
+	'keep *_*_FBCMHits_*',
+	'keep *_simFbcmDigis_*_*'
+	])
+
