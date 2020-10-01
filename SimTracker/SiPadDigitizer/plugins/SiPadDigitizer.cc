@@ -193,7 +193,7 @@ namespace cms {
         if (detIds.insert(detId_raw).second) // if it is a new detId_raw
 		{
 			FbcmDetId dc(detId_raw);
-			std::cout << dc; 
+			//std::cout << dc; 
           // The insert succeeded, so this detector element has not yet been processed.
           const FbcmSiPadGeom* SiPadSensorGeom = SiPadsIdGeomMap[detId_raw];
           
