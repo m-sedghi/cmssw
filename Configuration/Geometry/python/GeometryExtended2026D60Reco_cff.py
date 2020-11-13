@@ -5,10 +5,6 @@ import FWCore.ParameterSet.Config as cms
 
 from Configuration.Geometry.GeometryExtended2026D60_cff import *
 
-# BRIL_FBCM
-from Geometry.FbcmGeometryBuilder.FbcmGeometry_cfi import *
-
-
 # tracker
 from Geometry.CommonDetUnit.globalTrackingGeometry_cfi import *
 from RecoTracker.GeometryESProducer.TrackerRecoGeometryESProducer_cfi import *
