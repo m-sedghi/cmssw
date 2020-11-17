@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
  <ConstantsSection label="fbcm" eval="true">
-    <!-- dimensions of the FBCM volume --><Constant name="Parent_ShiftZ" value="[pixfwd:ZPixelForward]"><!--[pixfwd:ZPixelForward], 291.*mm--></Constant>
+    <!-- dimensions of the FBCM volume -->
  	<Constant name="FBCM_Z1" value="2770.*mm"></Constant>
     <Constant name="FBCM_Z2" value="2900.*mm"/>
     <Constant name="FBCM_Z"              value="([FBCM_Z2]+[FBCM_Z1])/2."><!-- z position of the center of FBCM volume wrt to CMS --></Constant>
     <Constant name="FBCM_Thickness"      value="([FBCM_Z2]-[FBCM_Z1])"></Constant>
-    <Constant name="FBCM_InnerRadius"    value="28.0*mm"><!--Should be similar to minimum --></Constant>
-    <Constant name="FBCM_OuterRadius"    value="307.0*mm"><!--Should be similar to [pixfwd:RootRadius2] --></Constant>
-    <Constant name="NumOfStations" value="8"></Constant>
+    <Constant name="FBCM_InnerRadius"    value="62.38*mm"><!--should be similar to pixel:Disc12--></Constant>
+    <Constant name="FBCM_OuterRadius"    value="255.101*mm"><!--should be similar to pixel:Disc12--></Constant>
+    <Constant name="NumOfStations" value="4"></Constant>
     <Constant name="NumOfPadRows" value="4"></Constant>
     <Constant name="NumOfPadCols" value="2"></Constant>
     <Constant name="ReductionFactor" value="1"><!--This factor determines the effective sensitive area (metallized), typically=0.975; One can assume =1 for initial estimation--></Constant>
@@ -66,13 +66,19 @@
  </LogicalPartSection>
  
  <!-- Position --> 
- <PosPartSection label="fbcm"><!--FBCM as a child of Tracker:Pixel:Service-->
-     <PosPart copyNumber="1">
-       <rParent name="pixfwd:Phase2PixelEndcap"/>
-       <rChild name="FBCM"></rChild>
-       <rRotation name="rotations:000D"></rRotation>
-       <Translation x="0*fm" y="0*fm" z="[FBCM_Z]-[Parent_ShiftZ]"/>
-    </PosPart>
+ <PosPartSection label="fbcm">
+   <PosPart copyNumber="1">
+     <rParent name="cms:CMSE"/>
+     <rChild name="FBCM"></rChild>
+     <Translation x="0*fm" y="0*fm" z="[FBCM_Z]"/>
+   </PosPart>
+   <PosPart copyNumber="2">
+     <rParent name="cms:CMSE"/>
+     <rChild name="FBCM"></rChild>
+     <rRotation name="rotations:180D"></rRotation>
+     <Translation x="0*fm" y="0*fm" z="-[FBCM_Z]"/>
+   </PosPart>
+ 
      <Algorithm name="global:DDLinear">
             <rParent name="FBCM_SensorRow"/>
             <String name="ChildName" value="FBCM_SensorPad"/>
@@ -111,11 +117,9 @@
        <Numeric name="StartAngle" value="45.*deg"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
-       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg
-       </Vector>
+       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg</Vector>
     </Algorithm>
     
   
