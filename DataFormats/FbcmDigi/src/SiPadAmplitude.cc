@@ -1,1 +1,0 @@
-#include "DataFormats/FbcmDigi/interface/SiPadAmplitude.h"

@@ -1,0 +1,3 @@
+[submodule "SimTracker/SiPadDigitizer/bin"]
+	path = SimTracker/SiPadDigitizer/bin
+	url = ssh://git@gitlab.cern.ch:7999/briliut/FbcmFESim.git

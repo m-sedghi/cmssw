@@ -150,4 +150,11 @@ def _loadPremixStage2Aliases(process):
 modifyDigitizers_loadPremixStage2Aliases = premix_stage2.makeProcessModifier(_loadPremixStage2Aliases)
 
 
+from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
+OnlyfbcmDigi.toReplaceWith(theDigitizers,cms.PSet(SiPad = cms.PSet(SiPadDigitizer)))
+
+def _loadOnlyfbcmDigiAliases(process):
+    process.load("SimTracker.SiPadDigitizer.aliases_OnlyFbcmDigi_cfi")
+modifyDigitizers_loadOnlyfbcmDigiAliases = OnlyfbcmDigi.makeProcessModifier(_loadOnlyfbcmDigiAliases)
+
 

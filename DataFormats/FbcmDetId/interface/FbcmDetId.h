@@ -52,40 +52,36 @@ public:
   unsigned int SiPad() const {  return ((id_ >> SiPadStartBit_) & SiPadMask_);   }
   //unsigned int SiPad() const {    return ((int(id_ & CopyNoMask))%10);    }
   
-
- 
   /// Return the corresponding StationId (mask SiliconDieIds)
-  FbcmDetId StationId() const { return FbcmDetId(id_ & StationIdMask_); }
+  FbcmDetId StationDetId() const { return FbcmDetId(id_ & StationIdMask_); }
   /// Return the corresponding SiliconDieId (mask SiPadIds)
-  FbcmDetId SiliconDieId() const { return FbcmDetId(id_ & SiliconDieIdMask_); }
+  FbcmDetId SiliconDieDetId() const { return FbcmDetId(id_ & SiliconDieIdMask_); }
 
  
 
 	static const int maxSideId = 2; // only 1 or 2 // Zero is not valid
-	static const int maxStationId = 63; //Temporarily was set to Max valid number in 6 bits! // 0-3
-	
-	/// for the moment, it is assumed each station includes only one SiliconDie with CopyNo=0
-	static const int maxSiliconDieId = 0; //0 
-	static const int maxSiPadId = 7; // 0-7
+	static const int maxStationId = 63; // 0-63
+	static const int maxSiliconDieId = 127; //0-127 
+	static const int maxSiPadId = 1023; // 0-1023
 
 private:
 /**
 The DetId is a 32-bit unsigned integer.
-The four most significant bits ([31:28]) identify the large-scale detector (e.g. Tracker or Ecal)
+The four most significant bits (calc) identify the large-scale detector (e.g. Tracker or Ecal)
 The next three bits ([27:25]) identify a part of the detector (such as HcalBarrel (HB) for Hcal).
 */
 
 
-  static const unsigned int SideStartBit_ = 20;
-  static const unsigned int StationStartBit_ = 14;
-  static const unsigned int SiliconDieStartBit_ = 8;
+  static const unsigned int SideStartBit_ = 23;
+  static const unsigned int StationStartBit_ = 17;
+  static const unsigned int SiliconDieStartBit_ = 10;
   static const unsigned int SiPadStartBit_ = 0;
   
 
   static const unsigned int SideMask_ = 0x3; // 2 bits
   static const unsigned int StationMask_ = 0x3F; // 6 bits
-  static const unsigned int SiliconDieMask_ = 0x3F; // 6 bits
-  static const unsigned int SiPadMask_ = 0xFF; // 8 bits
+  static const unsigned int SiliconDieMask_ = 0x7F; // 7 bits
+  static const unsigned int SiPadMask_ = 0x3FF; // 10 bits
   
    static const uint32_t StationIdMask_ = ~((SiliconDieMask_ << SiliconDieStartBit_) | (SiPadMask_ << SiPadStartBit_));
   static const uint32_t SiliconDieIdMask_ = ~(SiPadMask_ << SiPadStartBit_);

@@ -45,7 +45,7 @@ pdigi = cms.Sequence(pdigiTask)
 pdigi_valid = cms.Sequence(pdigiTask)
 pdigi_nogen=cms.Sequence(pdigiTask_nogen)
 pdigi_valid_nogen=cms.Sequence(pdigiTask_nogen)
-#pdigi_fbcmOnly=cms.Sequence(pdigiTask)
+
 from GeneratorInterface.HiGenCommon.HeavyIon_cff import *
 pdigiTask_hi = cms.Task(pdigiTask, heavyIon)
 pdigiTask_hi_nogen = cms.Task(pdigiTask_nogen, genJetMETTask, heavyIon)
@@ -79,5 +79,9 @@ def _modifyEnableHcalHardcode( theProcess ):
 
 from Configuration.Eras.Modifier_hcalHardcodeConditions_cff import hcalHardcodeConditions
 modifyEnableHcalHardcode_ = hcalHardcodeConditions.makeProcessModifier( _modifyEnableHcalHardcode )
+
+pdigiFbcmTask=cms.Task(generatorSmeared,cms.TaskPlaceholder("randomEngineStateProducer"), cms.TaskPlaceholder("mix"),addPileupInfo)
+from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
+OnlyfbcmDigi.toReplaceWith(pdigi,cms.Sequence(pdigiFbcmTask))
 
 

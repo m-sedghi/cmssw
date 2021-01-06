@@ -59,6 +59,7 @@ SiPadSimBlock = cms.PSet(
     NoiseInElectrons = cms.double(200),	         # 30% of the readout noise (should be changed in future)
     Phase2ReadoutMode = cms.int32(0), # Flag to decide Readout Mode :Digital(0) or Analog (linear TDR (-1), dual slope with slope parameters (+1,+2,+3,+4) with threshold subtraction
     AdcFullScale = cms.int32(255),
+	hitSelectionMode = cms.int32(1), # 1 or 0 # 1 means select all hits, 0 means filter hits according to the TofUpperCut and TofLowerCut
     TofUpperCut = cms.double(60), # I know that Tof for the positin of FBCM is ~59.7 ns
     TofLowerCut = cms.double(-60), # it was -12.5, I don't know what the minus sign means.
     AddNoisyPixels = cms.bool(True),
@@ -80,7 +81,9 @@ SiPadSimBlock = cms.PSet(
     EfficiencyFactors_Barrel = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999 ),
     EfficiencyFactors_Endcap = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 
     0.999, 0.999 ),#Efficiencies kept as Side2Disk1,Side1Disk1 and so on
-    CellsToKill = cms.VPSet()
+    CellsToKill = cms.VPSet(),
+	FirstBxSlotNo = cms.int32(0), # by default BxSlotNo Zero is the first one for each Event
+	LastBxSlotNo = cms.int32(2) # this means the last BxSlotNo to study hitAnalsis and Store HitAnalysisInfo in the vector
 )
 
 # SiPixelQualityLabel = cms.string(''),

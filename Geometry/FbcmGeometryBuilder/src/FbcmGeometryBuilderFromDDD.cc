@@ -13,6 +13,7 @@
 #include "DetectorDescription/Core/interface/DDSolid.h"
 
 #include "DataFormats/GeometrySurface/interface/RectangularPlaneBounds.h"
+#include "DataFormats/GeometrySurface/interface/SimpleTubBounds.h"
 #include "DataFormats/GeometryVector/interface/Basic3DVector.h"
 #include "CLHEP/Units/GlobalSystemOfUnits.h"
 
@@ -47,12 +48,28 @@ void FbcmGeometryBuilderFromDDD::build(FbcmGeometry& theGeometry, const DDCompac
 // before utilization of fview, it refers to the Main RootNode, i.e. OCMS, 
 // after one move down (child), it refers to the Filter
   fview.firstChild(); // this is essential to apply the filter to the Node
+    
   buildGeometry(theGeometry, fview);
 }
 
 void FbcmGeometryBuilderFromDDD::buildGeometry(FbcmGeometry& theFbcmGeometry, DDFilteredView& fv) {
   //FbcmGeometry* geometry = new FbcmGeometry();
 
+  
+   	DDValue NumOfStations("nStations");
+	const std::vector<const DDsvalues_type*>& specs = fv.specifics();
+	//std::cout << "SpecSizeSattion: " << specs.size() << "\n" ;
+	//std::cout << specs << "\n" ;
+	int nStations=0;
+	for (auto const& is : specs) {
+		if (DDfetch(is, NumOfStations)) 
+			nStations = (int) (NumOfStations.doubles()[0]);
+	}
+	theFbcmGeometry.SetNumOfStations(nStations); 
+	//std::cout << "SetNumOfStations read as: " << theFbcmGeometry.NumOfStations() << "\n";
+	
+	
+	
 //std::cout << "Hello from FbcmGeometryBuilderFromDDD_buildGeometry\n";
 
 //std::cout << "fviewTopName logical Name: " <<  fv.logicalPart().name().name() << "\n" ;
@@ -82,7 +99,7 @@ void FbcmGeometryBuilderFromDDD::buildGeometry(FbcmGeometry& theFbcmGeometry, DD
 
  /// --------- FBCM Geometry Builder --------------
    /// Caution: there is a aditinal level in fbcm.xml which is ignored in the the FBCMGeometry Class. 
-  /// (i.e. SiliconRows). 
+  /// (i.e. SiliconCols). 
   // For the moment, in the fbxm.xml we have the following Parent-Child relationship: 
   /// FBCM --> Station --> SiliconDie --> SensorRow ---> SiPad
   // but the FbcmGeometry class is something like this: 
@@ -107,9 +124,11 @@ while (doFbcmSides) {
 	//std::cout << "Station: " <<  fv.logicalPart().name().name() << ",  ";
 	//std::cout << StationCopyNo << "\n";
 	
-	FbcmDetId StationDetId = FbcmDetId(SideID,StationCopyNo,DONTCARE,DONTCARE);
-	FbcmStationGeom* NewStation = buildStation(fv, StationDetId);
+	FbcmDetId StationDetId_ = FbcmDetId(SideID,StationCopyNo,DONTCARE,DONTCARE);
+	FbcmStationGeom* NewStation = buildStation(fv, StationDetId_.StationDetId());
     theFbcmGeometry.add(NewStation);
+	
+	//std::cout << "nRings: " << NewStation->NumOfRings() << ",nDiePerRing: " << NewStation->NumOfDiesPerRing() << " \n";
 
 
     // in FbcmGeometry: loop over SiliconDies of the Station
@@ -120,25 +139,30 @@ while (doFbcmSides) {
 		//std::cout << "SiliconDie: " <<  fv.logicalPart().name().name() << ",  ";
 		//std::cout << SilconDieCopyNo << "\n";
 		
-		FbcmDetId SilconDieDetId = FbcmDetId(SideID,StationCopyNo,SilconDieCopyNo,DONTCARE);				
-		FbcmSiliconDieGeom* NewSiDie = buildSiliconDie(fv, SilconDieDetId);
+		FbcmDetId SiDieDetId = FbcmDetId(SideID,StationCopyNo,SilconDieCopyNo,DONTCARE);				
+		FbcmSiliconDieGeom* NewSiDie = buildSiliconDie(fv, SiDieDetId.SiliconDieDetId());
 		NewStation->add(NewSiDie);
-		theFbcmGeometry.add(NewSiDie); // May be this is not requaired!!
-
-	// loop over SiliconRows of each SiliconDie
-	// SilicoRows has not a geometry in the FBCMGeometry !
-    bool doSiRows = fv.firstChild(); // SiliconRows
-    while (doSiRows) {
-		int SilconRowCopyNo = fv.copyno(); // SiliconRow
+		theFbcmGeometry.add(NewSiDie); 
+		//unsigned int nCols=NewSiDie->NumOfCols();
+		unsigned int nRows=NewSiDie->NumOfRows();
+		
+		//std::cout << SiDieDetId;
+		//std::cout << "nCols: " << NewSiDie->NumOfCols() << ",nRows: " << NewSiDie->NumOfRows() << " \n";
+	
+	// loop over SiliconCols of each SiliconDie
+	// SiliconCol has not a geometry in the FBCMGeometry !
+    bool doSiCols = fv.firstChild(); // SiliconCols
+    while (doSiCols) {
+		int SilconColCopyNo = fv.copyno(); // SiliconCol
      
 	  
-	  // loop over SiPads of the SiliconRow
+	  // loop over SiPads of the SiliconCol
       bool doSiPads = fv.firstChild(); // SiPads
       while (doSiPads) {
         
        int SiPadCopyNo = fv.copyno(); // SiPad
-	   	// Assuming 2 Sensors per Row. and 4 Rows
-		int SensorPadID=SilconRowCopyNo*2+SiPadCopyNo; // (0-7): 4(rows)x2(cols)
+	   	
+		int SensorPadID=SilconColCopyNo*nRows+SiPadCopyNo; 
 				
 		//std::cout << "SiPad: " <<  fv.logicalPart().name().name() << ",  ";
 		//std::cout << SensorPadID << "\n";
@@ -148,14 +172,14 @@ while (doFbcmSides) {
         
 		FbcmSiPadGeom* NewSiPad = buildSiPad(fv, SiPadDetId);
         NewSiDie->add(NewSiPad);
-        theFbcmGeometry.add(NewSiPad); // may be it is not needed
+        theFbcmGeometry.add(NewSiPad); 
 
         doSiPads = fv.nextSibling();
       }
 	  
 	  
-	  fv.parent(); // get back to SiliconRow
-      doSiRows = fv.nextSibling(); // Next SiliconRow
+	  fv.parent(); // get back to SiliconCol
+      doSiCols = fv.nextSibling(); // Next SiliconCol
 	  
 	}
       fv.parent(); // get back to SiliconDie
@@ -172,50 +196,66 @@ while (doFbcmSides) {
   //return theFbcmGeometry;
 }
 
-FbcmStationGeom* FbcmGeometryBuilderFromDDD::buildStation(DDFilteredView& fv, FbcmDetId StationDetId) const {
-  LogTrace("FbcmGeometryBuilderFromDDD") << "buildStation " << fv.logicalPart().name().name() << ", StationDetId: " << StationDetId << std::endl;
+FbcmStationGeom* FbcmGeometryBuilderFromDDD::buildStation(DDFilteredView& fv, FbcmDetId StationDetId_) const {
+  LogTrace("FbcmGeometryBuilderFromDDD") << "buildStation " << fv.logicalPart().name().name() << ", StationDetId_: " << StationDetId_ << std::endl;
+  
+  //std:: cout << "buildStation " << fv.logicalPart().name().name() << ", StationDetId_: " << StationDetId_ << std::endl;
 
-	//std::cout << "buildStation: "<< StationDetId;
+	//std::cout << " Hi buildStation: "<< StationDetId_;
 
-  DDBox solid = (DDBox)(fv.logicalPart().solid());
+  DDTubs  solid = (DDTubs)(fv.logicalPart().solid());
   
   std::vector<double> dpar = solid.parameters();
-  
-  // double w = dpar[0] / cm;  //  halfWidth
-  // double h = dpar[1] / cm;  // halfLength
-  // double t = dpar[2] / cm;  // halfThickness 
-  
-    double w = solid.halfX() ;  //  halfWidth
-    double h = solid.halfY() ;  // halfLength
-    double t = solid.halfZ() ;  // halfThickness 
 
-   // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
-  // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
+	double halfZ  = solid.zhalf() / cm;  // halfThickness 
+	double rMin = solid.rIn() / cm; 
+    double rMax = solid.rOut() / cm ;  
+    double StartPhi = solid.startPhi();
+    double DeltaPhi = solid.deltaPhi();
+
+
+    // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
+    // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
+    // for (unsigned int i = 0; i < dpar.size(); ++i) {
+      // std::cout << " dpar [" << i << "] = " << dpar[i] << " mm or rad" << std::endl;
+	// }
+	// std::cout << "halfZ: " << halfZ << "cm, rMin: " << rMin << "cm,  rMax: " << rMax << "cm, StartPhi: " << StartPhi << ", DeltaPhi: " << DeltaPhi << std::endl;
+	// std::cout << "\n";
+
+// #ifdef EDM_ML_DEBUG
+  // LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
+  // LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   // for (unsigned int i = 0; i < dpar.size(); ++i) {
-    // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
+    // LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
   // }
-  // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
-  // std::cout << "\n";
+  // LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
+// #endif
 
-#ifdef EDM_ML_DEBUG
-  LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
-  LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
-  for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
-  }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
-#endif
+	DDValue NumOfDiesPerRing("nSiDiesPerStationPerRing");
+	DDValue NumOfRings("nRingsPerStation");
+	const std::vector<const DDsvalues_type*>& specs = fv.specifics();
+	//std::cout << specs << "\n" ;
+	int nDiesPerRing = 0, nRings = 0;
+	for (auto const& is : specs) {
+		if (DDfetch(is, NumOfDiesPerRing)) 
+			nDiesPerRing = (int) (NumOfDiesPerRing.doubles()[0]);
+		if (DDfetch(is, NumOfRings))
+			nRings = (int)(NumOfRings.doubles()[0]);
+	}
 
-  //RectangularPlaneBounds::RectangularPlaneBounds(float w, float h, float t), halfWidth(w), halfLength(h), halfThickness(t) 
-  FbcmBoundPlane surf(boundPlane(fv, new RectangularPlaneBounds(w, h, t)));
-  FbcmStationGeom* Station = new FbcmStationGeom(StationDetId, surf);
+
+
+  // SimpleTubBounds(float rmin, float rmax, float dz, float startPhi, float deltaPhi);  
+  FbcmBoundPlane surf(boundPlane(fv, new SimpleTubBounds(rMin, rMax , halfZ, StartPhi, DeltaPhi)));
+  FbcmStationGeom* Station = new FbcmStationGeom(StationDetId_, surf, nDiesPerRing, nRings);
+  
   return Station;
 }
 
-FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& fv, FbcmDetId SilconDieDetId) const {
-  LogTrace("FbcmGeometryBuilderFromDDD") << "buildSiliconDie " << fv.logicalPart().name().name() << ", SiliconDieId: " << SilconDieDetId << std::endl;
+FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& fv, FbcmDetId SiDieDetId) const {
+  LogTrace("FbcmGeometryBuilderFromDDD") << "buildSiliconDie " << fv.logicalPart().name().name() << ", SiliconDieId: " << SiDieDetId << std::endl;
 
-	//std::cout << "buildSiliconDie: "<< SilconDieDetId;
+	//std::cout << "buildSiliconDie: "<< SiDieDetId;
 
   DDBox solid = (DDBox)(fv.logicalPart().solid());
   std::vector<double> dpar = solid.parameters();
@@ -224,18 +264,30 @@ FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& 
   // double h = dpar[1] / cm;  // halfLength
   // double t = dpar[2] / cm;  // halfThickness 
   
-    double w = solid.halfX() ;  //  halfWidth
-    double h = solid.halfY() ;  // halfLength
-    double t = solid.halfZ() ;  // halfThickness 
+    double w = solid.halfX() / cm;  //  halfWidth
+    double h = solid.halfY() / cm;  // halfLength
+    double t = solid.halfZ() / cm;  // halfThickness 
   
+  
+  	DDValue NumOfCols("nCols");
+	DDValue NumOfRows("nRows");
+	const std::vector<const DDsvalues_type*>& specs = fv.specifics();
+	//std::cout << specs << "\n" ;
+	unsigned int nCols = 0, nRows = 0;
+	for (auto const& is : specs) {
+		if (DDfetch(is, NumOfCols))
+			nCols = (unsigned int)(NumOfCols.doubles()[0]);
+		if (DDfetch(is, NumOfRows)) 
+			nRows = (unsigned int)(NumOfRows.doubles()[0]);
+	}
   
   
   // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
   // for (unsigned int i = 0; i < dpar.size(); ++i) {
-    // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
+    // std::cout << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
   // }
-  // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
+  // std::cout << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
   // std::cout << "\n";
   
   
@@ -243,13 +295,13 @@ FbcmSiliconDieGeom* FbcmGeometryBuilderFromDDD::buildSiliconDie(DDFilteredView& 
   LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] << " mm " << std::endl;
+    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
   }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
+  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
 #endif
 
   FbcmBoundPlane surf(boundPlane(fv, new RectangularPlaneBounds(w, h, t)));
-  FbcmSiliconDieGeom* SiliconDie = new FbcmSiliconDieGeom(SilconDieDetId, surf);
+  FbcmSiliconDieGeom* SiliconDie = new FbcmSiliconDieGeom(SiDieDetId, surf, nCols, nRows);
   return SiliconDie;
 }
 
@@ -265,25 +317,25 @@ FbcmSiPadGeom* FbcmGeometryBuilderFromDDD::buildSiPad(DDFilteredView& fv, FbcmDe
   // double h = dpar[1] / cm;  // halfLength
   // double t = dpar[2] / cm;  // halfThickness 
   
-    double w = solid.halfX() ;  //  halfWidth
-    double h = solid.halfY() ;  // halfLength
-    double t = solid.halfZ() ;  // halfThickness 
+    double w = solid.halfX() / cm;  //  halfWidth
+    double h = solid.halfY() / cm;  // halfLength
+    double t = solid.halfZ() / cm;  // halfThickness 
   
     // std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   // std::cout << " dpar is vector with size = " << dpar.size() << std::endl;
    // for (unsigned int i = 0; i < dpar.size(); ++i) {
-   // std::cout << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
+   // std::cout << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
    // }
-   // std::cout << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
+   // std::cout << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
    // std::cout << "\n";
   
 #ifdef EDM_ML_DEBUG
   LogTrace("FbcmGeometryBuilderFromDDD") << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
   LogTrace("FbcmGeometryBuilderFromDDD") << " dpar is vector with size = " << dpar.size() << std::endl;
   for (unsigned int i = 0; i < dpar.size(); ++i) {
-    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i]  << " mm " << std::endl;
+    LogTrace("FbcmGeometryBuilderFromDDD") << " dpar [" << i << "] = " << dpar[i] / cm << " cm " << std::endl;
   }
-  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "mm, halfLength: " << h << "mm,  halfThickness: " << t << "mm" << std::endl;
+  LogTrace("FbcmGeometryBuilderFromDDD") << "size  halfWidth: " << w << "cm, halfLength: " << h << "cm,  halfThickness: " << t << "cm" << std::endl;
 #endif
 
   std::vector<float> pars;
@@ -303,7 +355,7 @@ FbcmSiPadGeom* FbcmGeometryBuilderFromDDD::buildSiPad(DDFilteredView& fv, FbcmDe
 FbcmGeometryBuilderFromDDD::FbcmBoundPlane FbcmGeometryBuilderFromDDD::boundPlane(const DDFilteredView& fv, Bounds* bounds) const {
   // extract the position
   const DDTranslation& trans(fv.translation());
-  const Surface::PositionType posResult(float(trans.x()), float(trans.y()), float(trans.z()));
+  const Surface::PositionType posResult(float(trans.x() / cm), float(trans.y() / cm), float(trans.z() / cm));
   
   //std::cout << " name of logical part = " << fv.logicalPart().name().name() << std::endl;
 //  std::cout << "x: " << posResult.x() << ", y: " << posResult.y() << ", z: " << posResult.z() << "\n";
@@ -352,7 +404,7 @@ FbcmGeometryBuilderFromDDD::FbcmBoundPlane FbcmGeometryBuilderFromDDD::boundPlan
 //for shape other than BOXs, the conversion of local GEANT position
 // to global needs some modifications to change axis. 
 
-// Im not sure about the rotation Axis conversion. I should double chekc it later. !!
+// Im not sure about the rotation Axis conversion. I should double check it later. !!
 
 //--------------------------
 // it seems there was also a need to chagnge XZ to XY rotation axis

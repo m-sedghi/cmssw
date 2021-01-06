@@ -65,13 +65,28 @@
 
 #include "CondFormats/SiPixelObjects/interface/PixelROC.h"
 
+
+
 using namespace edm;
 using namespace sipixelobjects;
+
 
 SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
     :
 	//conf_common(conf.getParameter<ParameterSet>("AlgorithmCommon")),
 	conf_specific(conf.getParameter<ParameterSet>("SiPadSimParam")),
+
+	FFT_SimParam(conf.getParameter<edm::ParameterSet>("FFT_SimParam") ),
+	SiHitPulseShapeParam(conf.getParameter<edm::ParameterSet>("SiHitPulseShapeParam")),
+	SiPadFrontEndParamVect(conf.getParameter< std::vector< edm::ParameterSet > >("SiPadFrontEndParam")),
+    
+	FftPrep(FFT_SimParam),
+	HitPulse( SiHitPulseShapeParam.getParameter< std::vector<double> >("HitPulseParam") ),
+    FrontEnd(FftPrep), // the FrontEnd parameters will be set just before running each sensor size
+	FeParamSelector(SiPadFrontEndParamVect),
+	FirstBxSlotNo(conf_specific.getParameter< int >("FirstBxSlotNo")),
+	LastBxSlotNo(conf_specific.getParameter< int >("LastBxSlotNo")),
+	
 	_signal(),
 	//common part
 	makeDigiSimLinks_(conf.getUntrackedParameter<bool>("makeDigiSimLinks", true)),
@@ -144,6 +159,7 @@ SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
       theHIPThresholdInE_Endcap(conf_specific.getParameter<double>("HIPThresholdInElectrons_Endcap")),
       theHIPThresholdInE_Barrel(conf_specific.getParameter<double>("HIPThresholdInElectrons_Barrel")),
 
+		hitSelectionMode_(conf_specific.getParameter<int>("hitSelectionMode")),
       // theTofCut 12.5, cut in particle TOD +/- 12.5ns
       theTofLowerCut(conf_specific.getParameter<double>("TofLowerCut")),
       theTofUpperCut(conf_specific.getParameter<double>("TofUpperCut")),
@@ -234,15 +250,38 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
                                       // << (*it).tof() << " " << (*it).trackId() << " " << (*it).processType() << " "
                                       // << (*it).detUnitId() << (*it).entryPoint() << " " << (*it).exitPoint() << "\n";
 
-    std::vector<DigitizerUtility::EnergyDepositUnit> ionization_points;
-    std::vector<DigitizerUtility::SignalPoint> collection_points;
+    std::vector<CommonDigiUtility::EnergyDepositUnit> ionization_points;
+    std::vector<CommonDigiUtility::SignalPoint> collection_points;
 
     // fill collection_points for this SimHit, indpendent of topology
     // Check the TOF cut
-	//std::cout <<"inside Algorithem, Local Tof: " << SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30. <<"\n";
+	//std::cout <<"inside Algorithem,  Mag distance: " << SiPadGeom->surface().toGlobal((*it).localPosition()).mag() <<"\n";
+	//std::cout <<"ParticleType " << (*it).particleType() <<"\n";
+	//std::cout <<"EvntID " << (*it).eventId() <<"\n";
+	//std::cout <<"EvID_size " << (*it).eventId().size() <<"\n";
+	//std::cout <<"EvID BXC " << (*it).eventId().bunchCrossing() <<"\n";
+	//std::cout << "PsimHit Local Pos:" << (*it).localPosition() << "\n";
 	
-    if (((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
-        ((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
+	//FbcmDetId dcvv((*it).detUnitId());
+	//std::cout << dcvv; 
+	//std:: cout << "hit point:" << SiPadGeom->surface().toGlobal((*it).localPosition()) << ", ";
+	//std:: cout << "degree :" << SiPadGeom->surface().toGlobal((*it).localPosition()).phi().degrees() << "\n";
+	
+	double tCorr = SiPadGeom->surface().toGlobal((*it).localPosition()).mag() * c_inv;
+	
+	//double tCorr=SiPadGeom->surface().toGlobal((*it).localPosition()).mag() * c_inv;
+	//float Sampling_time=(-1) * ((*it).eventId().bunchCrossing() + 1) * 25.0;
+		
+	float toa1=it->tof() - tCorr;
+	float toa=toa1;
+	toa -= (*it).eventId().bunchCrossing() * 25.0;
+	//std::cout << "ToF:" << (*it).tof() << ", bunchCrossing:" << (*it).eventId().bunchCrossing() << ", toa1:"<< toa1 << ", toaR:" << toa  << ", TOF:" << ((*it).tof() -(*it).eventId().bunchCrossing() * 25.0) << ", Sampling_time:" << Sampling_time << ", Xcal:" << Sampling_time-toa << "evId: " << (*it).eventId().rawId() <<std::endl;		
+	//std::cout <<"ToF: " << it->tof() << ", tCorr: "<< tCorr << ", ToA: "<< toa <<"\n";
+	
+	
+	if (FilterHit((*it), tCorr)) {
+		// if (((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
+        //((*it).tof() - SiPadGeom->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
 			
 			//std::cout <<"ToF cutoff passed!\n"; 
 			
@@ -268,7 +307,7 @@ SiPadDigitizerAlgorithm::SubdetEfficiencies::SubdetEfficiencies(const edm::Param
 //
 // =================================================================
 void SiPadDigitizerAlgorithm::primary_ionization(
-    const PSimHit& hit, std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points) const {
+    const PSimHit& hit, std::vector<CommonDigiUtility::EnergyDepositUnit>& ionization_points) const {
   // Straight line approximation for trajectory inside active media
   const float SegmentLength = 0.0010;  // in cm (10 microns)
   float energy;
@@ -278,6 +317,10 @@ void SiPadDigitizerAlgorithm::primary_ionization(
 
   float eLoss = hit.energyLoss();  // Eloss in GeV
   float length = direction.mag();  // Track length in Silicon
+
+//std::cout << "length" <<length << "\n";
+//std::cout << "DeltaX"<< hit.exitPoint().x() - hit.entryPoint().x()  << ", DeltaY " << hit.exitPoint().y() - hit.entryPoint().y() << ", DetalZ"<< hit.exitPoint().z() - hit.entryPoint().z() <<"\n";
+
 
   int NumberOfSegments = int(length / SegmentLength);  // Number of segments
   if (NumberOfSegments < 1)
@@ -308,7 +351,7 @@ void SiPadDigitizerAlgorithm::primary_ionization(
     else
       energy = hit.energyLoss() / GeVperElectron / float(NumberOfSegments);
 
-    DigitizerUtility::EnergyDepositUnit edu(energy, point);  // define position,energy point
+    CommonDigiUtility::EnergyDepositUnit edu(energy, point);  // define position,energy point
     ionization_points.push_back(edu);                        // save
     LogDebug("SiPadDigitizerAlgorithm")
         << i << " " << ionization_points[i].x() << " " << ionization_points[i].y() << " " << ionization_points[i].z()
@@ -389,8 +432,8 @@ void SiPadDigitizerAlgorithm::fluctuateEloss(int pid,
 void SiPadDigitizerAlgorithm::drift(const PSimHit& hit,
                                             const FbcmSiPadGeom* SiPadGeom,
                                             const GlobalVector& bfield,
-                                            const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points,
-                                            std::vector<DigitizerUtility::SignalPoint>& collection_points) const {
+                                            const std::vector<CommonDigiUtility::EnergyDepositUnit>& ionization_points,
+                                            std::vector<CommonDigiUtility::SignalPoint>& collection_points) const {
   LogDebug("SiPadDigitizerAlgorithm") << "enter drift ";
 
   collection_points.resize(ionization_points.size());                      // set size
@@ -482,7 +525,7 @@ void SiPadDigitizerAlgorithm::drift(const PSimHit& hit,
     LogDebug("SiPadDigitizerAlgorithm")
         << "Dift DistanceZ = " << DriftDistance << " module thickness = " << moduleThickness
         << " Start Energy = " << ionization_points[i].energy() << " Energy after loss= " << energyOnCollector;
-    DigitizerUtility::SignalPoint sp(CloudCenterX, CloudCenterY, Sigma_x, Sigma_y, hit.tof(), energyOnCollector);
+    CommonDigiUtility::SignalPoint sp(CloudCenterX, CloudCenterY, Sigma_x, Sigma_y, hit.tof(), energyOnCollector);
     // Load the Charge distribution parameters
     collection_points[i] = sp;
   }
@@ -496,7 +539,7 @@ void SiPadDigitizerAlgorithm::induce_signal(
     const size_t hitIndex,
     const unsigned int tofBin,
     const FbcmSiPadGeom* SiPadGeom,
-    const std::vector<DigitizerUtility::SignalPoint>& collection_points) {
+    const std::vector<CommonDigiUtility::SignalPoint>& collection_points) {
   // X  - Rows, Left-Right, 160, (1.6cm)   for barrel
   // Y  - Columns, Down-Up, 416, (6.4cm)
   const FbcmSiPadTopology* topol = &SiPadGeom->SiPadTopology();
@@ -677,11 +720,12 @@ void SiPadDigitizerAlgorithm::induce_signal(
   
   //std::cout << "makeDigiSimLinks_=" <<makeDigiSimLinks_ << "\n";
   // Fill the global map with all hit pixels from this event
+  float corr_time = hit.tof() - SiPadGeom->surface().toGlobal(hit.localPosition()).mag() * c_inv;
   for (auto const& hit_s : hit_signal) {
     int chan = hit_s.first;
     theSignal[chan] +=
-        (makeDigiSimLinks_ ? DigitizerUtility::Amplitude(hit_s.second, &hit, hit_s.second, hitIndex, tofBin)
-                           : DigitizerUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
+        (makeDigiSimLinks_ ? CommonDigiUtility::Amplitude(hit_s.second, &hit, hit_s.second, corr_time, hitIndex, tofBin)
+                           : CommonDigiUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
 						   
 	//std::cout << "Chan= " <<chan << ", Ampl= " << hit_s.second  << "\n";
   }
@@ -731,13 +775,13 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
       int chanXtalkPrev = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                       : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
-      signalNew.emplace(chanXtalkPrev, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      signalNew.emplace(chanXtalkPrev, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
     if (hitChan.first < (numRows - 1)) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
       int chanXtalkNext = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                       : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-      signalNew.emplace(chanXtalkNext, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      signalNew.emplace(chanXtalkNext, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
   }
   for (auto const& l : signalNew) {
@@ -746,7 +790,7 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
     if (iter != theSignal.end()) {
       theSignal[chan] += l.second.ampl();
     } else {
-      theSignal.emplace(chan, DigitizerUtility::Amplitude(l.second.ampl(), nullptr, -1.0));
+      theSignal.emplace(chan, CommonDigiUtility::Amplitude(l.second.ampl(), nullptr, -1.0));
     }
   }
 }
@@ -795,7 +839,7 @@ void SiPadDigitizerAlgorithm::add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, fl
 
     if (theSignal[chan] == 0) {
       int noise = int((*mapI).second);
-      theSignal[chan] = DigitizerUtility::Amplitude(noise, nullptr, -1.);
+      theSignal[chan] = CommonDigiUtility::Amplitude(noise, nullptr, -1.);
     }
   }
 }
@@ -1043,97 +1087,140 @@ void SiPadDigitizerAlgorithm::loadAccumulator(unsigned int detId, const std::map
   // the input channel is always with SiPadDigi definition
   // if needed, that has to be converted to Phase2TrackerDigi convention
   for (const auto& elem : accumulator) {
-    auto inserted = theSignal.emplace(elem.first, DigitizerUtility::Amplitude(elem.second, nullptr));
+    auto inserted = theSignal.emplace(elem.first, CommonDigiUtility::Amplitude(elem.second, nullptr));
     if (!inserted.second) {
       throw cms::Exception("LogicError") << "Signal was already set for DetId " << detId;
     }
   }
 }
 
-  void SiPadDigitizerAlgorithm::GetAmplitude(const FbcmSiPadGeom* SiPadGeom,
-                        std::map<int, SiPadAmplitude>& SiPadAmplMap) {
+
+  void SiPadDigitizerAlgorithm::GetDigiResults(const FbcmSiPadGeom* SiPadGeom,  std::map<int, SiPadDigiData>& SiPadDigilMap) {
 
 uint32_t detID = SiPadGeom->geographicalId().rawId();
-FbcmDetId SiPdetId(detID);
+FbcmDetId SiPadDetId(detID);
   auto it = _signal.find(detID);
   if (it == _signal.end())
     return;
 
   const signal_map_type& theSignal = _signal[detID];
-
-  for (auto const& s : theSignal) {
-    const DigitizerUtility::Amplitude& sig_data = s.second;
+	HitAnalysisInfo HitTotToaInfo;
+	//std::vector<std::pair<float, CommonDigiUtility::PSimHitInfo*> > BXC_CahrgePSim_Vect;
+	std::vector<std::pair<float, CommonDigiUtility::PSimHitInfo> > BXC_CahrgePSim_Vect;
+	std::vector< TofChargePair > Tof_Q_pairVect;
+	std::pair<float, float> SiPadDimension;
+	std::pair<float, const edm::ParameterSet * > Area_FeParamPtr;
+	std::vector < HitAnalysisInfo > HitAnalysisVect;
+  for (auto const& s : theSignal) // loop over channels ?? // by default one SiPad has one channel 
+  
+  {
+	  
+    const CommonDigiUtility::Amplitude& sig_data = s.second;
 	float signalInElectrons = sig_data.ampl();
-	  DigitizerUtility::DigiSimInfo info1;
+	  //CommonDigiUtility::DigiSimInfo info1;
+
+	  BXC_CahrgePSim_Vect.clear();
+	  Tof_Q_pairVect.clear();
+	  
       if (makeDigiSimLinks_) {
         for (auto const& l : sig_data.simInfoList()) {
-          float charge_frac = l.first / signalInElectrons;
-          if (l.first > -5.0)
-            info1.simInfoList.push_back({charge_frac, l.second.get()});
+			//BXC_CahrgePSim_Vect.push_back({l.first,l.second.get()}); // first: charge, second: PSimHit
+			BXC_CahrgePSim_Vect.push_back({l.first,*(l.second)}); // first: charge, second: PSimHit
+			Tof_Q_pairVect.emplace_back(std::make_pair( l.second->time() , l.first ));
+			//Tof_Q_pairVect.push_back({ l.second->time() , l.first });
         }
+	  }
+	  	  
+	  //	  std::cout << "rawId :" << detID << ", "
+	  //		<< "size :" << BXC_CahrgePSim_Vect.size() << "\n" ;
+	  	SiPadDimension = SiPadGeom->SiPadTopology().pitch();
+		float SiPadArea = SiPadDimension.first * SiPadDimension.second ;
+		float RRadius = SiPadGeom->surface().position().perp();
+		float PhiDegrees = SiPadGeom->surface().position().phi().degrees();
 		
-    
-    // unsigned short adc;
-    // if (signalInElectrons >= theThresholdInE) {  // check threshold
-      // adc = convertSignalToAdc(detID, signalInElectrons, theThresholdInE);
-      // DigitizerUtility::DigiSimInfo info;
-      // info.sig_tot = adc;
-      // info.ot_bit = (signalInElectrons > theHIPThresholdInE ? true : false);
-      // if (makeDigiSimLinks_) {
-        // for (auto const& l : sig_data.simInfoList()) {
-          // float charge_frac = l.first / signalInElectrons;
-          // if (l.first > -5.0)
-            // info.simInfoList.push_back({charge_frac, l.second.get()});
-        // }
-      // }
-      // digi_map.insert({s.first, info});
-    // }
-	
-	SiPadAmplitude SiPadAmpl(
-		SiPdetId.Side(),
-		SiPdetId.Station(),
-		SiPdetId.SiliconDie(),
-		SiPdetId.SiPad(),
-		sig_data.ampl(),
-		sig_data.ampl(),
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		SiPdetId.rawId(),
-		0
-		);
 		
-		SiPadAmplMap.insert({s.first,SiPadAmpl});
+//		std::cout << BXC_CahrgePSim_Vect ;
 		
-					  // Side_=Side;
-			  // Station_=Station;
-			  // SiliconDie_=SiliconDie;
-			  // SiPad_=SiPad;
-			  // Ampl_A_=Ampl_A;
-			  // Ampl_SP_=Ampl_SP;
-			  // x_=x;
-			  // y_=y;
-			  // sigma_x_=sigma_x;
-			  // sigma_y_=sigma_y;
-			  // sig_ToT_=sig_ToT;
-			  // time_=Time;
-			  // ToF_=ToF;
-			  // energyLoss_=energyLoss;
-			  // rawId_=rawId;
-			  // trackId_=trackId;
-	
-  }							
+		//std::cout << "------Cont----------- " << "ToFQ_size:" << Tof_Q_pairVect.size() << " --------------------\n" ;
+		
+	   // if ( BXC_CahrgePSim_Vect.size() > 1 )
+		  // for (unsigned int w=0 ; w < BXC_CahrgePSim_Vect.size() ; w++)
+			// std::cout << "rawId :" << detID << ", "
+				// << "ampl :" << sig_data.ampl() << ", "
+				// << "charge :" << BXC_CahrgePSim_Vect[w].first << ", "
+				// << "Time :" << BXC_CahrgePSim_Vect[w].second.time() << ", "
+				// << "ToF :" << BXC_CahrgePSim_Vect[w].second.Tof() << ", "
+				// << "PgID :" << BXC_CahrgePSim_Vect[w].second.ParticleType() << ", "
+				// << "BXC :" << BXC_CahrgePSim_Vect[w].second.BunchCrossing() << ", "
+				// << "SiPadArea :" << SiPadArea << ", "
+				// << "Radius :" << RRadius << ", "
+				// << "PhiDegrees :" << PhiDegrees << ", "
+				// << "\n" ; 
+				
+		
+/* 		 if ( Tof_Q_pairVect.size() >= 2) 
+		   for (unsigned int w=0 ; w < Tof_Q_pairVect.size() ; w++)
+			 std::cout << "rawId :" << detID << ", "
+				<< "ToFQ_size :" << Tof_Q_pairVect.size() << ", "
+				// << "charge1 :" << BXC_CahrgePSim_Vect[w].first << ", "
+				// << "Time1 :" << BXC_CahrgePSim_Vect[w].second->time() << ", "
+				 << "charge2 :" << Tof_Q_pairVect[w].second << ", "
+				 << "Time2 :" << Tof_Q_pairVect[w].first << ", "
+				// << "ToF :" << BXC_CahrgePSim_Vect[w].second->Tof() << ", "
+				// << "BXC :" << BXC_CahrgePSim_Vect[w].second->BunchCrossing() << ", "
+				 << "SiPadArea :" << SiPadArea << ", "
+				 << "\n" ; 
+				 */
+				
+				
+			 // for (unsigned int w=0 ; w < Tof_Q_pairVect.size() ; w++) {
+				// std::cout << "rawId: " << detID << ", "
+					// << "SiPadArea: " << SiPadArea << ", "
+					// << "Time: " << Tof_Q_pairVect[w].first << ", "
+					// << "charge: " << Tof_Q_pairVect[w].second << "\n" ;
+		 		
+			 // }
+				
+				HitPulse.GetPulseSeriesShape(FftPrep, Tof_Q_pairVect); // vector for charge amplitude
+				Area_FeParamPtr = FeParamSelector.SelectFrontEndConfig(SiPadArea);
+				FrontEnd.RunFECircuit(Area_FeParamPtr);
+				
+				HitAnalysisVect.clear();
+				for (int BxSlotNo = FirstBxSlotNo ; BxSlotNo <= LastBxSlotNo ; BxSlotNo++) {
+					HitTotToaInfo.clear();
+					FrontEnd.GetHitAnalysisInfo(BxSlotNo, HitTotToaInfo);
+					HitAnalysisVect.emplace_back(HitTotToaInfo);
+					//std:: cout << HitTotToaInfo ;
+
+					// if (HitTotToaInfo.nbrOfRecognizedHitsInBx() >= 1)  {
+						// FrontEnd.printInfo_with_AlignedTime();
+						// std::cin >> Teststp;						
+					// } 
+					
+				}
+				
+
+			
+	SiPadDigiData SiPadDigiRes( SiPadDetId.Side(),
+								SiPadDetId.Station(),
+								SiPadDetId.SiliconDie(),
+								SiPadDetId.SiPad(),
+								RRadius,
+								PhiDegrees,
+								SiPadArea,
+								signalInElectrons  ,
+								BXC_CahrgePSim_Vect,
+								HitAnalysisVect);
+	//std::cout << SiPadDigiRes;
+
+		SiPadDigilMap.insert({s.first,SiPadDigiRes});
 
 }
 
 }
+
 void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
-                                               std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
+                                               std::map<int, CommonDigiUtility::DigiSimInfo>& digi_map,
                                                const TrackerTopology* tTopo) {
   uint32_t detID = SiPadGeom->geographicalId().rawId();
   auto it = _signal.find(detID);
@@ -1183,15 +1270,16 @@ void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
       module_killing_conf(detID);
   }
 
+
   // Digitize if the signal is greater than threshold
   for (auto const& s : theSignal) {
-    //    DigitizerUtility::Amplitude sig_data = s.second;
-    const DigitizerUtility::Amplitude& sig_data = s.second;
+    //    CommonDigiUtility::Amplitude sig_data = s.second;
+    const CommonDigiUtility::Amplitude& sig_data = s.second;
     float signalInElectrons = sig_data.ampl();
     unsigned short adc;
     if (signalInElectrons >= theThresholdInE) {  // check threshold
       adc = convertSignalToAdc(detID, signalInElectrons, theThresholdInE);
-      DigitizerUtility::DigiSimInfo info;
+      CommonDigiUtility::DigiSimInfo info;
       info.sig_tot = adc;
       info.ot_bit = (signalInElectrons > theHIPThresholdInE ? true : false);
       if (makeDigiSimLinks_) {
@@ -1233,4 +1321,17 @@ int SiPadDigitizerAlgorithm::convertSignalToAdc(uint32_t detID, float signal_in_
         << temp_signal << " signal_in_adc " << signal_in_adc;
   }
   return signal_in_adc;
+}
+
+
+bool SiPadDigitizerAlgorithm::FilterHit(const PSimHit& hit, double tCorr)
+{
+	double toa = hit.tof() - tCorr;
+	//std::cout << "hitSelectionMode:" << hitSelectionMode_ << "\n";
+	if (hitSelectionMode_ == 1) // all hits
+		return true;
+	else if (hitSelectionMode_ == 0) // filter with LowerToFCut and UpperToFCut
+		return (toa >= theTofLowerCut && toa <= theTofUpperCut);
+	else
+		throw cms::Exception("Wrong hitSelectionMode") << "hitSelectionMode should be either '1' (select all hits) or '0' (filter with LowerToFCut and UpperToFCut) \n";	
 }

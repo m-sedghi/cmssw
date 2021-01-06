@@ -3,8 +3,15 @@
 
 
 
-#include "DataFormats/FbcmDigi/interface/SiPadAmplitude.h"
-#include "DataFormats/FbcmDigi/interface/SiPadAmplitudeCollection.h"
+#include <cstdint>
+
+#include "DataFormats/FbcmDigi/interface/SiPadDigiData.h"
+#include "DataFormats/FbcmDigi/interface/SiPadDigiDataCollection.h"
+
+#include "DataFormats/FbcmDigi/interface/PSimHitInfo.h"
+#include "DataFormats/FbcmDigi/interface/HitAnalysisInfo.h"
+#include "DataFormats/FbcmDigi/interface/ToaTotPair.h"
+
 #include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
 
 #include "DataFormats/Common/interface/Wrapper.h"

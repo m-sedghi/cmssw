@@ -298,3 +298,22 @@ phase2_timing_layer.toModify( theMixObjects,
         crossingFrames = theMixObjects.mixSH.crossingFrames + [ 'FastTimerHitsBarrel','FastTimerHitsEndcap' ]
     )
 )
+
+mixFbcmSimHits = cms.PSet(
+    input = cms.VInputTag(cms.InputTag("g4SimHits","FBCMHits")),
+    type = cms.string('PSimHit'),
+    subdets = cms.vstring('FBCMHits'),
+    crossingFrames = cms.untracked.vstring('FBCMHits'), 
+    pcrossingFrames = cms.untracked.vstring()
+)
+
+from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
+OnlyfbcmDigi.toReplaceWith(theMixObjects,cms.PSet(
+		mixSH = cms.PSet(
+			mixFbcmSimHits
+		),
+		mixHepMC = cms.PSet(
+			mixHepMCProducts
+		)
+	)
+	)

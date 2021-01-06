@@ -15,7 +15,7 @@ class FbcmSiPadGeom; // ??
 class FbcmSiliconDieGeom : public GeomDet {
 public:
   /// Constructor
-  FbcmSiliconDieGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane);
+  FbcmSiliconDieGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane, unsigned int nCols, unsigned int nRows);
 
   /// Destructor
   ~FbcmSiliconDieGeom() override;
@@ -48,9 +48,13 @@ public:
 
   /// Retunr numbers of SiPads
   int nSiPads() const;
-
+   unsigned int NumOfCols() const {return nCols_; }
+   unsigned int NumOfRows()  const {return nRows_;}
+   
 private:
   FbcmDetId detId_;
+   unsigned int nCols_;
+   unsigned int nRows_;
 
   // vector of SiPadGeoms for a SiliconDie
   std::vector<const FbcmSiPadGeom*> SiPads_;

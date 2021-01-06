@@ -10,7 +10,11 @@
 
 
 
-FbcmSiliconDieGeom::FbcmSiliconDieGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane) : GeomDet(plane), detId_(id) {
+FbcmSiliconDieGeom::FbcmSiliconDieGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane, unsigned int nCols, unsigned int nRows) :
+ GeomDet(plane),
+ detId_(id),
+ nCols_(nCols),
+ nRows_(nRows) {
   setDetId(id);
 }
 
@@ -33,7 +37,7 @@ const std::vector<const FbcmSiPadGeom*>& FbcmSiliconDieGeom::SiPads() const { re
 int FbcmSiliconDieGeom::nSiPads() const { return SiPads_.size(); }
 
 const FbcmSiPadGeom* FbcmSiliconDieGeom::SiPad(FbcmDetId id) const {
-  if (id.SiliconDieId() != detId_)
+  if (id.SiliconDieDetId() != detId_)
     return nullptr;  // not in this SiPad! // Not in this SiliconDie
   return SiPad(id.SiPad());
 }

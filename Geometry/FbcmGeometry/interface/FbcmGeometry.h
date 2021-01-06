@@ -29,6 +29,12 @@ Note: the followig type was defined in  TrackingGeometry.h
   using mapIdToDetUnit = std::unordered_map<unsigned int, const GeomDet*>;
   using mapIdToDet = std::unordered_map<unsigned int, const GeomDet*>;
   */
+  
+  
+  using mapIdToStation = std::unordered_map<unsigned int, const FbcmStationGeom*>;
+  using mapIdToSiDie = std::unordered_map<unsigned int, const FbcmSiliconDieGeom*>;
+  using mapIdToSiPad = std::unordered_map<unsigned int, const FbcmSiPadGeom*>;
+  
 
 class FbcmGeometry : public TrackingGeometry {
 public:
@@ -61,14 +67,14 @@ public:
 
   //---- Extension of the interface
 
-  /// Return a FbcmSiPadGeom given its FbcmDetId
-  const FbcmSiPadGeom* SiPad(FbcmDetId id) const;
-
   /// Return a FbcmStationGeom given its FbcmDetId
-  const FbcmStationGeom* Station(FbcmDetId id) const;
+  const FbcmStationGeom* IdToStation(FbcmDetId id) const;
 
   /// Return a FbcmSiliconDieGeom given its FbcmDetId
-  const FbcmSiliconDieGeom* SiliconDie(FbcmDetId id) const;
+  const FbcmSiliconDieGeom* IdToSiliconDie(FbcmDetId id) const;
+
+  /// Return a FbcmSiPadGeom given its FbcmDetId
+  const FbcmSiPadGeom* IdToSiPad(FbcmDetId id) const;
 
   /// Return a vector of all FbcmSiPad Geometries
   const std::vector<FbcmSiPadGeom const*>& SiPads() const;
@@ -87,6 +93,10 @@ public:
 
   /// Add a FbcmSiliconDieGeom to the Geometry
   void add(FbcmSiliconDieGeom* SiliconDieGeom);
+  
+  void SetNumOfStations(int nStations) {nStations_=nStations;}
+  
+  int NumOfStations(void) const {return nStations_;}
 
 private:
 
@@ -96,12 +106,17 @@ private:
   DetIdContainer theDetIds;
   DetContainer theDets;
 
-  // Map for efficient lookup by DetId
-  mapIdToDet theMap;
+  
+	mapIdToDet theMap;
+  
+  mapIdToStation theMapToStations;
+  mapIdToSiDie theMapToSiDies;
+  mapIdToSiPad theMapToSiPads;
 
   std::vector<FbcmStationGeom const*> allStationGeoms; 
   std::vector<FbcmSiliconDieGeom const*> allSiliconDieGeoms;  
   std::vector<FbcmSiPadGeom const*> allSiPadGeoms;  
+  int nStations_;
   
 };
 

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+ <SpecParSection label="fbcmsens.xml" eval="true">
+  <SpecPar name="fbcm">
+   <PartSelector path="//FBCM_SensorPad"/>
+   <Parameter name="SensitiveDetector" value="FBCMSensitiveDetector" eval="false"></Parameter>
+   <Parameter name="ReadOutName" value="FBCMHits" eval="false"/>
+  </SpecPar>
+  <SpecPar name="FbcmGeomFilter">
+   <PartSelector path="//FBCM"/>
+   <PartSelector path="//FBCM_Station"/>
+   <PartSelector path="//FBCM_SiliconDie"/>
+   <PartSelector path="//FBCM_SensorRow"/>
+   <PartSelector path="//FBCM_SensorPad"/>
+   <Parameter name="FbcmDDDGeom" value="FbcmTopLevelGeometry" eval="false"></Parameter>
+  </SpecPar>
+ </SpecParSection>
+</DDDefinition>

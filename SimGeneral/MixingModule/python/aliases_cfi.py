@@ -31,7 +31,7 @@ simSiPixelDigis = cms.EDAlias(
 ) 
 simFbcmDigis = cms.EDAlias(
     mix = cms.VPSet(
-      cms.PSet(type = cms.string('SiPadAmplitudeedmDetSetVector'))
+      cms.PSet(type = cms.string('SiPadDigiDataedmDetSetVector'))
     )
 )
 simSiStripDigis = cms.EDAlias(

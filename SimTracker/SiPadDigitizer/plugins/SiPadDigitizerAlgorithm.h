@@ -26,9 +26,23 @@
 #include "SimDataFormats/TrackerDigiSimLink/interface/PixelDigiSimLink.h"
 #include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
 #include "Geometry/FbcmGeometry/interface/FbcmSiPadGeom.h"
-#include "SimTracker/SiPhase2Digitizer/plugins/DigitizerUtility.h"
-#include "DataFormats/FbcmDigi/interface/SiPadAmplitude.h"
+//#include "SimTracker/SiPhase2Digitizer/plugins/CommonDigiUtility.h"
+#include "SimTracker/SiPadDigitizer/plugins/CommonDigiUtility.h"
+#include "DataFormats/FbcmDigi/interface/SiPadDigiData.h"
 #include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
+
+
+//------------------------
+#include "SimTracker/SiPadDigitizer/interface/GeneralUtilities.h"
+#include "SimTracker/SiPadDigitizer/interface/FftPreparation.h"
+#include "SimTracker/SiPadDigitizer/interface/FbcmFrontEndChip.h"
+#include "SimTracker/SiPadDigitizer/interface/SiHitPulseShape.h"
+//#include "SimTracker/SiPadDigitizer/interface/HitAnalysisInfo.h"
+#include "DataFormats/FbcmDigi/interface/HitAnalysisInfo.h"
+#include "SimTracker/SiPadDigitizer/interface/FeConfigSelector.h"
+//------------------------
+
+
 
 //#include "SimTracker/SiPhase2Digitizer/plugins/Phase2TrackerDigitizerFwd.h"
 ////---------------- instead of Phase2TrackerDigitizerFwd.h ----------
@@ -43,6 +57,8 @@ class PixelTopology;
 
 using SiPadDigi = PixelDigi;
 using SiPadDigiSimLink = PixelDigiSimLink;
+using namespace FbcmFE;
+
 
 // forward declarations
 // For the random numbers
@@ -68,6 +84,18 @@ class TrackerGeometry;
 class TrackerTopology;
 
 
+// REMEMBER CMS conventions:
+// -- Energy: GeV
+// -- momentum: GeV/c
+// -- mass: GeV/c^2
+// -- Distance, position: cm
+// -- Time: ns
+// -- Angles: radian
+// Some constants in convenient units
+//constexpr double c_cm_ns = CLHEP::c_light * CLHEP::ns / CLHEP::cm;
+//constexpr double c_inv = 1.0 / c_cm_ns;
+constexpr double c_inv = 1.0 / 29.9792458 ;
+
 class SiPadDigitizerAlgorithm {
 public:
   //SiPadDigitizerAlgorithm(const edm::ParameterSet& conf_common, const edm::ParameterSet& conf_specific);
@@ -86,11 +114,13 @@ public:
                                  const FbcmSiPadGeom* SiPadGeom,
                                  const GlobalVector& bfield);
   void digitize(const FbcmSiPadGeom* SiPadGeom,
-                        std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
+                        std::map<int, CommonDigiUtility::DigiSimInfo>& digi_map,
                         const TrackerTopology* tTopo);
 
-  void GetAmplitude(const FbcmSiPadGeom* SiPadGeom,
-                        std::map<int, SiPadAmplitude>& SiPadAmplMap);
+  //void GetAmplitude(const FbcmSiPadGeom* SiPadGeom, std::map<int, SiPadDigiData>& SiPadAmplMap);
+	
+  void GetDigiResults(const FbcmSiPadGeom* SiPadGeom, std::map<int, SiPadDigiData>& SiPadDigilMap);	
+
 
   // For premixing
   void loadAccumulator(unsigned int detId, const std::map<int, float>& accumulator);
@@ -113,7 +143,7 @@ protected:
   };
 
   // Internal type aliases
-  using signal_map_type = std::map<int, DigitizerUtility::Amplitude, std::less<int> >;  // from Digi.Skel.
+  using signal_map_type = std::map<int, CommonDigiUtility::Amplitude, std::less<int> >;  // from Digi.Skel.
   using signal_map_iterator = signal_map_type::iterator;                                // from Digi.Skel.
   using signal_map_const_iterator = signal_map_type::const_iterator;                    // from Digi.Skel.
   using simlink_map = std::map<unsigned int, std::vector<float>, std::less<unsigned int> >;
@@ -123,6 +153,16 @@ protected:
 
   	//const edm::ParameterSet& conf_common;
 	const edm::ParameterSet& conf_specific;
+	const edm::ParameterSet& FFT_SimParam ; // = SiPadDigitizerParam.getParameter<edm::ParameterSet>("FFT_SimParam");
+	const edm::ParameterSet& SiHitPulseShapeParam ; // = SiPadDigitizerParam.getParameter<edm::ParameterSet>("SiHitPulseShapeParam");
+	const std::vector< edm::ParameterSet > & SiPadFrontEndParamVect; //  = SiPadDigitizerParam.getParameter< std::vector< edm::ParameterSet > >("SiPadFrontEndParam");
+    
+	FftPreparation FftPrep; //(FFT_SimParam); 
+	SiHitPulseShape HitPulse; // ( SiHitPulseShapeParam.getParameter< std::vector<double> >("HitPulseParam") );
+    FbcmFrontEndChip FrontEnd; //(FftPrep); // the FrontEnd parameters will be set just before running for each sensor size
+	FeConfigSelector FeParamSelector; //(SiPadFrontEndParamVect);
+	int FirstBxSlotNo;
+	int LastBxSlotNo;
   
   // Contains the accumulated hit info.
   signalMaps _signal;
@@ -171,6 +211,7 @@ protected:
   const double theHIPThresholdInE_Endcap;
   const double theHIPThresholdInE_Barrel;
 
+  const int hitSelectionMode_;
   const float theTofLowerCut;                  // Cut on the particle TOF
   const float theTofUpperCut;                  // Cut on the particle TOF
   const float tanLorentzAnglePerTesla_Endcap;  //FPix Lorentz angle tangent per Tesla
@@ -193,7 +234,7 @@ protected:
   // The PDTable
   // HepPDTable *particleTable;
   // ParticleDataTable *particleTable;
-
+	int Teststp;
   
   // Bad Pixels to be killed
   std::vector<edm::ParameterSet> badPixels;
@@ -202,20 +243,21 @@ protected:
   const std::unique_ptr<SiG4UniversalFluctuation> fluctuate;  // make a pointer
   const std::unique_ptr<GaussianTailNoiseGenerator> theNoiser;
 
+  bool FilterHit(const PSimHit& hit, double tCorr); 
   //-- additional member functions
   // Private methods
   void primary_ionization(const PSimHit& hit,
-                          std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points) const;
+                          std::vector<CommonDigiUtility::EnergyDepositUnit>& ionization_points) const;
   void drift(const PSimHit& hit,
              const FbcmSiPadGeom* SiPadGeom,
              const GlobalVector& bfield,
-             const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points,
-             std::vector<DigitizerUtility::SignalPoint>& collection_points) const;
+             const std::vector<CommonDigiUtility::EnergyDepositUnit>& ionization_points,
+             std::vector<CommonDigiUtility::SignalPoint>& collection_points) const;
   void induce_signal(const PSimHit& hit,
                      const size_t hitIndex,
                      const unsigned int tofBin,
                      const FbcmSiPadGeom* SiPadGeom,
-                     const std::vector<DigitizerUtility::SignalPoint>& collection_points);
+                     const std::vector<CommonDigiUtility::SignalPoint>& collection_points);
   void fluctuateEloss(int particleId,
                       float momentum,
                       float eloss,

@@ -17,7 +17,7 @@ class FbcmSiPadGeom;
 class FbcmStationGeom : public GeomDet {
 public:
   /// Constructor
-  FbcmStationGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane);
+  FbcmStationGeom(FbcmDetId id, const ReferenceCountingPointer<BoundPlane>& plane, unsigned int nDiesPerRing, unsigned int nRings);
 
   /// Destructor
   ~FbcmStationGeom() override;
@@ -64,6 +64,8 @@ public:
 
     /// Retunr numbers of SiPads
   int nSiPads() const;
+  unsigned int NumOfDiesPerRing(void)  const {return nDiesPerRing_;}
+  unsigned int NumOfRings(void)  const {return nRings_;}
 
   //For a line fit in the Station frame, compute: global phi position extrapolated
   //to the last SiliconDie - that extrapolated to the inner SiliconDie
@@ -72,7 +74,8 @@ public:
 
 private:
   FbcmDetId detId_;
-
+  unsigned int nDiesPerRing_;
+  unsigned int nRings_;
   // vector of SiliconDies for a Station
   std::vector<const FbcmSiliconDieGeom*> SiliconDies_;
   // vector of SiPads for a Station

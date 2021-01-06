@@ -8,6 +8,7 @@
 <use   name="SimDataFormats/SimHitMaker"/>
 <use   name="SimG4Core/Application"/>
 <use   name="DataFormats/FbcmDetId"/>
+<use   name="Geometry/FbcmGeometry"/>
 <export>
   <lib   name="1"/>
 </export>

@@ -22,3 +22,4 @@ const Topology& FbcmSiPadGeom::topology() const { return specs_->topology(); }
 const FbcmSiPadTopology& FbcmSiPadGeom::SiPadTopology() const { return specs_->SiPadTopology(); }
 
 const GeomDetType& FbcmSiPadGeom::type() const { return (*specs_); }
+//SiPadSensorGeom->surface().position()
