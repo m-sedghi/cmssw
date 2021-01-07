@@ -12,31 +12,64 @@
 #include <vector>
 
 #include "SimGeneral/MixingModule/interface/DigiAccumulatorMixMod.h"
+#include "SimGeneral/MixingModule/interface/PileUpEventPrincipal.h"
+
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/ProducesCollector.h"
-#include "DataFormats/DetId/interface/DetId.h"
-#include "DataFormats/Provenance/interface/EventID.h"
+//#include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/Framework/interface/ESWatcher.h"
-//#include "SimTracker/SiPhase2Digitizer/plugins/DigitizerUtility.h"
-#include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
-
-//#include "Geometry/Records/interface/TrackerTopologyRcd.h"
-//#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-//#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
-
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Framework/interface/Frameworkfwd.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+#include "FWCore/Utilities/interface/StreamID.h"
+#include "FWCore/Utilities/interface/Exception.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+
+
+#include "MagneticField/Engine/interface/MagneticField.h"
+#include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
+
+
+
+
+
+#include "DataFormats/Common/interface/Handle.h"
+#include "DataFormats/Common/interface/DetSet.h"
+#include "DataFormats/Common/interface/DetSetVector.h"
+#include "DataFormats/Provenance/interface/EventID.h"
+#include "DataFormats/GeometryVector/interface/LocalPoint.h"
+#include "DataFormats/GeometryVector/interface/LocalVector.h"
+
+#include "SimDataFormats/TrackingHit/interface/PSimHit.h"
+
+#include "Geometry/CommonDetUnit/interface/GeomDet.h"
 #include "Geometry/Records/interface/FbcmGeometryRecord.h"
 #include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
+#include "DataFormats/FbcmDigi/interface/SiPadDigiData.h"
+#include "DataFormats/FbcmDigi/interface/SiPadDigiDataCollection.h"
+#include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
+
+#include "SiPadDigitizerAlgorithm.h"
+
+//#include "DataFormats/Math/interface/angle_units.h"
+//using angle_units::operators::convertRadToDeg;
 
 
+///-----
 
+/*
 namespace CLHEP {
   class HepRandomEngine;
 }
+*/
 
-
+/*
 namespace edm {
   class ConsumesCollector;
   class Event;
@@ -50,21 +83,19 @@ namespace edm {
 class MagneticField;
 class PileUpEventPrincipal;
 class PSimHit;
+*/
+//class SiPadDigitizerAlgorithm;
+//class FbcmGeometryRecord;
 
-class SiPadDigitizerAlgorithm;
-class FbcmGeometryRecord;
-
-class FbcmSiPadGeom;
-class FbcmGeometry;
-class FbcmSiPadTopology;
+//class FbcmSiPadGeom;
+//class FbcmGeometry;
+//class FbcmSiPadTopology;
 
 
 
 namespace cms {
   class SiPadDigitizer : public DigiAccumulatorMixMod {
   public:
-    //typedef std::unordered_map<unsigned, TrackerGeometry::ModuleType> ModuleTypeCache;  
-	
     explicit SiPadDigitizer(  const edm::ParameterSet& iConfig, 
 									edm::ProducesCollector,
 									edm::ConsumesCollector& iC);
@@ -83,8 +114,7 @@ namespace cms {
                                 std::vector<int>& bunchCrossingList,
                                 std::vector<float>& TrueInteractionList,
                                 std::vector<edm::EventID>& eventInfoList,
-                                int bunchSpacing) override 
-								{
+                                int bunchSpacing) override {
 			PileupInfo_ = std::make_unique<PileupMixingContent>( numInteractionList, bunchCrossingList,
 																 TrueInteractionList, eventInfoList, bunchSpacing);
     }
@@ -92,45 +122,22 @@ namespace cms {
 */
   private:
     void accumulateSiPadHits(edm::Handle<std::vector<PSimHit> >, size_t globalSimHitIndex);
-	//Local3DPoint CMSUnits(Local3DPoint lp);
-	//void ConvertPSimHitsToCMSUnits(std::vector<PSimHit> const& simHits_org, std::vector<PSimHit> &simHitsCMSUnit);
 	
     bool firstInitializeEvent_;
-    //bool firstFinalizeEvent_;
     std::unique_ptr<SiPadDigitizerAlgorithm> SiPadDigiAlgo;
-
-
-    std::map<std::string, size_t> crossingSimHitIndexOffset_;
-
-    typedef std::vector<std::string> vstring;
+	std::map<std::string, size_t> crossingSimHitIndexOffset_;
     const std::string hitsProducer_;
 	const std::string SubdetName_;
-    const vstring trackerContainers_;
     const std::string geometryType_;
 	const std::string InstanceName_;
-	
     edm::ESHandle<FbcmGeometry> theFbcmGeom;
-    edm::ESHandle<MagneticField> pSetup; // OK
+    edm::ESHandle<MagneticField> pSetup; 
     std::map<unsigned int, FbcmSiPadGeom const*> SiPadsIdGeomMap;
-	
-	//edm::ESHandle<TrackerTopology> tTopoHand;
-	//edm::ESWatcher<TrackerDigiGeometryRecord> theDigiGeomWatcher;
 	edm::ESWatcher<FbcmGeometryRecord> theGeomWatcher;
-	
-    //CLHEP::HepRandomEngine* randomEngine_ = nullptr;
     std::unique_ptr<PileupMixingContent> PileupInfo_;
-
-    //const bool pilotBlades;         // Default = false
-    //const int NumberOfEndcapDisks;  // Default = 2
-	//const bool IsReadoutAnalog_; // No Need, I will alway put analog data
-	//const bool makeDigiSimLinks_;
-	//ModuleTypeCache moduleTypeCache_;
 	const std::vector<edm::ParameterSet>& conf_FE;
-	unsigned int DigiEventCnt; 
 	edm::EDGetTokenT< std::vector<PSimHit> > m_token;
-    // infrastructure to reject dead pixels as defined in db (added by F.Blekman)
-	//edm::InputTag simSrc_;
-	//const edm::EDGetTokenT< std::vector<PSimHit> > simHitToken_;
+   
   };
 }  // namespace cms
 

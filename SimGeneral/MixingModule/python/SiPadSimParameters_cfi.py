@@ -1,190 +1,29 @@
 import FWCore.ParameterSet.Config as cms
 
-# This object is used to make configuration changes for different running
-# scenarios, in this case for Run 2. See the code at the end of the
-# SiPadSimBlock definition.
-
-# def _modifyPixelDigitizerForPhase1Pixel( digitizer ) :
-    # """
-    # Function that modifies the pixel digitiser for the Phase 1 pixel detector.
-    
-    # First argument is the pixelDigitizer object.
-    # """
-    # #use default switches, new analog respnse, d.k. 2/16
-    # #digitizer.MissCalibrate = False
-    # #digitizer.LorentzAngle_DB = False
-    # #digitizer.killModules = False
-    # #digitizer.useDB = False
-    # #digitizer.DeadModules_DB = False
-    # digitizer.NumPixelBarrel = cms.int32(4)
-    # digitizer.NumPixelEndcap = cms.int32(3)
-    # digitizer.ThresholdInElectrons_FPix = cms.double(2000.0)
-    # digitizer.ThresholdInElectrons_BPix = cms.double(2000.0)
-    # digitizer.ThresholdInElectrons_BPix_L1 = cms.double(3000.0)
-    # digitizer.ThresholdInElectrons_BPix_L2 = cms.double(2600.0)
-    # digitizer.FPix_SignalResponse_p0 = cms.double(0.00171)
-    # digitizer.FPix_SignalResponse_p1 = cms.double(0.711)
-    # digitizer.FPix_SignalResponse_p2 = cms.double(203.)
-    # digitizer.FPix_SignalResponse_p3 = cms.double(148.)
-    # digitizer.BPix_SignalResponse_p0 = cms.double(0.00171)
-    # digitizer.BPix_SignalResponse_p1 = cms.double(0.711)
-    # digitizer.BPix_SignalResponse_p2 = cms.double(203.)
-    # digitizer.BPix_SignalResponse_p3 = cms.double(148.)
-    # # gains and offsets are ints in the Clusterizer, so round to the same value
-    # digitizer.ElectronsPerVcal           = cms.double(47)   # L2-4: 47  +- 4.7
-    # digitizer.ElectronsPerVcal_L1        = cms.double(50)   # L1:   49.6 +- 2.6
-    # digitizer.ElectronsPerVcal_Offset    = cms.double(-60)  # L2-4: -60 +- 130
-    # digitizer.ElectronsPerVcal_L1_Offset = cms.double(-670) # L1:   -670 +- 220
-    # digitizer.UseReweighting = cms.bool(True)
-    # digitizer.KillBadFEDChannels = cms.bool(True)
-
-# def _modifyPixelDigitizerForRun3( digitizer ):
-
-    # digitizer.ThresholdInElectrons_FPix = cms.double(1600.0)
-    # digitizer.ThresholdInElectrons_BPix = cms.double(1600.0)
-    # digitizer.ThresholdInElectrons_BPix_L1 = cms.double(2000.0)
-    # digitizer.ThresholdInElectrons_BPix_L2 = cms.double(1600.0)
-
 SiPadSimBlock = cms.PSet(
-	ElectronPerAdc = cms.double(135.0),
-	DeltaProductionCut = cms.double(0.03),
-	ReadoutNoiseInElec = cms.double(200.0),#D.B.:Fill readout noise, including all readout chain, relevant for smearing
-	ThresholdInElectrons_Barrel = cms.double(6300.), #(0.4 MIP = 0.4 * 16000 e) ##~~##
-	ThresholdInElectrons_Endcap = cms.double(6300.), #(0.4 MIP = 0.4 * 16000 e) 
-	AddThresholdSmearing = cms.bool(True),
-    ThresholdSmearing_Barrel = cms.double(630.0), ##~~##
-    ThresholdSmearing_Endcap = cms.double(630.0),
-    HIPThresholdInElectrons_Barrel = cms.double(1.0e10), # very high value to avoid Over threshold bit  ##~~##
-    HIPThresholdInElectrons_Endcap = cms.double(1.0e10), # very high value to avoid Over threshold bit
-    NoiseInElectrons = cms.double(200),	         # 30% of the readout noise (should be changed in future)
-    Phase2ReadoutMode = cms.int32(0), # Flag to decide Readout Mode :Digital(0) or Analog (linear TDR (-1), dual slope with slope parameters (+1,+2,+3,+4) with threshold subtraction
-    AdcFullScale = cms.int32(255),
-	hitSelectionMode = cms.int32(1), # 1 or 0 # 1 means select all hits, 0 means filter hits according to the TofUpperCut and TofLowerCut
-    TofUpperCut = cms.double(60), # I know that Tof for the positin of FBCM is ~59.7 ns
-    TofLowerCut = cms.double(-60), # it was -12.5, I don't know what the minus sign means.
-    AddNoisyPixels = cms.bool(True),
-    Alpha2Order = cms.bool(True),			#D.B.: second order effect, does not switch off magnetic field as described
-    AddNoise = cms.bool(True),
-    AddXTalk = cms.bool(True),			#D.B.
-    InterstripCoupling = cms.double(0.05),	#D.B.
-    SigmaZero = cms.double(0.00037),  		#D.B.: 3.7um spread for 300um-thick sensor, renormalized in digitizerAlgo
-    SigmaCoeff = cms.double(1.80),  		#D.B.: to be confirmed with simulations in CMSSW_6.X
-    ClusterWidth = cms.double(3),		#D.B.: this is used as number of sigmas for charge collection (3=+-3sigmas)
-    LorentzAngle_DB = cms.bool(False),			
-    TanLorentzAnglePerTesla_Endcap = cms.double(0.07),
-    TanLorentzAnglePerTesla_Barrel = cms.double(0.07),  ##~~##
-    KillModules = cms.bool(False),
-    DeadModules_DB = cms.bool(False),
-    DeadModules = cms.VPSet(),
-    AddInefficiency = cms.bool(False),
-    Inefficiency_DB = cms.bool(False),				
-    EfficiencyFactors_Barrel = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999 ),
-    EfficiencyFactors_Endcap = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 
-    0.999, 0.999 ),#Efficiencies kept as Side2Disk1,Side1Disk1 and so on
-    CellsToKill = cms.VPSet(),
-	FirstBxSlotNo = cms.int32(0), # by default BxSlotNo Zero is the first one for each Event
-	LastBxSlotNo = cms.int32(2) # this means the last BxSlotNo to study hitAnalsis and Store HitAnalysisInfo in the vector
-)
+	
+	ReadoutNoiseInElec = cms.double(200.0), #readout noise, including all readout chain 
+	GaussianTailNoise = cms.double(0.0),    # for GaussianTailNoiseGenerator, not impelemented YET
+	HitSelectionMode = cms.int32(1), # 1 or 0 # 1 means select all hits, 0 means filter hits according to the TofUpperCut and TofLowerCut
+    TofUpperCut = cms.double(60), # the Tof for the positin of FBCM is ~9.4ns for the BxSlotNo=0
+    TofLowerCut = cms.double(-60), 
+    FirstBxSlotNo = cms.int32(0), # by default BxSlotNo Zero is the first one for each Event
+	LastBxSlotNo = cms.int32(2), # this means the last BxSlotNo to study hitAnalsis and Store HitAnalysisInfo in the vector
+	
+	PseudoRadDamage = cms.untracked.double(0.0),
+	PseudoRadDamageRadius = cms.untracked.double(0.0),
+	#FluctuateCharge = cms.untracked.bool(True), # Fluctuate charge in track subsegments, by default should be True. 
+	DeltaProductionCut = cms.double(0.03),   # delta cutoff in MeV, has to be same as in OSCAR(0.030/cmsim=1.0 MeV)  // tMax(0.030) In MeV.
+	AddNoise = cms.bool(True),
+	Alpha2Order = cms.bool(True),			#second order effect, does not switch off magnetic field as described
+    SigmaZero = cms.double(0.00037),  		# 3.7um spread for 300um-thick sensor, renormalized in digitizerAlgo
+    SigmaCoeff = cms.double(1.80),  		# to be confirmed with simulations in CMSSW_6.X
+    ClusterWidth = cms.double(3),		# this is used as number of sigmas for charge collection (3=+-3sigmas)
+    TanLorentzAnglePerTesla_Fbcm = cms.double(0.07), # this is equal to the Tracker-endcap
+	    
+) 
 
-# SiPixelQualityLabel = cms.string(''),
-    # KillBadFEDChannels = cms.bool(False),
-    # UseReweighting = cms.bool(False),
-    # PrintClusters = cms.bool(False),
-    # PrintTemplates = cms.bool(False),
-    # DoPixelAging = cms.bool(False),
-    # ReadoutNoiseInElec = cms.double(350.0),
-    # DeltaProductionCut = cms.double(0.03),
-    # OffsetSmearing = cms.double(0.0),
-    # ThresholdInElectrons_FPix = cms.double(3000.0), 
-    # ThresholdInElectrons_BPix = cms.double(3500.0),
-    # ThresholdInElectrons_BPix_L1 = cms.double(3500.0),
-    # ThresholdInElectrons_BPix_L2 = cms.double(3500.0),
-    # AddThresholdSmearing = cms.bool(True),
-    # ThresholdSmearing_FPix = cms.double(210.0),
-    # ThresholdSmearing_BPix = cms.double(245.0),
-    # ThresholdSmearing_BPix_L1 = cms.double(245.0),
-    # ThresholdSmearing_BPix_L2 = cms.double(245.0),
-    # NoiseInElectrons = cms.double(175.0),
-    # MissCalibrate = cms.bool(True),
-    # FPix_SignalResponse_p0 = cms.double(0.0043),
-    # FPix_SignalResponse_p1 = cms.double(1.31),
-    # FPix_SignalResponse_p2 = cms.double(93.6),
-    # FPix_SignalResponse_p3 = cms.double(134.6),
-    # BPix_SignalResponse_p0 = cms.double(0.0035),
-    # BPix_SignalResponse_p1 = cms.double(1.23),
-    # BPix_SignalResponse_p2 = cms.double(97.4),
-    # BPix_SignalResponse_p3 = cms.double(126.5),
-    # ElectronsPerVcal = cms.double(65.5),
-    # ElectronsPerVcal_L1 = cms.double(65.5),
-    # ElectronsPerVcal_Offset = cms.double(-414.0),
-    # ElectronsPerVcal_L1_Offset = cms.double(-414.0),
-    # ElectronPerAdc = cms.double(135.0),
-    # TofUpperCut = cms.double(12.5),
-    # AdcFullScale = cms.int32(255),
-    # TofLowerCut = cms.double(-12.5),
-    # TanLorentzAnglePerTesla_FPix = cms.double(0.106),
-    # TanLorentzAnglePerTesla_BPix = cms.double(0.106),
-    # AddNoisyPixels = cms.bool(True),
-    # Alpha2Order = cms.bool(True),
-    # AddPixelInefficiency = cms.bool(True),
-    # AddNoise = cms.bool(True),
-    # ChargeVCALSmearing = cms.bool(True),
-    # GainSmearing = cms.double(0.0),
-    # GeometryType = cms.string('idealForDigi'),                           
-    # useDB = cms.bool(False),
-    # LorentzAngle_DB = cms.bool(True),
-    # DeadModules_DB = cms.bool(True),
-    # killModules = cms.bool(True),
-    # NumPixelBarrel = cms.int32(3),
-    # NumPixelEndcap = cms.int32(2),
-	# isReadoutAnalog = cms.bool(True),
-###    DeadModules = cms.VPSet()
-
-
-
-# activate charge reweighing for 2016 pixel detector (UL 2016)
-from Configuration.Eras.Modifier_pixel_2016_cff import pixel_2016
-pixel_2016.toModify(SiPadSimBlock,UseReweighting=True)
-
-#
-# Apply the changes for the different Run 2 running scenarios
-#
-# from Configuration.Eras.Modifier_phase1Pixel_cff import phase1Pixel
-# phase1Pixel.toModify( SiPadSimBlock, func=_modifyPixelDigitizerForPhase1Pixel )
-
-# use Label 'forDigitizer' for years >= 2018
-from CalibTracker.SiPixelESProducers.SiPixelQualityESProducer_cfi import siPixelQualityESProducer
-from Configuration.Eras.Modifier_run2_SiPixel_2018_cff import run2_SiPixel_2018
-#run2_SiPixel_2018.toModify(siPixelQualityESProducer,siPixelQualityLabel = 'forDigitizer',)
-#run2_SiPixel_2018.toModify(SiPadSimBlock, SiPixelQualityLabel = 'forDigitizer',)
-
-# change the digitizer threshold for Run3
-# - new layer1 installed: expected improvement in timing alignment of L1 and L2
-# - update the rest of the detector to 1600e 
-
-#from Configuration.Eras.Modifier_run3_common_cff import run3_common
-#run3_common.toModify(SiPadSimBlock, func=_modifyPixelDigitizerForRun3)
-
-from Configuration.ProcessModifiers.premix_stage1_cff import premix_stage1
-premix_stage1.toModify(SiPadSimBlock,
-    AddNoise = True,
-    AddNoisyPixels = False,
-    AddPixelInefficiency = False, #done in second step
-    KillBadFEDChannels = False, #done in second step
-)
 
 # Threshold in electrons are the Official CRAFT09 numbers:
 # FPix(smearing)/BPix(smearing) = 2480(160)/2730(200)
-
-#DEAD MODULES LIST: NEW LIST AFTER 2009 PIXEL REPAIRS
-# https://twiki.cern.ch/twiki/bin/view/CMS/SiPixelQualityHistory
-######Barrel
-#Bad Module: 302055940 errorType 2 BadRocs=ff00
-#Bad Module: 302059800 errorType 0 BadRocs=ffff
-#BmI_SEC3_LYR2_LDR5F_MOD3 -- 302121992, "TBM-A"
-#####Forward
-#Bad Module: 352453892 errorType 0 BadRocs=ffff
-#BmO_DISK1_BLD9_PNL2 -- 344014340, 344014344, 344014348
-#Barrel 
-#302187268, "none" (ROC 6) 
 

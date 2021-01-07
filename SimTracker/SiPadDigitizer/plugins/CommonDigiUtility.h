@@ -101,10 +101,13 @@ namespace CommonDigiUtility {
     float _sigma_y;  //    "       "          y direction (cm) */
     const PSimHit* _hitp;
   };
+  
+  /*
   struct DigiSimInfo {
     int sig_tot;
     bool ot_bit;
     std::vector<std::pair<float, PSimHitInfo*> > simInfoList;
   };
+  */
 }  // namespace CommonDigiUtility
 #endif

@@ -2,7 +2,6 @@
 //  Author: Mohammad Sedghi, msedghi@cern.ch
 //  Isfahan University of Technology
 //  Date created: September 2020
-//  Adopted and modified from SiPhase2Digitizer
 ///-------------------------------------------
 
 #include <typeinfo>
@@ -11,64 +10,66 @@
 
 
 
-#include "SimGeneral/NoiseGenerators/interface/GaussianTailNoiseGenerator.h"
+//#include "SimGeneral/NoiseGenerators/interface/GaussianTailNoiseGenerator.h"
 
-#include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
-#include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
+//#include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
+///#include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
 
 #include "SimTracker/SiPadDigitizer/plugins/SiPadDigitizerAlgorithm.h"
 
-#include "FWCore/Utilities/interface/RandomNumberGenerator.h"
-#include "CLHEP/Random/RandGaussQ.h"
-#include "CLHEP/Random/RandFlat.h"
+///#include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+///#include "CLHEP/Random/RandGaussQ.h"
+///#include "CLHEP/Random/RandFlat.h"
 
-//#include "PixelIndices.h"
-#include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
-#include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
 
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ServiceRegistry/interface/Service.h"
-#include "FWCore/Utilities/interface/Exception.h"
-#include "CalibTracker/SiPixelESProducers/interface/SiPixelGainCalibrationOfflineSimService.h"
+//#include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
+//#include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
+//#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+//#include "Geometry/Records/interface/IdealGeometryRecord.h"
 
-#include "DataFormats/DetId/interface/DetId.h"
-#include "CondFormats/SiPixelObjects/interface/GlobalPixel.h"
-#include "CondFormats/DataRecord/interface/SiPixelQualityRcd.h"
-#include "CondFormats/DataRecord/interface/SiPixelFedCablingMapRcd.h"
-#include "CondFormats/DataRecord/interface/SiPixelLorentzAngleSimRcd.h"
-#include "CondFormats/SiPixelObjects/interface/SiPixelFedCablingMap.h"
-#include "CondFormats/SiPixelObjects/interface/SiPixelFedCablingTree.h"
-#include "CondFormats/SiPixelObjects/interface/SiPixelFedCabling.h"
-#include "CondFormats/SiPixelObjects/interface/PixelIndices.h"
-#include "CondFormats/SiPixelObjects/interface/SiPixelLorentzAngle.h"
-#include "CondFormats/SiPixelObjects/interface/SiPixelQuality.h"
-#include "CondFormats/SiPixelObjects/interface/PixelROC.h"
-#include "CondFormats/SiPixelObjects/interface/LocalPixel.h"
-#include "CondFormats/SiPixelObjects/interface/CablingPathToDetUnit.h"
+///#include "FWCore/MessageLogger/interface/MessageLogger.h"
+///#include "FWCore/ParameterSet/interface/ParameterSet.h"
+///#include "FWCore/ServiceRegistry/interface/Service.h"
+///#include "FWCore/Utilities/interface/Exception.h"
+//#include "CalibTracker/SiPixelESProducers/interface/SiPixelGainCalibrationOfflineSimService.h"
 
-#include "CondFormats/SiPixelObjects/interface/SiPixelFrameReverter.h"
-#include "CondFormats/SiPixelObjects/interface/PixelFEDCabling.h"
-#include "CondFormats/SiPixelObjects/interface/PixelFEDLink.h"
-#include "DataFormats/FEDRawData/interface/FEDNumbering.h"
-#include "DataFormats/SiPixelDetId/interface/PixelBarrelName.h"
-#include "DataFormats/SiPixelDetId/interface/PixelEndcapName.h"
+//#include "DataFormats/DetId/interface/DetId.h"
+
+//#include "CondFormats/SiPixelObjects/interface/GlobalPixel.h"
+//#include "CondFormats/DataRecord/interface/SiPixelQualityRcd.h"
+//#include "CondFormats/DataRecord/interface/SiPixelFedCablingMapRcd.h"
+//#include "CondFormats/DataRecord/interface/SiPixelLorentzAngleSimRcd.h"
+//#include "CondFormats/SiPixelObjects/interface/SiPixelFedCablingMap.h"
+//#include "CondFormats/SiPixelObjects/interface/SiPixelFedCablingTree.h"
+//#include "CondFormats/SiPixelObjects/interface/SiPixelFedCabling.h"
+//#include "CondFormats/SiPixelObjects/interface/PixelIndices.h"
+//#include "CondFormats/SiPixelObjects/interface/SiPixelLorentzAngle.h"
+//#include "CondFormats/SiPixelObjects/interface/SiPixelQuality.h"
+//#include "CondFormats/SiPixelObjects/interface/PixelROC.h"
+//#include "CondFormats/SiPixelObjects/interface/LocalPixel.h"
+//#include "CondFormats/SiPixelObjects/interface/CablingPathToDetUnit.h"
+
+//#include "CondFormats/SiPixelObjects/interface/SiPixelFrameReverter.h"
+//#include "CondFormats/SiPixelObjects/interface/PixelFEDCabling.h"
+//#include "CondFormats/SiPixelObjects/interface/PixelFEDLink.h"
+
+//#include "DataFormats/FEDRawData/interface/FEDNumbering.h"
+//#include "DataFormats/SiPixelDetId/interface/PixelBarrelName.h"
+//#include "DataFormats/SiPixelDetId/interface/PixelEndcapName.h"
 
 // Geometry
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
-#include "Geometry/CommonDetUnit/interface/PixelGeomDetUnit.h"
-#include "Geometry/CommonTopologies/interface/PixelTopology.h"
+//#include "Geometry/Records/interface/TrackerTopologyRcd.h"
+//#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+//#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+//#include "Geometry/CommonDetUnit/interface/PixelGeomDetUnit.h"
+//#include "Geometry/CommonTopologies/interface/PixelTopology.h"
 
-#include "CondFormats/SiPixelObjects/interface/PixelROC.h"
+//#include "CondFormats/SiPixelObjects/interface/PixelROC.h"
 
 
 
 using namespace edm;
-using namespace sipixelobjects;
+//using namespace sipixelobjects;
 
 
 SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
@@ -89,29 +90,29 @@ SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
 	
 	_signal(),
 	//common part
-	makeDigiSimLinks_(conf.getUntrackedParameter<bool>("makeDigiSimLinks", true)),
+	//makeDigiSimLinks_(conf.getUntrackedParameter<bool>("makeDigiSimLinks", true)),
 	
 	  // delta cutoff in MeV, has to be same as in OSCAR(0.030/cmsim=1.0 MeV
       // tMax(0.030), // In MeV.
       // tMax(conf.getUntrackedParameter<double>("DeltaProductionCut",0.030)),
       tMax(conf_specific.getParameter<double> ("DeltaProductionCut")),
       ///------------------
-      use_ineff_from_db_(conf_specific.getParameter<bool>("Inefficiency_DB")),
-      use_module_killing_(conf_specific.getParameter<bool>("KillModules")),    // boolean to kill or not modules
-      use_deadmodule_DB_(conf_specific.getParameter<bool>("DeadModules_DB")),  // boolean to access dead modules from DB
+      //use_ineff_from_db_(false),
+      //use_module_killing_(false),    // boolean to kill or not modules
+      //use_deadmodule_DB_(false),  // boolean to access dead modules from DB
       // boolean to access Lorentz angle from DB
-      use_LorentzAngle_DB_(conf_specific.getParameter<bool>("LorentzAngle_DB")),
+      use_LorentzAngle_DB_(false),
 
       // get dead module from cfg file
-      DeadModules(use_deadmodule_DB_ ? Parameters() : conf_specific.getParameter<Parameters>("DeadModules")),
+      //DeadModules(use_deadmodule_DB_ ? Parameters() : conf_specific.getParameter<Parameters>("DeadModules")),
 
       // Common pixel parameters
       // These are parameters which are not likely to be changed
       GeVperElectron(3.61E-09),                                      // 1 electron(3.61eV, 1keV(277e, mod 9/06 d.k.
       alpha2Order(conf_specific.getParameter<bool>("Alpha2Order")),  // switch on/off of E.B effect
-      addXtalk(conf_specific.getParameter<bool>("AddXTalk")),
+      //addXtalk(conf_specific.getParameter<bool>("AddXTalk")),
       // Interstrip Coupling - Not used in PixelDigitizerAlgorithm
-      interstripCoupling(conf_specific.getParameter<double>("InterstripCoupling")),
+      //interstripCoupling(conf_specific.getParameter<double>("InterstripCoupling")),
 
       Sigma0(conf_specific.getParameter<double>("SigmaZero")),       // Charge diffusion constant 7->3.7
       SigmaCoeff(conf_specific.getParameter<double>("SigmaCoeff")),  // delta in the diffusion across the strip pitch
@@ -126,21 +127,23 @@ SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
       // 0          ---> Digital or binary readout
       // -1         ---> Analog readout, current digitizer (Inner Pixel) (TDR version) with no threshold subtraction
       // Analog readout with dual slope with the "second" slope being 1/2^(n-1) and threshold subtraction (n = 1, 2, 3,4)
-      thePhase2ReadoutMode(conf_specific.getParameter<int>("Phase2ReadoutMode")),
+      //thePhase2ReadoutMode(conf_specific.getParameter<int>("Phase2ReadoutMode")),
 
       // ADC calibration 1adc count(135e.
       // Corresponds to 2adc/kev, 270[e/kev]/135[e/adc](2[adc/kev]
       // Be careful, this parameter is also used in SiPixelDet.cc to
       // calculate the noise in adc counts from noise in electrons.
       // Both defaults should be the same.
-      theElectronPerADC(conf_specific.getParameter<double>("ElectronPerAdc")),
+      //theElectronPerADC(conf_specific.getParameter<double>("ElectronPerAdc")),
 
       // ADC saturation value, 255(8bit adc.
-      theAdcFullScale(conf_specific.getParameter<int>("AdcFullScale")),
+      //theAdcFullScale(conf_specific.getParameter<int>("AdcFullScale")),
 
       // Noise in electrons:
       // Pixel cell noise, relevant for generating noisy pixels
-      theNoiseInElectrons(conf_specific.getParameter<double>("NoiseInElectrons")),
+      //theNoiseInElectrons(conf_specific.getParameter<double>("NoiseInElectrons")),
+	  
+	  theTailNoiseInElectrons(conf_specific.getParameter<double>("GaussianTailNoise")),
 
       // Fill readout noise, including all readout chain, relevant for smearing
       theReadoutNoise(conf_specific.getParameter<double>("ReadoutNoiseInElec")),
@@ -148,73 +151,77 @@ SiPadDigitizerAlgorithm::SiPadDigitizerAlgorithm(const edm::ParameterSet& conf)
       // Threshold in units of noise:
       // thePixelThreshold(conf.getParameter<double>("ThresholdInNoiseUnits")),
       // Pixel threshold in electron units.
-      theThresholdInE_Endcap(conf_specific.getParameter<double>("ThresholdInElectrons_Endcap")),
-      theThresholdInE_Barrel(conf_specific.getParameter<double>("ThresholdInElectrons_Barrel")),
+      //theThresholdInE_Endcap(conf_specific.getParameter<double>("ThresholdInElectrons_Endcap")),
+      //theThresholdInE_Barrel(conf_specific.getParameter<double>("ThresholdInElectrons_Barrel")),
 
       // Add threshold gaussian smearing:
-      theThresholdSmearing_Endcap(conf_specific.getParameter<double>("ThresholdSmearing_Endcap")),
-      theThresholdSmearing_Barrel(conf_specific.getParameter<double>("ThresholdSmearing_Barrel")),
+      //theThresholdSmearing_Endcap(conf_specific.getParameter<double>("ThresholdSmearing_Endcap")),
+      //theThresholdSmearing_Barrel(conf_specific.getParameter<double>("ThresholdSmearing_Barrel")),
 
       // Add HIP Threshold in electron units.
-      theHIPThresholdInE_Endcap(conf_specific.getParameter<double>("HIPThresholdInElectrons_Endcap")),
-      theHIPThresholdInE_Barrel(conf_specific.getParameter<double>("HIPThresholdInElectrons_Barrel")),
+      //theHIPThresholdInE_Endcap(conf_specific.getParameter<double>("HIPThresholdInElectrons_Endcap")),
+      //theHIPThresholdInE_Barrel(conf_specific.getParameter<double>("HIPThresholdInElectrons_Barrel")),
 
-		hitSelectionMode_(conf_specific.getParameter<int>("hitSelectionMode")),
+	  hitSelectionMode_(conf_specific.getParameter<int>("HitSelectionMode")),
       // theTofCut 12.5, cut in particle TOD +/- 12.5ns
       theTofLowerCut(conf_specific.getParameter<double>("TofLowerCut")),
       theTofUpperCut(conf_specific.getParameter<double>("TofUpperCut")),
 
       // Get the Lorentz angle from the cfg file:
-      tanLorentzAnglePerTesla_Endcap(
-          use_LorentzAngle_DB_ ? 0.0 : conf_specific.getParameter<double>("TanLorentzAnglePerTesla_Endcap")),
-      tanLorentzAnglePerTesla_Barrel(
-          use_LorentzAngle_DB_ ? 0.0 : conf_specific.getParameter<double>("TanLorentzAnglePerTesla_Barrel")),
+      tanLorentzAnglePerTesla_(
+          use_LorentzAngle_DB_ ? 0.0 : conf_specific.getParameter<double>("TanLorentzAnglePerTesla_Fbcm")),
+      //tanLorentzAnglePerTesla_Barrel(
+        //  use_LorentzAngle_DB_ ? 0.0 : conf_specific.getParameter<double>("TanLorentzAnglePerTesla_Barrel")),
 
       // Add noise
       addNoise(conf_specific.getParameter<bool>("AddNoise")),
 
       // Add noisy pixels
-      addNoisyPixels(conf_specific.getParameter<bool>("AddNoisyPixels")),
+      //addNoisyPixels(conf_specific.getParameter<bool>("AddNoisyPixels")),
 
       // Fluctuate charge in track subsegments
       fluctuateCharge(conf_specific.getUntrackedParameter<bool>("FluctuateCharge", true)),
+	  //fluctuateCharge(conf_specific.getParameter<bool>(FluctuateCharge)),
 
       // Control the pixel inefficiency
-      AddPixelInefficiency(conf_specific.getParameter<bool>("AddInefficiency")),
+      //AddPixelInefficiency(conf_specific.getParameter<bool>("AddInefficiency")),
 
       // Add threshold gaussian smearing:
-      addThresholdSmearing(conf_specific.getParameter<bool>("AddThresholdSmearing")),
+      //addThresholdSmearing(conf_specific.getParameter<bool>("AddThresholdSmearing")),
 
       // Add some pseudo-red damage
-      pseudoRadDamage(conf_specific.exists("PseudoRadDamage") ? conf_specific.getParameter<double>("PseudoRadDamage")
-                                                              : double(0.0)),
-      pseudoRadDamageRadius(conf_specific.exists("PseudoRadDamageRadius")
-                                ? conf_specific.getParameter<double>("PseudoRadDamageRadius")
-                                : double(0.0)),
+	  pseudoRadDamage(conf_specific.getUntrackedParameter<double>("PseudoRadDamage", 0.0)),
+	  pseudoRadDamageRadius(conf_specific.getUntrackedParameter<double>("PseudoRadDamageRadius", 0.0)),
+      //pseudoRadDamage(conf_specific.exists("PseudoRadDamage") ? conf_specific.getParameter<double>("PseudoRadDamage") : double(0.0)),
+      //pseudoRadDamageRadius(conf_specific.exists("PseudoRadDamageRadius") ? conf_specific.getParameter<double>("PseudoRadDamageRadius") : double(0.0)),
+	  
 
      
-      badPixels(conf_specific.getParameter<std::vector<edm::ParameterSet> >("CellsToKill")),
-      fluctuate(fluctuateCharge ? new SiG4UniversalFluctuation() : nullptr),
-      theNoiser(addNoise ? new GaussianTailNoiseGenerator() : nullptr),
-      theSiPixelGainCalibrationService_(use_ineff_from_db_ ? new SiPixelGainCalibrationOfflineSimService(conf_specific)
-                                                           : nullptr),
-      subdetEfficiencies_(conf_specific)
+      //badPixels(conf_specific.getParameter<std::vector<edm::ParameterSet> >("CellsToKill")),
+      fluctuate(fluctuateCharge ? new SiG4UniversalFluctuation() : nullptr) //,
+      //theNoiser(addNoise ? new GaussianTailNoiseGenerator() : nullptr),
+      //theSiPixelGainCalibrationService_(use_ineff_from_db_ ? new SiPixelGainCalibrationOfflineSimService(conf_specific)
+        //                                                   : nullptr) //,
+      //subdetEfficiencies_(conf_specific)
 	  {
-	
-		pixelFlag = false;
+
+//std::cout << "IsfluctuateCharge: " << fluctuateCharge << ", pseudoRadDamage:" << pseudoRadDamage << ", pseudoRadDamageRadius:" << pseudoRadDamageRadius << "\n";
+/*	
+		//pixelFlag = true;
   LogInfo("SiPadDigitizerAlgorithm")
       << "SiPadDigitizerAlgorithm constructed\n"
       << "Configuration parameters:\n"
       << "Threshold/Gain = "
       << "threshold in electron Endcap = " << theThresholdInE_Endcap
-      << "\nthreshold in electron Barrel = " << theThresholdInE_Barrel << " ElectronPerADC " << theElectronPerADC
-      << " ADC Scale (in bits) " << theAdcFullScale << " The delta cut-off is set to " << tMax << " pix-inefficiency "
-      << AddPixelInefficiency;
+      << "\nthreshold in electron Barrel = " << theThresholdInE_Barrel // << " ElectronPerADC " << theElectronPerADC
+      << " ADC Scale (in bits) " << theAdcFullScale << " The delta cut-off is set to " << tMax ; //<< " pix-inefficiency "
+      //<< AddPixelInefficiency;
+	  */
 }
 
 void SiPadDigitizerAlgorithm::init(const edm::EventSetup& es) 
    { 
-   es.get<TrackerDigiGeometryRecord>().get(geom_); 
+   //es.get<TrackerDigiGeometryRecord>().get(geom_); 
    }
 
 
@@ -229,8 +236,6 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
                                               const FbcmSiPadGeom* SiPadGeom,
                                               const GlobalVector& bfield) 
 {
-	
-	//std::cout << "Hello from accumulateSimHits in digitizer algorithem \n";
 	
   // produce SignalPoint's for all SimHit's in detector
   // Loop over hits
@@ -272,9 +277,9 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
 	//double tCorr=SiPadGeom->surface().toGlobal((*it).localPosition()).mag() * c_inv;
 	//float Sampling_time=(-1) * ((*it).eventId().bunchCrossing() + 1) * 25.0;
 		
-	float toa1=it->tof() - tCorr;
-	float toa=toa1;
-	toa -= (*it).eventId().bunchCrossing() * 25.0;
+	//float toa1=it->tof() - tCorr;
+	//float toa=toa1;
+	//toa -= (*it).eventId().bunchCrossing() * 25.0;
 	//std::cout << "ToF:" << (*it).tof() << ", bunchCrossing:" << (*it).eventId().bunchCrossing() << ", toa1:"<< toa1 << ", toaR:" << toa  << ", TOF:" << ((*it).tof() -(*it).eventId().bunchCrossing() * 25.0) << ", Sampling_time:" << Sampling_time << ", Xcal:" << Sampling_time-toa << "evId: " << (*it).eventId().rawId() <<std::endl;		
 	//std::cout <<"ToF: " << it->tof() << ", tCorr: "<< tCorr << ", ToA: "<< toa <<"\n";
 	
@@ -295,11 +300,13 @@ void SiPadDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
     }
   }
 }
-
+/*
 SiPadDigitizerAlgorithm::SubdetEfficiencies::SubdetEfficiencies(const edm::ParameterSet& conf) {
   barrel_efficiencies = conf.getParameter<std::vector<double> >("EfficiencyFactors_Barrel");
   endcap_efficiencies = conf.getParameter<std::vector<double> >("EfficiencyFactors_Endcap");
 }
+*/
+
 // =================================================================
 //
 // Generate primary ionization along the track segment.
@@ -723,9 +730,12 @@ void SiPadDigitizerAlgorithm::induce_signal(
   float corr_time = hit.tof() - SiPadGeom->surface().toGlobal(hit.localPosition()).mag() * c_inv;
   for (auto const& hit_s : hit_signal) {
     int chan = hit_s.first;
-    theSignal[chan] +=
-        (makeDigiSimLinks_ ? CommonDigiUtility::Amplitude(hit_s.second, &hit, hit_s.second, corr_time, hitIndex, tofBin)
-                           : CommonDigiUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
+    //theSignal[chan] +=
+        //(makeDigiSimLinks_ ? CommonDigiUtility::Amplitude(hit_s.second, &hit, hit_s.second, corr_time, hitIndex, tofBin)
+          //                 : CommonDigiUtility::Amplitude(hit_s.second, nullptr, hit_s.second));
+						   
+	theSignal[chan] += CommonDigiUtility::Amplitude(hit_s.second, &hit, hit_s.second, corr_time, hitIndex, tofBin); 
+	
 						   
 	//std::cout << "Chan= " <<chan << ", Ampl= " << hit_s.second  << "\n";
   }
@@ -746,6 +756,8 @@ void SiPadDigitizerAlgorithm::add_noise(const FbcmSiPadGeom* SiPadGeom) {
       s.second += noise;
   }
 }
+
+/*
 // ======================================================================
 //
 //  Add  Cross-talk contribution
@@ -762,10 +774,10 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
     float signalInElectrons = s.second.ampl();  // signal in electrons
 
     std::pair<int, int> hitChan;
-    if (pixelFlag)
+    //if (pixelFlag)
       hitChan = SiPadDigi::channelToPixel(s.first);
-    else
-      hitChan = Phase2TrackerDigi::channelToPixel(s.first);
+    //else
+      //hitChan = Phase2TrackerDigi::channelToPixel(s.first);
 
     float signalInElectrons_Xtalk = signalInElectrons * interstripCoupling;
     //subtract the charge which will be shared
@@ -773,15 +785,17 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
 
     if (hitChan.first != 0) {
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
-      int chanXtalkPrev = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
-                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
-      signalNew.emplace(chanXtalkPrev, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      //int chanXtalkPrev = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
+        //                              : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
+      int chanXtalkPrev = SiPadDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second); 
+	  signalNew.emplace(chanXtalkPrev, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
     if (hitChan.first < (numRows - 1)) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
-      int chanXtalkNext = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
-                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-      signalNew.emplace(chanXtalkNext, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      //int chanXtalkNext = (pixelFlag) ? SiPadDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
+        //                              : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
+      int chanXtalkNext = SiPadDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
+	  signalNew.emplace(chanXtalkNext, CommonDigiUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
     }
   }
   for (auto const& l : signalNew) {
@@ -795,6 +809,9 @@ void SiPadDigitizerAlgorithm::add_cross_talk(const FbcmSiPadGeom* SiPadGeom) {
   }
 }
 
+*/
+
+/*
 // ======================================================================
 //
 //  Add noise on non-hit cells
@@ -832,7 +849,8 @@ void SiPadDigitizerAlgorithm::add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, fl
       LogWarning("SiPadDigitizerAlgorithm") << " error in ix " << ix;
 
     int chan;
-    chan = (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);
+    //chan = (pixelFlag) ? SiPadDigi::pixelToChannel(ix, iy) : Phase2TrackerDigi::pixelToChannel(ix, iy);
+	chan = SiPadDigi::pixelToChannel(ix, iy) ;
 
     LogDebug("SiPadDigitizerAlgorithm")
         << " Storing noise = " << (*mapI).first << " " << (*mapI).second << " " << ix << " " << iy << " " << chan;
@@ -843,6 +861,10 @@ void SiPadDigitizerAlgorithm::add_noisy_cells(const FbcmSiPadGeom* SiPadGeom, fl
     }
   }
 }
+
+*/
+
+/*
 // ============================================================================
 //
 // Simulate the readout inefficiencies.
@@ -882,17 +904,24 @@ void SiPadDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencies& eff,
     }
   }
 }
+
+*/
 void SiPadDigitizerAlgorithm::initializeEvent(CLHEP::HepRandomEngine& eng) {
-  if (addNoise || AddPixelInefficiency || fluctuateCharge || addThresholdSmearing) {
+  //if (addNoise || AddPixelInefficiency || fluctuateCharge || addThresholdSmearing) 
+  if (addNoise || fluctuateCharge) 
+  {
     gaussDistribution_ = std::make_unique<CLHEP::RandGaussQ>(eng, 0., theReadoutNoise);
   }
   // Threshold smearing with gaussian distribution:
+  /*
   if (addThresholdSmearing) {
-    smearedThreshold_Endcap_ =
+      smearedThreshold_Endcap_ =
         std::make_unique<CLHEP::RandGaussQ>(eng, theThresholdInE_Endcap, theThresholdSmearing_Endcap);
     smearedThreshold_Barrel_ =
         std::make_unique<CLHEP::RandGaussQ>(eng, theThresholdInE_Barrel, theThresholdSmearing_Barrel);
   }
+  */
+  
   rengine_ = (&eng);
   _signal.clear();
 }
@@ -905,14 +934,15 @@ void SiPadDigitizerAlgorithm::initializeEvent(CLHEP::HepRandomEngine& eng) {
 // Configurations for barrel and foward pixels possess different tanLorentzAngleperTesla
 // parameter value
 
+
 LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGeom,
                                                             const GlobalVector& bfield,
                                                             const DetId& detId) const {
   Frame detFrame(SiPadGeom->surface().position(), SiPadGeom->surface().rotation());
   LocalVector Bfield = detFrame.toLocal(bfield);
   float alpha2_Endcap;
-  float alpha2_Barrel;
-  float alpha2;
+  //float alpha2_Barrel;
+  //float alpha2;
 
   float dir_x = 0.0;
   float dir_y = 0.0;
@@ -925,13 +955,14 @@ LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGe
   // Read Lorentz angle from cfg file:
   if (!use_LorentzAngle_DB_) {
     if (alpha2Order) {
-      alpha2_Endcap = tanLorentzAnglePerTesla_Endcap * tanLorentzAnglePerTesla_Endcap;
-      alpha2_Barrel = tanLorentzAnglePerTesla_Barrel * tanLorentzAnglePerTesla_Barrel;
+      alpha2_Endcap = tanLorentzAnglePerTesla_ * tanLorentzAnglePerTesla_;
+	  //alpha2_Barrel = tanLorentzAnglePerTesla_Barrel * tanLorentzAnglePerTesla_Barrel;
     } else {
       alpha2_Endcap = 0.0;
-      alpha2_Barrel = 0.0;
+      //alpha2_Barrel = 0.0;
     }
 
+/*
     if (Sub_detid == PixelSubdetector::PixelBarrel || Sub_detid == StripSubdetector::TOB) {  // barrel layers
       dir_x = -(tanLorentzAnglePerTesla_Barrel * Bfield.y() + alpha2_Barrel * Bfield.z() * Bfield.x());
       dir_y = +(tanLorentzAnglePerTesla_Barrel * Bfield.x() - alpha2_Barrel * Bfield.z() * Bfield.y());
@@ -939,13 +970,23 @@ LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGe
       scale = (1 + alpha2_Barrel * Bfield.z() * Bfield.z());
 
     } else {  // forward disks
-      dir_x = -(tanLorentzAnglePerTesla_Endcap * Bfield.y() + alpha2_Endcap * Bfield.z() * Bfield.x());
-      dir_y = +(tanLorentzAnglePerTesla_Endcap * Bfield.x() - alpha2_Endcap * Bfield.z() * Bfield.y());
+      dir_x = -(tanLorentzAnglePerTesla_ * Bfield.y() + alpha2_Endcap * Bfield.z() * Bfield.x());
+      dir_y = +(tanLorentzAnglePerTesla_ * Bfield.x() - alpha2_Endcap * Bfield.z() * Bfield.y());
       dir_z = -(1 + alpha2_Endcap * Bfield.z() * Bfield.z());
       scale = (1 + alpha2_Endcap * Bfield.z() * Bfield.z());
     }
+	*/
+	if (Sub_detid == FbcmSubdetId::FbcmModule) { // similar to Forward disks in the Tracker-Endcap.
+		  dir_x = -(tanLorentzAnglePerTesla_ * Bfield.y() + alpha2_Endcap * Bfield.z() * Bfield.x());
+      dir_y = +(tanLorentzAnglePerTesla_ * Bfield.x() - alpha2_Endcap * Bfield.z() * Bfield.y());
+      dir_z = -(1 + alpha2_Endcap * Bfield.z() * Bfield.z());
+      scale = (1 + alpha2_Endcap * Bfield.z() * Bfield.z());
+	}
+	else {std::cout << "Wrong SunbetID \n" ;}
+	
   }
 
+/*
   // Read Lorentz angle from DB:
   if (use_LorentzAngle_DB_) {
     float lorentzAngle = SiPixelLorentzAngle_->getLorentzAngle(detId);
@@ -956,7 +997,7 @@ LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGe
     dir_z = -(1 + alpha2 * Bfield.z() * Bfield.z());
     scale = (1 + alpha2 * Bfield.z() * Bfield.z());
   }
-
+*/
   LocalVector theDriftDirection = LocalVector(dir_x / scale, dir_y / scale, dir_z / scale);
 
   LogDebug("SiPadDigitizerAlgorithm") << " The drift direction in local coordinate is " << theDriftDirection;
@@ -964,17 +1005,17 @@ LocalVector SiPadDigitizerAlgorithm::DriftDirection(const FbcmSiPadGeom* SiPadGe
 }
 
 // =============================================================================
-
+/*
 void SiPadDigitizerAlgorithm::pixel_inefficiency_db(uint32_t detID) {
   signal_map_type& theSignal = _signal[detID];  // check validity
 
   // Loop over hit pixels, amplitude in electrons, channel = coded row,col
   for (auto& s : theSignal) {
     std::pair<int, int> ip;
-    if (pixelFlag)
+    //if (pixelFlag)
       ip = SiPadDigi::channelToPixel(s.first);  //get pixel pos
-    else
-      ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
+    //else
+	//ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
     int row = ip.first;                                 // X in row
     int col = ip.second;                                // Y is in col
     //transform to ROC index coordinates
@@ -983,9 +1024,9 @@ void SiPadDigitizerAlgorithm::pixel_inefficiency_db(uint32_t detID) {
     }
   }
 }
-
+*/
 // ==========================================================================
-
+/*
 void SiPadDigitizerAlgorithm::module_killing_conf(uint32_t detID) {
   bool isbad = false;
   int detid = detID;
@@ -1006,10 +1047,10 @@ void SiPadDigitizerAlgorithm::module_killing_conf(uint32_t detID) {
 
   for (auto& s : theSignal) {
     std::pair<int, int> ip;
-    if (pixelFlag)
+    //if (pixelFlag)
       ip = SiPadDigi::channelToPixel(s.first);
-    else
-      ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
+    //else
+      //ip = Phase2TrackerDigi::channelToPixel(s.first);  //get pixel pos
 
     if (Module == "whole")
       s.second.set(0.);  // reset amplitude
@@ -1019,7 +1060,10 @@ void SiPadDigitizerAlgorithm::module_killing_conf(uint32_t detID) {
       s.second.set(0.);
   }
 }
+*/
+
 // ==========================================================================
+/*
 void SiPadDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
   bool isbad = false;
 
@@ -1064,10 +1108,10 @@ void SiPadDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
 
     for (auto& s : theSignal) {
       std::pair<int, int> ip;
-      if (pixelFlag)
+      //if (pixelFlag)
         ip = SiPadDigi::channelToPixel(s.first);
-      else
-        ip = Phase2TrackerDigi::channelToPixel(s.first);
+      //else
+//        ip = Phase2TrackerDigi::channelToPixel(s.first);
 
       for (auto const& p : badrocpositions) {
         for (auto& k : badPixels) {
@@ -1080,6 +1124,7 @@ void SiPadDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
     }
   }
 }
+*/
 
 // For premixing
 void SiPadDigitizerAlgorithm::loadAccumulator(unsigned int detId, const std::map<int, float>& accumulator) {
@@ -1103,6 +1148,9 @@ FbcmDetId SiPadDetId(detID);
   if (it == _signal.end())
     return;
 
+   if (addNoise)
+    add_noise(SiPadGeom);  // generate noise
+
   const signal_map_type& theSignal = _signal[detID];
 	HitAnalysisInfo HitTotToaInfo;
 	//std::vector<std::pair<float, CommonDigiUtility::PSimHitInfo*> > BXC_CahrgePSim_Vect;
@@ -1122,14 +1170,14 @@ FbcmDetId SiPadDetId(detID);
 	  BXC_CahrgePSim_Vect.clear();
 	  Tof_Q_pairVect.clear();
 	  
-      if (makeDigiSimLinks_) {
+      //if (makeDigiSimLinks_) {
         for (auto const& l : sig_data.simInfoList()) {
 			//BXC_CahrgePSim_Vect.push_back({l.first,l.second.get()}); // first: charge, second: PSimHit
 			BXC_CahrgePSim_Vect.push_back({l.first,*(l.second)}); // first: charge, second: PSimHit
 			Tof_Q_pairVect.emplace_back(std::make_pair( l.second->time() , l.first ));
 			//Tof_Q_pairVect.push_back({ l.second->time() , l.first });
         }
-	  }
+	  //}
 	  	  
 	  //	  std::cout << "rawId :" << detID << ", "
 	  //		<< "size :" << BXC_CahrgePSim_Vect.size() << "\n" ;
@@ -1138,48 +1186,6 @@ FbcmDetId SiPadDetId(detID);
 		float RRadius = SiPadGeom->surface().position().perp();
 		float PhiDegrees = SiPadGeom->surface().position().phi().degrees();
 		
-		
-//		std::cout << BXC_CahrgePSim_Vect ;
-		
-		//std::cout << "------Cont----------- " << "ToFQ_size:" << Tof_Q_pairVect.size() << " --------------------\n" ;
-		
-	   // if ( BXC_CahrgePSim_Vect.size() > 1 )
-		  // for (unsigned int w=0 ; w < BXC_CahrgePSim_Vect.size() ; w++)
-			// std::cout << "rawId :" << detID << ", "
-				// << "ampl :" << sig_data.ampl() << ", "
-				// << "charge :" << BXC_CahrgePSim_Vect[w].first << ", "
-				// << "Time :" << BXC_CahrgePSim_Vect[w].second.time() << ", "
-				// << "ToF :" << BXC_CahrgePSim_Vect[w].second.Tof() << ", "
-				// << "PgID :" << BXC_CahrgePSim_Vect[w].second.ParticleType() << ", "
-				// << "BXC :" << BXC_CahrgePSim_Vect[w].second.BunchCrossing() << ", "
-				// << "SiPadArea :" << SiPadArea << ", "
-				// << "Radius :" << RRadius << ", "
-				// << "PhiDegrees :" << PhiDegrees << ", "
-				// << "\n" ; 
-				
-		
-/* 		 if ( Tof_Q_pairVect.size() >= 2) 
-		   for (unsigned int w=0 ; w < Tof_Q_pairVect.size() ; w++)
-			 std::cout << "rawId :" << detID << ", "
-				<< "ToFQ_size :" << Tof_Q_pairVect.size() << ", "
-				// << "charge1 :" << BXC_CahrgePSim_Vect[w].first << ", "
-				// << "Time1 :" << BXC_CahrgePSim_Vect[w].second->time() << ", "
-				 << "charge2 :" << Tof_Q_pairVect[w].second << ", "
-				 << "Time2 :" << Tof_Q_pairVect[w].first << ", "
-				// << "ToF :" << BXC_CahrgePSim_Vect[w].second->Tof() << ", "
-				// << "BXC :" << BXC_CahrgePSim_Vect[w].second->BunchCrossing() << ", "
-				 << "SiPadArea :" << SiPadArea << ", "
-				 << "\n" ; 
-				 */
-				
-				
-			 // for (unsigned int w=0 ; w < Tof_Q_pairVect.size() ; w++) {
-				// std::cout << "rawId: " << detID << ", "
-					// << "SiPadArea: " << SiPadArea << ", "
-					// << "Time: " << Tof_Q_pairVect[w].first << ", "
-					// << "charge: " << Tof_Q_pairVect[w].second << "\n" ;
-		 		
-			 // }
 				
 				HitPulse.GetPulseSeriesShape(FftPrep, Tof_Q_pairVect); // vector for charge amplitude
 				Area_FeParamPtr = FeParamSelector.SelectFrontEndConfig(SiPadArea);
@@ -1218,7 +1224,7 @@ FbcmDetId SiPadDetId(detID);
 }
 
 }
-
+/*
 void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
                                                std::map<int, CommonDigiUtility::DigiSimInfo>& digi_map,
                                                const TrackerTopology* tTopo) {
@@ -1248,8 +1254,7 @@ void SiPadDigitizerAlgorithm::digitize(const FbcmSiPadGeom* SiPadGeom,
     theHIPThresholdInE = theHIPThresholdInE_Endcap;
   }
 
-  //  if (addNoise) add_noise(SiPadGeom, theThresholdInE/theNoiseInElectrons);  // generate noise
-  if (addNoise)
+   if (addNoise)
     add_noise(SiPadGeom);  // generate noise
   if (addXtalk)
     add_cross_talk(SiPadGeom);
@@ -1323,7 +1328,7 @@ int SiPadDigitizerAlgorithm::convertSignalToAdc(uint32_t detID, float signal_in_
   return signal_in_adc;
 }
 
-
+*/
 bool SiPadDigitizerAlgorithm::FilterHit(const PSimHit& hit, double tCorr)
 {
 	double toa = hit.tof() - tCorr;
