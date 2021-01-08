@@ -13,10 +13,8 @@
 
 #include "SimGeneral/MixingModule/interface/DigiAccumulatorMixMod.h"
 #include "SimGeneral/MixingModule/interface/PileUpEventPrincipal.h"
-
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/ProducesCollector.h"
-//#include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/Framework/interface/ESWatcher.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
 #include "FWCore/Framework/interface/ConsumesCollector.h"
@@ -30,24 +28,15 @@
 #include "FWCore/Utilities/interface/StreamID.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-
-
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "MagneticField/Records/interface/IdealMagneticFieldRecord.h"
-
-
-
-
-
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Common/interface/DetSet.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
 #include "DataFormats/Provenance/interface/EventID.h"
 #include "DataFormats/GeometryVector/interface/LocalPoint.h"
 #include "DataFormats/GeometryVector/interface/LocalVector.h"
-
 #include "SimDataFormats/TrackingHit/interface/PSimHit.h"
-
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
 #include "Geometry/Records/interface/FbcmGeometryRecord.h"
 #include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
@@ -56,41 +45,8 @@
 #include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
 
 #include "SiPadDigitizerAlgorithm.h"
-
 //#include "DataFormats/Math/interface/angle_units.h"
 //using angle_units::operators::convertRadToDeg;
-
-
-///-----
-
-/*
-namespace CLHEP {
-  class HepRandomEngine;
-}
-*/
-
-/*
-namespace edm {
-  class ConsumesCollector;
-  class Event;
-  class EventSetup;
-  class ParameterSet;
-  template <typename T>
-  class Handle;
-  class StreamID;
-}  // namespace edm
-
-class MagneticField;
-class PileUpEventPrincipal;
-class PSimHit;
-*/
-//class SiPadDigitizerAlgorithm;
-//class FbcmGeometryRecord;
-
-//class FbcmSiPadGeom;
-//class FbcmGeometry;
-//class FbcmSiPadTopology;
-
 
 
 namespace cms {
@@ -109,7 +65,7 @@ namespace cms {
 	void beginLuminosityBlock(edm::LuminosityBlock const& lumi, edm::EventSetup const& iSetup) override;
     virtual void beginJob() {}
 
-/*
+
     void StorePileupInformation(std::vector<int>& numInteractionList,
                                 std::vector<int>& bunchCrossingList,
                                 std::vector<float>& TrueInteractionList,
@@ -119,7 +75,7 @@ namespace cms {
 																 TrueInteractionList, eventInfoList, bunchSpacing);
     }
 		PileupMixingContent* getEventPileupInfo() override { return PileupInfo_.get(); }
-*/
+
   private:
     void accumulateSiPadHits(edm::Handle<std::vector<PSimHit> >, size_t globalSimHitIndex);
 	

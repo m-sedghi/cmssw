@@ -9,8 +9,6 @@
 
 #include "SiPadDigitizer.h"
 
-
-
 namespace cms {
   SiPadDigitizer::SiPadDigitizer(const edm::ParameterSet& iConfig,
                                        edm::ProducesCollector producesCollector,
@@ -64,17 +62,12 @@ namespace cms {
 		  const FbcmSiPadGeom* SiPadDetptr = SiPadUnit;
           assert(SiPadDetptr);
           SiPadsIdGeomMap.insert(std::make_pair(DetID_Fbcm.rawId(), SiPadDetptr));
-        
       }
-	  
     }
-	
   }
 
-
-  
-  void SiPadDigitizer::accumulateSiPadHits(edm::Handle<std::vector<PSimHit> > hSimHits,
-                                                   size_t globalSimHitIndex)
+void SiPadDigitizer::accumulateSiPadHits(edm::Handle<std::vector<PSimHit> > hSimHits,
+                                         size_t globalSimHitIndex)
   {
 	 //std::cout << "SiPadDigitizer-accumulateSiPadHits " << "\n"; // call 4
      if (hSimHits.isValid()) {
