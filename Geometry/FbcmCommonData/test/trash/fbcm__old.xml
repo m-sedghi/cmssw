@@ -6,9 +6,9 @@
     <Constant name="FBCM_Z2" value="2900.*mm"/>
     <Constant name="FBCM_Z"              value="([FBCM_Z2]+[FBCM_Z1])/2."><!-- z position of the center of FBCM volume wrt to CMS --></Constant>
     <Constant name="FBCM_Thickness"      value="([FBCM_Z2]-[FBCM_Z1])"></Constant>
-    <Constant name="FBCM_InnerRadius"    value="28.0*mm"><!--Should be similar to minimum --></Constant>
-    <Constant name="FBCM_OuterRadius"    value="307.0*mm"><!--Should be similar to [pixfwd:RootRadius2] --></Constant>
-    <Constant name="NumOfStations" value="8"></Constant>
+    <Constant name="FBCM_InnerRadius"    value="62.38*mm"><!--should be similar to pixel:Disc12--></Constant>
+    <Constant name="FBCM_OuterRadius"    value="255.101*mm"><!--should be similar to pixel:Disc12--></Constant>
+    <Constant name="NumOfStations" value="4"></Constant>
     <Constant name="NumOfPadRows" value="4"></Constant>
     <Constant name="NumOfPadCols" value="2"></Constant>
     <Constant name="ReductionFactor" value="1"><!--This factor determines the effective sensitive area (metallized), typically=0.975; One can assume =1 for initial estimation--></Constant>
@@ -33,9 +33,8 @@
  <!-- Create geometrical shapes -->
  <SolidSection label="fbcm">
     <Tubs name="FBCM"  rMin="[FBCM_InnerRadius]" rMax="[FBCM_OuterRadius]" dz="[FBCM_Thickness]/2" startPhi="0*deg" deltaPhi="360*deg"></Tubs>
-    <Box  name="FBCM_Station"  dx="1.5*[SiliconDie_LX]/2." dy="1.5*[SiliconDie_LY]/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie"  dx="[SiliconDie_LX]/2." dy="[SiliconDie_LY]/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box name="FBCM_SensorRow" dx="[SensorPadRow_LX]/2." dy="[SensorPadRow_LY]/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie"  dx="[SiliconDie_LX]/2." dy="[SiliconDie_LY]/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SensorPad"   dx="[SensorPad_Eff_LX]/2."  dy="[SensorPad_Eff_LY]/2."  dz="[SensorPad_LZ]/2."></Box>
  </SolidSection>
  
@@ -46,18 +45,15 @@
        <rSolid name="FBCM"/>
        <rMaterial name="materials:Air"></rMaterial>
    </LogicalPart>
-   <LogicalPart name="FBCM_Station" category="unspecified">
-       <rSolid name="FBCM_Station"/>
-       <rMaterial name="materials:Air"/>
-   </LogicalPart>
-   <LogicalPart name="FBCM_SiliconDie" category="unspecified">
+    <LogicalPart name="FBCM_SensorRow" category="unspecified">
+    	<rSolid name="FBCM_SensorRow"></rSolid>
+    	<rMaterial name="materials:Silicon"></rMaterial></LogicalPart>
+
+    <LogicalPart name="FBCM_SiliconDie" category="unspecified">
        <rSolid name="FBCM_SiliconDie"/>
        <rMaterial name="materials:Silicon"/>
    </LogicalPart>
-   <LogicalPart name="FBCM_SensorRow" category="unspecified">
-    	<rSolid name="FBCM_SensorRow"></rSolid>
-    	<rMaterial name="materials:Silicon"></rMaterial>
-    </LogicalPart>
+   
    <LogicalPart name="FBCM_SensorPad" category="unspecified">
        <rSolid name="FBCM_SensorPad"></rSolid>
        <rMaterial name="materials:Silicon"></rMaterial>
@@ -94,28 +90,20 @@
             <Vector name="Base" type="numeric" nEntries="3">0.*mm,-[SiliconDie_LY]/2.+[SensorPad_ShiftY]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
-        </Algorithm>
-	<PosPart copyNumber="0">
-       <rParent name="FBCM_Station"/>
-       <rChild name="FBCM_SiliconDie"></rChild>
-       <rRotation name="rotations:000D"></rRotation>
-       <Translation x="0*fm" y="0*fm" z="0*fm"/>
-    </PosPart>  
+        </Algorithm>  
     <Algorithm name="global:DDAngular">
        <rParent name="FBCM"/>
-       <String name="ChildName" value="FBCM_Station"></String>
-       <Numeric name="StartCopyNo" value="0"/>
+       <String name="ChildName" value="FBCM_SiliconDie"></String>
+       <Numeric name="StartCopyNo" value="1"/>
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="[NumOfStations]"/>
        <Numeric name="Radius" value="[SiliconDie_Rho]"/>
        <Numeric name="StartAngle" value="45.*deg"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
-       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg,
-       0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg, 0.*deg
-       </Vector>
+       <Vector name="RotateSolid" type="numeric" nEntries="[NumOfStations]*3">0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg,
+       0.*deg, 0.*deg, 0.*deg, 0.*deg</Vector>
     </Algorithm>
     
   

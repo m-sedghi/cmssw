@@ -1,0 +1,13 @@
+  <use   name="SimG4CMS/Fbcm"/>
+  <use   name="FWCore/ParameterSet"/>
+  <use   name="SimG4Core/SensitiveDetector"/>
+  <use   name="SimG4CMS/Forward"/>
+  <use   name="SimG4CMS/Tracker"/>
+  <use   name="SimG4Core/Notification"/>
+  <use   name="SimG4Core/Physics"/>
+  <use   name="geant4core"/>
+  <use   name="SimDataFormats/SimHitMaker"/>
+  <use   name="SimG4Core/Application"/>
+<library   file="*.cc" name="SimG4CMSFbcmPlugins">
+  <flags   EDM_PLUGIN="1"/>
+</library>

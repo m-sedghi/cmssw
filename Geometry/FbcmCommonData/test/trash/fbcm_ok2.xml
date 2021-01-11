@@ -27,8 +27,12 @@
     <Constant name="SiliconDie_LZ"            value="0.35*mm"></Constant>
     <Constant name="SiliconDie_Z"             value="2835.*mm"><!-- z position of the center of the Silicon wrt CMS --></Constant>
  	<Constant name="SensorPad_Z"             value="[SiliconDie_Z]"></Constant>
+	
+	<Constant name="startPhiStation"    value="135.*deg"></Constant>
 
-	<Constant name="StationStartPhi"             value="0.*deg"></Constant>
+
+
+
 	<Constant name="MinNumOfCols"       value="3"></Constant>
     <Constant name="MaxNumOfCols"       value="17"></Constant>
     <Constant name="NumOfSiDiesPerStationPerRing"   value="8"></Constant>
@@ -77,7 +81,7 @@
     <Constant name="SiDie2_NumOfRowsR0"   value="9"></Constant>
     <Constant name="SiDie3_NumOfRowsR0"   value="8"></Constant>
     <Constant name="SiDie4_NumOfRowsR0"   value="7"></Constant>
-    <Constant name="SiDie5_NumOfRowsR0"   value="5"></Constant>
+    <Constant name="SiDie4_NumOfRowsR0"   value="5"></Constant>
     <Constant name="SiDie6_NumOfRowsR0"   value="4"></Constant>
     <Constant name="SiDie7_NumOfRowsR0"   value="3"></Constant>
     <Constant name="SiDie8_NumOfRowsR0"   value="2"></Constant>
@@ -87,7 +91,7 @@
     <Constant name="SiDie2_NumOfRowsR1"   value="12"></Constant>
     <Constant name="SiDie3_NumOfRowsR1"   value="10"></Constant>
     <Constant name="SiDie4_NumOfRowsR1"   value="9"></Constant>
-    <Constant name="SiDie5_NumOfRowsR1"   value="7"></Constant>
+    <Constant name="SiDie4_NumOfRowsR1"   value="7"></Constant>
     <Constant name="SiDie6_NumOfRowsR1"   value="5"></Constant>
     <Constant name="SiDie7_NumOfRowsR1"   value="4"></Constant>
     <Constant name="SiDie8_NumOfRowsR1"   value="2"></Constant>
@@ -99,7 +103,7 @@
     <Constant name="SiDie2_NumOfRowsR2"   value="15"></Constant>
     <Constant name="SiDie3_NumOfRowsR2"   value="13"></Constant>
     <Constant name="SiDie4_NumOfRowsR2"   value="11"></Constant>
-    <Constant name="SiDie5_NumOfRowsR2"   value="9"></Constant>
+    <Constant name="SiDie4_NumOfRowsR2"   value="9"></Constant>
     <Constant name="SiDie6_NumOfRowsR2"   value="7"></Constant>
     <Constant name="SiDie7_NumOfRowsR2"   value="5"></Constant>
     <Constant name="SiDie8_NumOfRowsR2"   value="3"></Constant>
@@ -110,7 +114,7 @@
     <Constant name="SiDie2_NumOfRowsR3"   value="18"></Constant>
     <Constant name="SiDie3_NumOfRowsR3"   value="16"></Constant>
     <Constant name="SiDie4_NumOfRowsR3"   value="13"></Constant>
-    <Constant name="SiDie5_NumOfRowsR3"   value="11"></Constant>
+    <Constant name="SiDie4_NumOfRowsR3"   value="11"></Constant>
     <Constant name="SiDie6_NumOfRowsR3"   value="8"></Constant>
     <Constant name="SiDie7_NumOfRowsR3"   value="6"></Constant>
     <Constant name="SiDie8_NumOfRowsR3"   value="3"></Constant>
@@ -121,7 +125,7 @@
     <Constant name="SiDie2_NumOfRowsR4"   value="21"></Constant>
     <Constant name="SiDie3_NumOfRowsR4"   value="18"></Constant>
     <Constant name="SiDie4_NumOfRowsR4"   value="15"></Constant>
-    <Constant name="SiDie5_NumOfRowsR4"   value="13"></Constant>
+    <Constant name="SiDie4_NumOfRowsR4"   value="13"></Constant>
     <Constant name="SiDie6_NumOfRowsR4"   value="10"></Constant>
     <Constant name="SiDie7_NumOfRowsR4"   value="7"></Constant>
     <Constant name="SiDie8_NumOfRowsR4"   value="4"></Constant>
@@ -134,7 +138,7 @@
  <!-- Create geometrical shapes -->
  <SolidSection label="fbcm">
     <Tubs name="FBCM"  rMin="[FBCM_InnerRadius]" rMax="[FBCM_OuterRadius]" dz="[FBCM_Thickness]/2" startPhi="0*deg" deltaPhi="360*deg"></Tubs>
-    <Tubs name="FBCM_Station"  rMin="[SiliconDieRing_R2]-3*([SiDie8_NumOfCols]*[SiCellLen8])" rMax="[SiliconDieRing_R2]+3*([SiDie8_NumOfCols]*[SiCellLen8])" dz="[SiliconDie_LZ]/2." startPhi="[StationStartPhi]" deltaPhi="[IncrementRotAngle]*[NumOfSiDiesPerStationPerRing]"></Tubs>
+    <Tubs name="FBCM_Station"  rMin="[SiliconDieRing_R2]-3*([SiDie8_NumOfCols]*[SiCellLen8])" rMax="[SiliconDieRing_R2]+3*([SiDie8_NumOfCols]*[SiCellLen8])" dz="[SiliconDie_LZ]/2." startPhi="[startPhiStation]" deltaPhi="[IncrementRotAngle]*[NumOfSiDiesPerStationPerRing]"></Tubs>
     
     <Box  name="FBCM_SensorPad1"   dx="[SiPadLen1]/2."  dy="[SiPadLen1]/2."  dz="[SensorPad_LZ]/2."></Box>
     <Box  name="FBCM_SensorPad2"   dx="[SiPadLen2]/2."  dy="[SiPadLen2]/2."  dz="[SensorPad_LZ]/2."></Box>
@@ -152,7 +156,7 @@
     <Box name="FBCM_SensorCol02" dx="[SiCellLen2]/2." dy="([SiDie2_NumOfRowsR0]*[SiCellLen2])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol03" dx="[SiCellLen3]/2." dy="([SiDie3_NumOfRowsR0]*[SiCellLen3])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol04" dx="[SiCellLen4]/2." dy="([SiDie4_NumOfRowsR0]*[SiCellLen4])/2." dz="[SensorPad_LZ]/2."></Box>
-    <Box name="FBCM_SensorCol05" dx="[SiCellLen5]/2." dy="([SiDie5_NumOfRowsR0]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box name="FBCM_SensorCol05" dx="[SiCellLen5]/2." dy="([SiDie4_NumOfRowsR0]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol06" dx="[SiCellLen6]/2." dy="([SiDie6_NumOfRowsR0]*[SiCellLen6])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol07" dx="[SiCellLen7]/2." dy="([SiDie7_NumOfRowsR0]*[SiCellLen7])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol08" dx="[SiCellLen8]/2." dy="([SiDie8_NumOfRowsR0]*[SiCellLen8])/2." dz="[SensorPad_LZ]/2."></Box>
@@ -161,7 +165,7 @@
     <Box  name="FBCM_SiliconDie02"  dx="([SiDie2_NumOfCols]*[SiCellLen2])/2." dy="([SiDie2_NumOfRowsR0]*[SiCellLen2])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie03"  dx="([SiDie3_NumOfCols]*[SiCellLen3])/2." dy="([SiDie3_NumOfRowsR0]*[SiCellLen3])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie04"  dx="([SiDie4_NumOfCols]*[SiCellLen4])/2." dy="([SiDie4_NumOfRowsR0]*[SiCellLen4])/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie05"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie5_NumOfRowsR0]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie05"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie4_NumOfRowsR0]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie06"  dx="([SiDie6_NumOfCols]*[SiCellLen6])/2." dy="([SiDie6_NumOfRowsR0]*[SiCellLen6])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie07"  dx="([SiDie7_NumOfCols]*[SiCellLen7])/2." dy="([SiDie7_NumOfRowsR0]*[SiCellLen7])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie08"  dx="([SiDie8_NumOfCols]*[SiCellLen8])/2." dy="([SiDie8_NumOfRowsR0]*[SiCellLen8])/2." dz="[SiliconDie_LZ]/2."></Box>
@@ -172,7 +176,7 @@
     <Box name="FBCM_SensorCol12" dx="[SiCellLen2]/2." dy="([SiDie2_NumOfRowsR1]*[SiCellLen2])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol13" dx="[SiCellLen3]/2." dy="([SiDie3_NumOfRowsR1]*[SiCellLen3])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol14" dx="[SiCellLen4]/2." dy="([SiDie4_NumOfRowsR1]*[SiCellLen4])/2." dz="[SensorPad_LZ]/2."></Box>
-    <Box name="FBCM_SensorCol15" dx="[SiCellLen5]/2." dy="([SiDie5_NumOfRowsR1]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box name="FBCM_SensorCol15" dx="[SiCellLen5]/2." dy="([SiDie4_NumOfRowsR1]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol16" dx="[SiCellLen6]/2." dy="([SiDie6_NumOfRowsR1]*[SiCellLen6])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol17" dx="[SiCellLen7]/2." dy="([SiDie7_NumOfRowsR1]*[SiCellLen7])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol18" dx="[SiCellLen8]/2." dy="([SiDie8_NumOfRowsR1]*[SiCellLen8])/2." dz="[SensorPad_LZ]/2."></Box>
@@ -181,7 +185,7 @@
     <Box  name="FBCM_SiliconDie12"  dx="([SiDie2_NumOfCols]*[SiCellLen2])/2." dy="([SiDie2_NumOfRowsR1]*[SiCellLen2])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie13"  dx="([SiDie3_NumOfCols]*[SiCellLen3])/2." dy="([SiDie3_NumOfRowsR1]*[SiCellLen3])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie14"  dx="([SiDie4_NumOfCols]*[SiCellLen4])/2." dy="([SiDie4_NumOfRowsR1]*[SiCellLen4])/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie15"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie5_NumOfRowsR1]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie15"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie4_NumOfRowsR1]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie16"  dx="([SiDie6_NumOfCols]*[SiCellLen6])/2." dy="([SiDie6_NumOfRowsR1]*[SiCellLen6])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie17"  dx="([SiDie7_NumOfCols]*[SiCellLen7])/2." dy="([SiDie7_NumOfRowsR1]*[SiCellLen7])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie18"  dx="([SiDie8_NumOfCols]*[SiCellLen8])/2." dy="([SiDie8_NumOfRowsR1]*[SiCellLen8])/2." dz="[SiliconDie_LZ]/2."></Box>
@@ -192,7 +196,7 @@
     <Box name="FBCM_SensorCol22" dx="[SiCellLen2]/2." dy="([SiDie2_NumOfRowsR2]*[SiCellLen2])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol23" dx="[SiCellLen3]/2." dy="([SiDie3_NumOfRowsR2]*[SiCellLen3])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol24" dx="[SiCellLen4]/2." dy="([SiDie4_NumOfRowsR2]*[SiCellLen4])/2." dz="[SensorPad_LZ]/2."></Box>
-    <Box name="FBCM_SensorCol25" dx="[SiCellLen5]/2." dy="([SiDie5_NumOfRowsR2]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box name="FBCM_SensorCol25" dx="[SiCellLen5]/2." dy="([SiDie4_NumOfRowsR2]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol26" dx="[SiCellLen6]/2." dy="([SiDie6_NumOfRowsR2]*[SiCellLen6])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol27" dx="[SiCellLen7]/2." dy="([SiDie7_NumOfRowsR2]*[SiCellLen7])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol28" dx="[SiCellLen8]/2." dy="([SiDie8_NumOfRowsR2]*[SiCellLen8])/2." dz="[SensorPad_LZ]/2."></Box>
@@ -201,7 +205,7 @@
     <Box  name="FBCM_SiliconDie22"  dx="([SiDie2_NumOfCols]*[SiCellLen2])/2." dy="([SiDie2_NumOfRowsR2]*[SiCellLen2])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie23"  dx="([SiDie3_NumOfCols]*[SiCellLen3])/2." dy="([SiDie3_NumOfRowsR2]*[SiCellLen3])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie24"  dx="([SiDie4_NumOfCols]*[SiCellLen4])/2." dy="([SiDie4_NumOfRowsR2]*[SiCellLen4])/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie25"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie5_NumOfRowsR2]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie25"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie4_NumOfRowsR2]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie26"  dx="([SiDie6_NumOfCols]*[SiCellLen6])/2." dy="([SiDie6_NumOfRowsR2]*[SiCellLen6])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie27"  dx="([SiDie7_NumOfCols]*[SiCellLen7])/2." dy="([SiDie7_NumOfRowsR2]*[SiCellLen7])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie28"  dx="([SiDie8_NumOfCols]*[SiCellLen8])/2." dy="([SiDie8_NumOfRowsR2]*[SiCellLen8])/2." dz="[SiliconDie_LZ]/2."></Box>
@@ -212,7 +216,7 @@
     <Box name="FBCM_SensorCol32" dx="[SiCellLen2]/2." dy="([SiDie2_NumOfRowsR3]*[SiCellLen2])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol33" dx="[SiCellLen3]/2." dy="([SiDie3_NumOfRowsR3]*[SiCellLen3])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol34" dx="[SiCellLen4]/2." dy="([SiDie4_NumOfRowsR3]*[SiCellLen4])/2." dz="[SensorPad_LZ]/2."></Box>
-    <Box name="FBCM_SensorCol35" dx="[SiCellLen5]/2." dy="([SiDie5_NumOfRowsR3]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box name="FBCM_SensorCol35" dx="[SiCellLen5]/2." dy="([SiDie4_NumOfRowsR3]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol36" dx="[SiCellLen6]/2." dy="([SiDie6_NumOfRowsR3]*[SiCellLen6])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol37" dx="[SiCellLen7]/2." dy="([SiDie7_NumOfRowsR3]*[SiCellLen7])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol38" dx="[SiCellLen8]/2." dy="([SiDie8_NumOfRowsR3]*[SiCellLen8])/2." dz="[SensorPad_LZ]/2."></Box>
@@ -221,7 +225,7 @@
     <Box  name="FBCM_SiliconDie32"  dx="([SiDie2_NumOfCols]*[SiCellLen2])/2." dy="([SiDie2_NumOfRowsR3]*[SiCellLen2])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie33"  dx="([SiDie3_NumOfCols]*[SiCellLen3])/2." dy="([SiDie3_NumOfRowsR3]*[SiCellLen3])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie34"  dx="([SiDie4_NumOfCols]*[SiCellLen4])/2." dy="([SiDie4_NumOfRowsR3]*[SiCellLen4])/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie35"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie5_NumOfRowsR3]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie35"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie4_NumOfRowsR3]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie36"  dx="([SiDie6_NumOfCols]*[SiCellLen6])/2." dy="([SiDie6_NumOfRowsR3]*[SiCellLen6])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie37"  dx="([SiDie7_NumOfCols]*[SiCellLen7])/2." dy="([SiDie7_NumOfRowsR3]*[SiCellLen7])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie38"  dx="([SiDie8_NumOfCols]*[SiCellLen8])/2." dy="([SiDie8_NumOfRowsR3]*[SiCellLen8])/2." dz="[SiliconDie_LZ]/2."></Box>
@@ -232,7 +236,7 @@
     <Box name="FBCM_SensorCol42" dx="[SiCellLen2]/2." dy="([SiDie2_NumOfRowsR4]*[SiCellLen2])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol43" dx="[SiCellLen3]/2." dy="([SiDie3_NumOfRowsR4]*[SiCellLen3])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol44" dx="[SiCellLen4]/2." dy="([SiDie4_NumOfRowsR4]*[SiCellLen4])/2." dz="[SensorPad_LZ]/2."></Box>
-    <Box name="FBCM_SensorCol45" dx="[SiCellLen5]/2." dy="([SiDie5_NumOfRowsR4]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
+    <Box name="FBCM_SensorCol45" dx="[SiCellLen5]/2." dy="([SiDie4_NumOfRowsR4]*[SiCellLen5])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol46" dx="[SiCellLen6]/2." dy="([SiDie6_NumOfRowsR4]*[SiCellLen6])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol47" dx="[SiCellLen7]/2." dy="([SiDie7_NumOfRowsR4]*[SiCellLen7])/2." dz="[SensorPad_LZ]/2."></Box>
     <Box name="FBCM_SensorCol48" dx="[SiCellLen8]/2." dy="([SiDie8_NumOfRowsR4]*[SiCellLen8])/2." dz="[SensorPad_LZ]/2."></Box>
@@ -241,7 +245,7 @@
     <Box  name="FBCM_SiliconDie42"  dx="([SiDie2_NumOfCols]*[SiCellLen2])/2." dy="([SiDie2_NumOfRowsR4]*[SiCellLen2])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie43"  dx="([SiDie3_NumOfCols]*[SiCellLen3])/2." dy="([SiDie3_NumOfRowsR4]*[SiCellLen3])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie44"  dx="([SiDie4_NumOfCols]*[SiCellLen4])/2." dy="([SiDie4_NumOfRowsR4]*[SiCellLen4])/2." dz="[SiliconDie_LZ]/2."></Box>
-    <Box  name="FBCM_SiliconDie45"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie5_NumOfRowsR4]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
+    <Box  name="FBCM_SiliconDie45"  dx="([SiDie5_NumOfCols]*[SiCellLen5])/2." dy="([SiDie4_NumOfRowsR4]*[SiCellLen5])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie46"  dx="([SiDie6_NumOfCols]*[SiCellLen6])/2." dy="([SiDie6_NumOfRowsR4]*[SiCellLen6])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie47"  dx="([SiDie7_NumOfCols]*[SiCellLen7])/2." dy="([SiDie7_NumOfRowsR4]*[SiCellLen7])/2." dz="[SiliconDie_LZ]/2."></Box>
     <Box  name="FBCM_SiliconDie48"  dx="([SiDie8_NumOfCols]*[SiCellLen8])/2." dy="([SiDie8_NumOfRowsR4]*[SiCellLen8])/2." dz="[SiliconDie_LZ]/2."></Box>
@@ -762,9 +766,9 @@
             <String name="ChildName" value="FBCM_SensorPad5"/>
             <Numeric name="StartCopyNo" value="0"/>
             <Numeric name="IncrCopyNo" value="1"/>
-            <Numeric name="N" value="[SiDie5_NumOfRowsR0]"/>
+            <Numeric name="N" value="[SiDie4_NumOfRowsR0]"/>
             <Numeric name="Delta" value="[SiCellLen5]"/>
-            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie5_NumOfRowsR0])/2.+[SiCellLen5]/2.,0.*mm</Vector>
+            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie4_NumOfRowsR0])/2.+[SiCellLen5]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
 	</Algorithm>
@@ -951,9 +955,9 @@
             <String name="ChildName" value="FBCM_SensorPad5"/>
             <Numeric name="StartCopyNo" value="0"/>
             <Numeric name="IncrCopyNo" value="1"/>
-            <Numeric name="N" value="[SiDie5_NumOfRowsR1]"/>
+            <Numeric name="N" value="[SiDie4_NumOfRowsR1]"/>
             <Numeric name="Delta" value="[SiCellLen5]"/>
-            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie5_NumOfRowsR1])/2.+[SiCellLen5]/2.,0.*mm</Vector>
+            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie4_NumOfRowsR1])/2.+[SiCellLen5]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
 	</Algorithm>
@@ -1141,9 +1145,9 @@
             <String name="ChildName" value="FBCM_SensorPad5"/>
             <Numeric name="StartCopyNo" value="0"/>
             <Numeric name="IncrCopyNo" value="1"/>
-            <Numeric name="N" value="[SiDie5_NumOfRowsR2]"/>
+            <Numeric name="N" value="[SiDie4_NumOfRowsR2]"/>
             <Numeric name="Delta" value="[SiCellLen5]"/>
-            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie5_NumOfRowsR2])/2.+[SiCellLen5]/2.,0.*mm</Vector>
+            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie4_NumOfRowsR2])/2.+[SiCellLen5]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
 	</Algorithm>
@@ -1333,9 +1337,9 @@
             <String name="ChildName" value="FBCM_SensorPad5"/>
             <Numeric name="StartCopyNo" value="0"/>
             <Numeric name="IncrCopyNo" value="1"/>
-            <Numeric name="N" value="[SiDie5_NumOfRowsR3]"/>
+            <Numeric name="N" value="[SiDie4_NumOfRowsR3]"/>
             <Numeric name="Delta" value="[SiCellLen5]"/>
-            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie5_NumOfRowsR3])/2.+[SiCellLen5]/2.,0.*mm</Vector>
+            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie4_NumOfRowsR3])/2.+[SiCellLen5]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
 	</Algorithm>
@@ -1523,9 +1527,9 @@
             <String name="ChildName" value="FBCM_SensorPad5"/>
             <Numeric name="StartCopyNo" value="0"/>
             <Numeric name="IncrCopyNo" value="1"/>
-            <Numeric name="N" value="[SiDie5_NumOfRowsR4]"/>
+            <Numeric name="N" value="[SiDie4_NumOfRowsR4]"/>
             <Numeric name="Delta" value="[SiCellLen5]"/>
-            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie5_NumOfRowsR4])/2.+[SiCellLen5]/2.,0.*mm</Vector>
+            <Vector name="Base" type="numeric" nEntries="3">0.*mm,-([SiCellLen5]*[SiDie4_NumOfRowsR4])/2.+[SiCellLen5]/2.,0.*mm</Vector>
             <Numeric name="Theta" value="90.*deg"></Numeric>
             <Numeric name="Phi" value="90.*deg"></Numeric>
 	</Algorithm>
@@ -1624,7 +1628,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+0*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1641,7 +1645,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+1*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1658,7 +1662,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+2*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1675,7 +1679,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+3*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1692,7 +1696,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+4*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1709,7 +1713,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+5*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1727,7 +1731,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+6*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1745,7 +1749,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R0]"/>
-       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+7*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1765,7 +1769,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+0*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1782,7 +1786,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+1*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1799,7 +1803,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+2*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1816,7 +1820,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+3*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1833,7 +1837,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+4*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1850,7 +1854,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+5*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1868,7 +1872,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+6*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1886,7 +1890,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R1]"/>
-       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+7*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1907,7 +1911,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+0*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1924,7 +1928,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+1*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1941,7 +1945,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+2*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1958,7 +1962,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+3*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1975,7 +1979,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+4*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -1992,7 +1996,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+5*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2010,7 +2014,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+6*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2028,7 +2032,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R2]"/>
-       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+7*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2049,7 +2053,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+0*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2066,7 +2070,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+1*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2083,7 +2087,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+2*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2100,7 +2104,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+3*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2117,7 +2121,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+4*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2134,7 +2138,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+5*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2152,7 +2156,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+6*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2170,7 +2174,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R3]"/>
-       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="[startPhiStation]+7*[IncrementRotAngle]+[IncrementRotAngle]/2."></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2191,7 +2195,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="0*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2208,7 +2212,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="1*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2225,7 +2229,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="2*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2242,7 +2246,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="3*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2259,7 +2263,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="4*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2276,7 +2280,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="5*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2294,7 +2298,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="6*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">
@@ -2312,7 +2316,7 @@
        <Numeric name="IncrCopyNo" value="1"></Numeric>
        <Numeric name="N" value="1"/>
        <Numeric name="Radius" value="[SiliconDieRing_R4]"/>
-       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2.+[StationStartPhi]"></Numeric>
+       <Numeric name="StartAngle" value="7*[IncrementRotAngle]+[IncrementRotAngle]/2+[startPhiStation]"></Numeric>
        <Numeric name="RangeAngle" value="360*deg"></Numeric>
        <Vector name="Center" type="numeric" nEntries="3">0, 0, 0</Vector>
        <Vector name="RotateSolid" type="numeric" nEntries="3">

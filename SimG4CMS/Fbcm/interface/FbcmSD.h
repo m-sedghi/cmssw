@@ -1,5 +1,19 @@
-#ifndef BRIL_FbcmSensitiveDetector_H
-#define BRIL_FbcmSensitiveDetector_H
+#ifndef BrilFbcm_FbcmSensitiveDetector_H
+#define BrilFbcm_FbcmSensitiveDetector_H
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+///-------------------------------------------
+
+
+#include <vector>
+#include <iostream>
+#include <string>
+#include "FWCore/Framework/interface/ESTransientHandle.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 #include "SimG4Core/Notification/interface/Observer.h"
 #include "SimG4Core/SensitiveDetector/interface/SensitiveTkDetector.h"
@@ -7,16 +21,32 @@
 #include "SimG4Core/Notification/interface/BeginOfEvent.h"
 #include "SimG4Core/Notification/interface/EndOfEvent.h"
 #include "SimG4Core/Notification/interface/BeginOfJob.h"
+#include "SimG4Core/SensitiveDetector/interface/FrameRotation.h"
+#include "SimG4Core/Notification/interface/TrackInformation.h"
+#include "SimG4Core/Notification/interface/G4TrackToParticleID.h"
+#include "SimG4Core/Physics/interface/G4ProcessTypeEnumerator.h"
+
+#include "SimG4CMS/Tracker/interface/FakeFrameRotation.h"
+#include "SimG4CMS/Tracker/interface/TrackerFrameRotation.h"
+#include "SimG4CMS/Tracker/interface/TkSimHitPrinter.h"
+
 
 #include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
+#include "DataFormats/GeometryVector/interface/LocalPoint.h"
+#include "SimDataFormats/TrackingHit/interface/UpdatablePSimHit.h"
+#include "SimDataFormats/SimHitMaker/interface/TrackingSlaveSD.h"
+
+#include "Geometry/Records/interface/IdealGeometryRecord.h"
+#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/FbcmGeometry/interface/FbcmGeometry.h"
 #include "Geometry/Records/interface/FbcmGeometryRecord.h"
 
 
 #include "G4Step.hh"
 #include "G4Track.hh"
-
-#include <string>
+#include "G4StepPoint.hh"
+#include "G4VProcess.hh"
+#include "G4SystemOfUnits.hh"
 
 class TrackInformation;
 class SimTrackManager;
@@ -24,7 +54,6 @@ class TrackingSlaveSD;
 class FrameRotation;
 class UpdatablePSimHit;
 class G4ProcessTypeEnumerator;
-//class TrackerG4SimHitNumberingScheme;
 
 class FbcmSD : public SensitiveTkDetector,
 			public Observer<const BeginOfEvent *>,
@@ -60,11 +89,8 @@ private:
   // data members initialised before run
   const SimTrackManager *theManager;
   std::unique_ptr<TrackingSlaveSD> _slaveSD;
-  //std::unique_ptr<TrackingSlaveSD> slaveLowTof;
-  //std::unique_ptr<TrackingSlaveSD> slaveHighTof;
   std::unique_ptr<FrameRotation> theRotation;
   std::unique_ptr<const G4ProcessTypeEnumerator> theG4ProcTypeEnumerator;
-  //TrackerG4SimHitNumberingScheme *theNumberingScheme;  //does not own
   bool allowZeroEnergyLoss;
   bool printHits;
   bool neverAccumulate;

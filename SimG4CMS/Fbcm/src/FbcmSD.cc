@@ -1,47 +1,13 @@
-#include "DataFormats/GeometryVector/interface/LocalPoint.h"
+///-------------------------------------------
+//  Author: Mohammad Sedghi, msedghi@cern.ch
+//  Isfahan University of Technology
+//  Date created: September 2020
+///-------------------------------------------
 
-#include "SimG4Core/SensitiveDetector/interface/FrameRotation.h"
-#include "SimG4Core/Notification/interface/TrackInformation.h"
-
-#include "SimDataFormats/TrackingHit/interface/UpdatablePSimHit.h"
-#include "SimDataFormats/SimHitMaker/interface/TrackingSlaveSD.h"
-
-#include "SimG4CMS/Tracker/interface/FbcmSD.h"
-#include "SimG4CMS/Tracker/interface/FakeFrameRotation.h"
-#include "SimG4CMS/Tracker/interface/TrackerFrameRotation.h"
-#include "SimG4CMS/Tracker/interface/TkSimHitPrinter.h"
-//#include "SimG4CMS/Tracker/interface/TrackerG4SimHitNumberingScheme.h"
-
-#include "FWCore/Framework/interface/ESTransientHandle.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/EventSetup.h"
-
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
-
-#include "SimG4Core/Notification/interface/TrackInformation.h"
-#include "SimG4Core/Notification/interface/G4TrackToParticleID.h"
-#include "SimG4Core/Physics/interface/G4ProcessTypeEnumerator.h"
-
-#include "G4Track.hh"
-#include "G4StepPoint.hh"
-#include "G4VProcess.hh"
-
-#include "G4SystemOfUnits.hh"
-
-#include <vector>
-#include <iostream>
-
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "SimG4CMS/Fbcm/interface/FbcmSD.h"
 
 //#define FAKEFRAMEROTATION
 
-/*
-static TrackerG4SimHitNumberingScheme& numberingScheme(const GeometricDet& det) {
-  static thread_local TrackerG4SimHitNumberingScheme s_scheme(det);
-  return s_scheme;
-}
-*/
 
 FbcmSD::FbcmSD(const std::string& name,
 				 const edm::EventSetup& es,
@@ -93,23 +59,16 @@ FbcmSD::FbcmSD(const std::string& name,
                                  << " neverAccumulate: " << neverAccumulate << " printHits: " << printHits;
 
   _slaveSD.reset(new TrackingSlaveSD(name));
-  
-//  slaveHighTof.reset(new TrackingSlaveSD(name + "HighTof"));
-
-
   ///---- no need for the following 3 lines: ------------
   //std::vector<std::string> temp;
   //temp.push_back(_slaveSD.get()->name());
   //setNames(temp);
   ///-----------------------------------------------------
 
-
   theG4ProcTypeEnumerator.reset(new G4ProcessTypeEnumerator);
-  //theNumberingScheme = nullptr;
-  
+   
   es.get<FbcmGeometryRecord>().get(FbcmGeom);
-  
-  
+    
 }
 
 FbcmSD::~FbcmSD() {}
@@ -159,25 +118,6 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	//std::cout << "hit touched at: " << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
 	
 	
-    // if (SensorPadName != "FBCM_SensorPad") {
-      // edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SensorPadName is not FBCM_SensorPad ";
-    // }
-	// if (SensorRowName != "FBCM_SensorCol") {
-      // edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SensorColName is not FBCM_SensorCol ";
-    // }
-	// if (SiliconDieName != "FBCM_SiliconDie") {
-      // edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- SiliconDieName is not FBCM_SiliconDie ";
-    // }
-	// if (StationName != "FBCM_Station") {
-      // edm::LogWarning("FBCMSim") << "FbcmSD::setDetUnitId -w- StationName is not FBCM_Station ";
-    // }
-    // if (DetectorName != "FBCM") {
-      // edm::LogWarning("FBCMSim") << " FbcmSD::setDetUnitId -w- DetectorName is not FBCM ";
-    // }
-	// if (volumeName != "Phase2PixelEndcap") {
-      // edm::LogWarning("FBCMSim") << " FbcmSD::setDetUnitId -w- volumeName is not Phase2PixelEndcap ";
-    // }
-	
 	// get the copyNumbers in the Geom. XML
     int SensorPadNo = touch->GetReplicaNumber(0); // 
     int SensorColNo = touch->GetReplicaNumber(1); // 
@@ -203,7 +143,7 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	
     detId = fbcmdet1.rawId();
 	//edm::LogVerbatim("FwkReport") << "*-FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 << "\n";
-	//std::cout << "A new G4SimHit: " << fbcmdet1 ;
+	std::cout << "A new G4SimHit: " << fbcmdet1 ;
   }
   return detId;
 }
@@ -231,14 +171,7 @@ void FbcmSD::update(const BeginOfTrack* bot) {
   // Check if in Tracker Volume
   //
   if (pos.x() * pos.x() + pos.y() * pos.y() < rMax2 && std::abs(pos.z()) < zMax ) {
-    
-	/*
-	std::cout << "\nParticle Name: " << gTrack->GetDefinition()->GetParticleName()
-                              << ", trackID= " << gTrack->GetTrackID() << " E(MeV)= " << gTrack->GetKineticEnergy()
-                              << ", Ecut= " << energyCut << ", R(mm)= " << pos.perp() << ", Z(mm)= " << pos.z() << "\n";
-
-	*/
-	
+    	
 	//
     // inside the Tracker
     //
@@ -284,12 +217,6 @@ void FbcmSD::sendHit() {
   }
 
 
-  //if (mySimHit->timeOfFlight() < theTofLimit) {
-//    _slaveSD.get()->processHits(*mySimHit);  // implicit conversion (slicing) to PSimHit!!!
-//  } else {
-//    slaveHighTof.get()->processHits(*mySimHit);  // implicit conversion (slicing) to PSimHit!!!
-//  }
-  
   _slaveSD.get()->processHits(*mySimHit);
   
   //
@@ -453,23 +380,14 @@ void FbcmSD::update(const BeginOfJob* i) {
   const edm::EventSetup* es = (*i)();
   es->get<IdealGeometryRecord>().get(pDD);
 	// Here I can load the FbcmGeometry rather than in the initializer
-  //theNumberingScheme = &(numberingScheme(*pDD));
 }
 
 void FbcmSD::clearHits() {
   _slaveSD.get()->Initialize();
-  //slaveHighTof.get()->Initialize();
+  
 }
 
 void FbcmSD::fillHits(edm::PSimHitContainer& cc, const std::string& hname) {
   if (_slaveSD.get()->name() == hname)
     cc = _slaveSD.get()->hits();
-
-/*	
-  if (_slaveSD.get()->name() == hname) {
-    cc = _slaveSD.get()->hits();
-  } else if (slaveHighTof.get()->name() == hname) {
-    cc = slaveHighTof.get()->hits();
-  }
-  */
 }

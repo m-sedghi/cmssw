@@ -1,0 +1,14 @@
+<use   name="FWCore/ParameterSet"/>
+<use   name="SimG4Core/SensitiveDetector"/>
+<use   name="SimG4CMS/Forward"/>
+<use   name="SimG4CMS/Tracker"/>
+<use   name="SimG4Core/Notification"/>
+<use   name="SimG4Core/Physics"/>
+<use   name="geant4core"/>
+<use   name="SimDataFormats/SimHitMaker"/>
+<use   name="SimG4Core/Application"/>
+<use   name="DataFormats/FbcmDetId"/>
+<use   name="Geometry/FbcmGeometry"/>
+<export>
+  <lib   name="1"/>
+</export>
