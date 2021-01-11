@@ -68,15 +68,16 @@ void FbcmGeometryTest::analyze(const edm::Event&, const edm::EventSetup& iEventS
   
    for (int sideId=1; sideId<3; sideId++){
 	  for (int st=0 ; st<4 ; st++) {
-		  for (int die=0 ; die<45 ; die++) {
+		  for (int die=0 ; die<40 ; die++) {
 			  
-		  FbcmDetId detId1(sideId,st,die,4); 
+		  FbcmDetId detId1(sideId,st,die,0); 
 		  //std::cout << detId1;
 		   const FbcmSiliconDieGeom * DieGeomPtr=FbcmGeom2->IdToSiliconDie(detId1);
 		   if (DieGeomPtr) {
 			  if (detId1.SiliconDieDetId()() != DieGeomPtr->id())
 				  std::cout << "Fatal Error\n";
-			  else  {
+			  else  { 
+				  std::cout << "Pos:" << DieGeomPtr->surface().position()  << ",\t"; 
 				  std::cout << "nRows: " << DieGeomPtr->NumOfRows() <<"\tnCols: " << DieGeomPtr->NumOfCols() ; 
 				  std::cout << ",\tfor: " << DieGeomPtr->id();
 			  }

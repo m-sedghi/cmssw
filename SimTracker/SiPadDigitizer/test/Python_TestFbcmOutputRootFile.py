@@ -31,18 +31,19 @@ for event in events:
 			Station=Digidata.StationIndex()
 			Die=Digidata.SiliconDieIndex() 
 			SiPadNo=Digidata.SiPadIndex()
+			Radius=Digidata.Radius() 
 			phi=Digidata.Phi_Degrees() 
 			Area_=Digidata.Area() 
 			ampl=Digidata.ChargeSum()
 			BVect = Digidata.BxSlotHitAnalysisVector()
 			Ch_P = Digidata.CahrgePsimVector()
-			str1 = '\nSide:' + str(Side) + ', Station:' + str(Station) +', Die:' + str(Die) +', SiPadNo:' + str(SiPadNo) +', phi:' +  '%.2f' % (phi) +', Area:' +  '%.4f' % (Area_) +', ChargeSum:' +  '%.1f' % (ampl) + ', BVect_Size:'+str(BVect.size())+ ', Ch_P_Size:'+str(Ch_P.size()) +'\n'
+			str1 = '\nSide:' + str(Side) + ', Station:' + str(Station) +', Die:' + str(Die) +', SiPadNo:' + str(SiPadNo) +', Radius:' +  '%.2f' % (Radius) +', phi:' +  '%.2f' % (phi) +', Area:' +  '%.4f' % (Area_) +', ChargeSum:' +  '%.1f' % (ampl) + ', BVect_Size:'+str(BVect.size())+ ', Ch_P_Size:'+str(Ch_P.size()) +'\n'
 			f.write(str1)
 			for chp in Ch_P:
 				charge = chp.first
 				PSim = chp.second
 				evntID = PSim.eventId()
-				str2 = '\tCharge:'+ '%.1f' % (charge) +', evntID:' + str(evntID.event()) + ', EventBx:' + str(evntID.bunchCrossing()) +', EventRawId:' + str(evntID.rawId()) +', trackId:' + str(PSim.trackId()) +', hitIndex:' + str(PSim.hitIndex()) +', tofBin:' + str(PSim.tofBin()) +', time:' + '%.2f' % (PSim.time()) + ', Tof:'+ '%.2f' % (PSim.Tof()) + ', Pabs:'+ '%.3e' % (PSim.Pabs()) +', EnergyLoss:' + '%.3e' % (PSim.EnergyLoss()) + ', ParticleType:'+str(PSim.ParticleType()) + ', DetUnitId:'+str(PSim.DetUnitId()) + ', ProcessType:'+str(PSim.ProcessType()) + ', Bx:'+str(PSim.BunchCrossing()) + '\n'
+				str2 = '\tCharge:'+ '%8.1f' % (charge) +', evntID:' + str(evntID.event()) + ', EventBx:' + str(evntID.bunchCrossing()) +', EventRawId:' + str(evntID.rawId()) +', trackId:' + str(PSim.trackId()) +', hitIndex:' + str(PSim.hitIndex()) +', tofBin:' + str(PSim.tofBin()) +', time:' + '%.3f' % (PSim.time()) + ', Tof:'+ '%.3f' % (PSim.Tof()) + ', Pabs:'+ '%.3e' % (PSim.Pabs()) +', EnergyLoss:' + '%.3e' % (PSim.EnergyLoss()) + ', ParticleType:'+str(PSim.ParticleType()) + ', DetUnitId:'+str(PSim.DetUnitId()) + ', ProcessType:'+str(PSim.ProcessType()) + ', Bx:'+str(PSim.BunchCrossing()) + '\n'
 				f.write(str2)
 
 			for hitA in BVect:

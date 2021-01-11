@@ -171,7 +171,6 @@ FbcmFrontEndChip::FbcmFrontEndChip(FftPreparation & FFtPrep):
 		Arming_Comp.RunComparator();
         OutputLogicCirc.RunLogic();
 
-
 	}
 
 	void FbcmFrontEndChip::GetHitAnalysisInfo(int BXC_SlotNo, HitAnalysisInfo & HitTotToaInfo){

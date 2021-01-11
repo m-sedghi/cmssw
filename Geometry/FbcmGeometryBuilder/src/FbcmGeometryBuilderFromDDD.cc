@@ -107,9 +107,11 @@ void FbcmGeometryBuilderFromDDD::buildGeometry(FbcmGeometry& theFbcmGeometry, DD
 
   
   bool doFbcmSides = true;
-  int SideID =1; // This is a temporary solving the code!!. It should be read out from the FBCM Side CopyNo. 
+  //int SideID =1; // This is a temporary solving the code!!. It should be read out from the FBCM Side CopyNo. 
+  int FbcmCopyNo;
 while (doFbcmSides) {
-   //int FbcmCopyNo = fv.copyno(); // FbcmCopyNo is always 1, we should get the CopyNo of its parent.
+   FbcmCopyNo = fv.copyno(); // FbcmCopyNo is always 1, we should get the CopyNo of its parent.
+   //std::cout << "FbcmCopyNo" << FbcmCopyNo << "\n";
    //fv.parent(); // its parent is the volum at endcap
     //= fv.copyno(); // the CopyNo of the Sides, i.e. the parent of FBCM
    //fv.firstChild(); // returing to FBCM
@@ -124,7 +126,7 @@ while (doFbcmSides) {
 	//std::cout << "Station: " <<  fv.logicalPart().name().name() << ",  ";
 	//std::cout << StationCopyNo << "\n";
 	
-	FbcmDetId StationDetId_ = FbcmDetId(SideID,StationCopyNo,DONTCARE,DONTCARE);
+	FbcmDetId StationDetId_ = FbcmDetId(FbcmCopyNo,StationCopyNo,DONTCARE,DONTCARE);
 	FbcmStationGeom* NewStation = buildStation(fv, StationDetId_.StationDetId());
     theFbcmGeometry.add(NewStation);
 	
@@ -139,7 +141,7 @@ while (doFbcmSides) {
 		//std::cout << "SiliconDie: " <<  fv.logicalPart().name().name() << ",  ";
 		//std::cout << SilconDieCopyNo << "\n";
 		
-		FbcmDetId SiDieDetId = FbcmDetId(SideID,StationCopyNo,SilconDieCopyNo,DONTCARE);				
+		FbcmDetId SiDieDetId = FbcmDetId(FbcmCopyNo,StationCopyNo,SilconDieCopyNo,DONTCARE);				
 		FbcmSiliconDieGeom* NewSiDie = buildSiliconDie(fv, SiDieDetId.SiliconDieDetId());
 		NewStation->add(NewSiDie);
 		theFbcmGeometry.add(NewSiDie); 
@@ -167,7 +169,7 @@ while (doFbcmSides) {
 		//std::cout << "SiPad: " <<  fv.logicalPart().name().name() << ",  ";
 		//std::cout << SensorPadID << "\n";
 				
-        FbcmDetId SiPadDetId = FbcmDetId(SideID,StationCopyNo,SilconDieCopyNo,SensorPadID);
+        FbcmDetId SiPadDetId = FbcmDetId(FbcmCopyNo,StationCopyNo,SilconDieCopyNo,SensorPadID);
 		//std::cout << SiPadDetId << "\n"; 
         
 		FbcmSiPadGeom* NewSiPad = buildSiPad(fv, SiPadDetId);
@@ -191,7 +193,7 @@ while (doFbcmSides) {
     fv.parent(); // get back to FbcmSides
     doFbcmSides = fv.nextSibling(); // Other Side
 	
-	SideID++; // Notice: this line is just for temporary fix!, it should be read out from FilterView
+	//SideID++; // Notice: this line is just for temporary fix!, it should be read out from FilterView
 }
   //return theFbcmGeometry;
 }

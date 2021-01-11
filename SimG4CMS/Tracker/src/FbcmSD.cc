@@ -153,8 +153,10 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
     G4String DetectorName = touch->GetVolume(4)->GetName();
     G4String volumeName = touch->GetVolume(5)->GetName();
 
+
 	//edm::LogWarning("FBCM-w-levelNames") << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
 	//edm::LogInfo("FBCM-I-levelNames") << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
+	//std::cout << "hit touched at: " << SensorPadName << ", " << SensorRowName << ", " << SiliconDieName << ", " << StationName << ", " << DetectorName << ", " <<volumeName << "\n";
 	
 	
     // if (SensorPadName != "FBCM_SensorPad") {
@@ -181,9 +183,9 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
     int SensorColNo = touch->GetReplicaNumber(1); // 
 	int SilcionDieNo = touch->GetReplicaNumber(2); //
 	int StationNo = touch->GetReplicaNumber(3); //
-    int VolumeNo = touch->GetReplicaNumber(5); // 
+    int VolumeNo = touch->GetReplicaNumber(4); // 
 
-
+	//std:: cout << "SensorPadNo:" <<SensorPadNo << ", SensorColNo:" <<SensorColNo << ", SilcionDieNo: " << SilcionDieNo<< ", StationNo:" << StationNo<< ", FbcmNo:" << VolumeNo<< "\n" ;
 	//New FbcmsDetID assignment:
 	FbcmDetId TMPfbcmDet(VolumeNo,StationNo,SilcionDieNo,0);
 	const FbcmSiliconDieGeom * DieGeomPtr=FbcmGeom->IdToSiliconDie(TMPfbcmDet);
@@ -193,8 +195,7 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 		  //std::cout << "nRows: " << nRows <<"\tnCols: " << DieGeomPtr->NumOfCols() << ", ColNo: " << SensorColNo << ", RowNo: " << SensorPadNo << "\n"; 
 		//std::cout << ",\tfor: " << DieGeomPtr->id();
 	}
-	else
-		edm::LogError("FbcmSD") << "Illegal Copy number, SiDie or Station \n";
+	else {edm::LogError("FbcmSD") << "Illegal Copy number, SiDie or Station \n"; }
 
 	int SensorPadID=SensorColNo*nRows+SensorPadNo; 
 		
@@ -202,7 +203,7 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	
     detId = fbcmdet1.rawId();
 	//edm::LogVerbatim("FwkReport") << "*-FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 << "\n";
-	//std::cout << "--**-- FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 ;
+	//std::cout << "A new G4SimHit: " << fbcmdet1 ;
   }
   return detId;
 }

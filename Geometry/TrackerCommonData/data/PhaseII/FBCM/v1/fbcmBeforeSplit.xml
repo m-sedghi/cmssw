@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
  <ConstantsSection label="fbcm" eval="true">
-    <!-- dimensions of the FBCM volume -->
+    <!-- dimensions of the FBCM volume --><Constant name="Parent_ShiftZ" value="[pixfwd:ZPixelForward]"><!--[pixfwd:ZPixelForward], 291.*mm--></Constant>
  	<Constant name="FBCM_Z1" value="2770.*mm"></Constant>
     <Constant name="FBCM_Z2" value="2900.*mm"/>
     <Constant name="FBCM_Z"              value="([FBCM_Z2]+[FBCM_Z1])/2."><!-- z position of the center of FBCM volume wrt to CMS --></Constant>
@@ -654,22 +654,14 @@
  
  <!-- Position --> 
  <PosPartSection label="fbcm"><!--FBCM as a child of Tracker:Pixel:Service-->
- 
-	<PosPart copyNumber="1">
-     <rParent name="cms:CMSE"/>
-     <rChild name="FBCM"></rChild>
-     <rRotation name="rotations:000D"></rRotation>
-     <Translation x="0*fm" y="0*fm" z="[FBCM_Z]"/>
+     <PosPart copyNumber="1">
+       <rParent name="pixfwd:Phase2PixelEndcap"/>
+       <rChild name="FBCM"></rChild>
+       <rRotation name="rotations:000D"></rRotation>
+       <Translation x="0*fm" y="0*fm" z="[FBCM_Z]-[Parent_ShiftZ]"/>
     </PosPart>
-	
-    <PosPart copyNumber="2">
-     <rParent name="cms:CMSE"/>
-     <rChild name="FBCM"></rChild>
-     <rRotation name="rotations:180D"></rRotation>
-     <Translation x="0*fm" y="0*fm" z="-[FBCM_Z]"/>
-    </PosPart>
-		
-	
+    
+    
     <!--Ring0 - Making SiliconDie-->
 	<Algorithm name="global:DDLinear">
             <rParent name="FBCM_SensorCol01"/>
