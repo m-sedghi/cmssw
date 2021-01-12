@@ -1,0 +1,21 @@
+<use   name="SimGeneral/MixingModule"/>
+<use   name="SimGeneral/PreMixingModule"/>
+<use   name="MagneticField/Records"/>
+<use   name="MagneticField/Engine"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/ParameterSet"/>
+
+<use   name="DataFormats/SiPixelDigi"/>
+
+<use   name="SimTracker/Common"/>
+
+<use   name="Geometry/FbcmGeometry"/>
+<use   name="Geometry/FbcmGeometryBuilder"/>
+<use   name="DataFormats/FbcmDetId"/>
+<use   name="DataFormats/FbcmDigi"/>
+<use   name="gsl"/>
+<use   name="clhep"/>
+
+<export>
+  <lib name="1"/>
+</export>

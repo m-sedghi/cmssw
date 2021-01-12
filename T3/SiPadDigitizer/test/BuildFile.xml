@@ -1,0 +1,10 @@
+<use name="root"/>
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="DataFormats/FbcmDigi"/>
+<use name="DataFormats/FbcmDetId"/>
+<use name="CommonTools/UtilAlgos"/>
+<library   file="CheckFbcmOutputRootFile.cc" name="FbcmOutputRootFileTester">
+  <flags   EDM_PLUGIN="1"/>
+</library>
