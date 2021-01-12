@@ -1,0 +1,7 @@
+<use name="SimFbcm/SiPadDigitizer"/>
+
+<library   file="*.cc" name="SimFbcmSiPadDigitizerPlugins">
+  <flags   EDM_PLUGIN="1"/>
+</library>
+
+

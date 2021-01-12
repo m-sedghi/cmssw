@@ -1,7 +1,0 @@
-<use name="SimTracker/SiPadDigitizer"/>
-
-<library   file="*.cc" name="SimTrackerSiPadDigitizerPlugins">
-  <flags   EDM_PLUGIN="1"/>
-</library>
-
-

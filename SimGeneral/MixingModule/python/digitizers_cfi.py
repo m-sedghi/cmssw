@@ -11,7 +11,7 @@ from SimGeneral.MixingModule.pileupVtxDigitizer_cfi import *
 from SimGeneral.MixingModule.trackingTruthProducerSelection_cfi import *
 from SimGeneral.MixingModule.caloTruthProducer_cfi import *
 from FastSimulation.Tracking.recoTrackAccumulator_cfi import *
-from SimGeneral.MixingModule.SiPadDigitizer_cfi import *
+from SimFbcm.SiPadDigitizer.SiPadDigitizer_cfi import *
 
 theDigitizers = cms.PSet(
   pixel = cms.PSet(
@@ -154,7 +154,7 @@ from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
 OnlyfbcmDigi.toReplaceWith(theDigitizers,cms.PSet(SiPad = cms.PSet(SiPadDigitizer)))
 
 def _loadOnlyfbcmDigiAliases(process):
-    process.load("SimTracker.SiPadDigitizer.aliases_OnlyFbcmDigi_cfi")
+    process.load("SimFbcm.SiPadDigitizer.aliases_OnlyFbcmDigi_cfi")
 modifyDigitizers_loadOnlyfbcmDigiAliases = OnlyfbcmDigi.makeProcessModifier(_loadOnlyfbcmDigiAliases)
 
 

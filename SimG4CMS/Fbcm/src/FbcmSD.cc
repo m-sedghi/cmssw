@@ -143,7 +143,7 @@ uint32_t FbcmSD::setDetUnitId(const G4Step* aStep) {
 	
     detId = fbcmdet1.rawId();
 	//edm::LogVerbatim("FwkReport") << "*-FbcmG4Sim: A new G4SimHit occurred at: " << fbcmdet1 << "\n";
-	std::cout << "A new G4SimHit: " << fbcmdet1 ;
+	//std::cout << "A new G4SimHit: " << fbcmdet1 ;
   }
   return detId;
 }
