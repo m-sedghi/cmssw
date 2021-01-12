@@ -60,12 +60,7 @@ void SSDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iterato
 
     std::vector<DigitizerUtility::EnergyDepositUnit> ionization_points;
     std::vector<DigitizerUtility::SignalPoint> collection_points;
-	
-	//float toa1=((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.);
-	//float toa=toa1;
-	//toa -= (*it).eventId().bunchCrossing() * 25.0;
-	//float Sampling_time=(-1) * ((*it).eventId().bunchCrossing() + 1) * 25.0;
-	//std::cout << "ToF:" << (*it).tof() << ", bunchCrossing:" << (*it).eventId().bunchCrossing() << ", toa1:"<< toa1 << ", toaR:" << toa  << ", TOF:" << ((*it).tof() -(*it).eventId().bunchCrossing() * 25.0) << ", Sampling_time:" << Sampling_time << ", Xcal:" << Sampling_time-toa <<std::endl;
+
     // fill collection_points for this SimHit, indpendent of topology
     // Check the TOF cut
     if (((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&

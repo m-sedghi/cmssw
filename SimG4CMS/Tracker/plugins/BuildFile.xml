@@ -8,6 +8,7 @@
   <use   name="geant4core"/>
   <use   name="SimDataFormats/SimHitMaker"/>
   <use   name="SimG4Core/Application"/>
+  
 <library   file="*.cc" name="SimG4CMSTrackerPlugins">
   <flags   EDM_PLUGIN="1"/>
 </library>
