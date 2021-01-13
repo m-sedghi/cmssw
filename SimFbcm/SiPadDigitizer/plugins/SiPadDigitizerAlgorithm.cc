@@ -9,7 +9,7 @@
 #include <cmath>
 
 
-#include "SimFbcm/SiPadDigitizer/plugins/SiPadDigitizerAlgorithm.h"
+#include "SiPadDigitizerAlgorithm.h"
 
 using namespace edm;
 

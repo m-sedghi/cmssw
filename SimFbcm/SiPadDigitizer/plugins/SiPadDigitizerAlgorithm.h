@@ -33,7 +33,7 @@
 
 #include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
 
-#include "SimFbcm/SiPadDigitizer/plugins/CommonDigiUtility.h"
+#include "CommonDigiUtility.h"
 #include "SimFbcm/SiPadDigitizer/interface/GeneralUtilities.h"
 #include "SimFbcm/SiPadDigitizer/interface/FftPreparation.h"
 #include "SimFbcm/SiPadDigitizer/interface/FbcmFrontEndChip.h"

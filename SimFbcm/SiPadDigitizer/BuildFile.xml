@@ -4,11 +4,8 @@
 <use   name="MagneticField/Engine"/>
 <use   name="FWCore/Framework"/>
 <use   name="FWCore/ParameterSet"/>
-
 <use   name="DataFormats/SiPixelDigi"/>
-
 <use   name="SimTracker/Common"/>
-
 <use   name="Geometry/FbcmGeometry"/>
 <use   name="Geometry/FbcmGeometryBuilder"/>
 <use   name="DataFormats/FbcmDetId"/>

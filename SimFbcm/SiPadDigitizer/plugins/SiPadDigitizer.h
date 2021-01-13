@@ -44,7 +44,7 @@
 #include "DataFormats/FbcmDigi/interface/SiPadDigiDataCollection.h"
 #include "DataFormats/FbcmDetId/interface/FbcmDetId.h"
 
-#include "SimFbcm/SiPadDigitizer/plugins/SiPadDigitizerAlgorithm.h"
+#include "SiPadDigitizerAlgorithm.h"
 //#include "DataFormats/Math/interface/angle_units.h"
 //using angle_units::operators::convertRadToDeg;
 
