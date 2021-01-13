@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+ <ConstantsSection label="FbcmVolume" eval="true">
+    <!-- dimensions of the FBCM volume -->
+ 	<Constant name="FBCM_Z1" value="2770.*mm"></Constant>
+    <Constant name="FBCM_Z2" value="2900.*mm"/>
+    <Constant name="FBCM_Z"              value="([FBCM_Z2]+[FBCM_Z1])/2."><!-- z position of the center of FBCM volume wrt to CMS --></Constant>
+    <Constant name="FBCM_Thickness"      value="([FBCM_Z2]-[FBCM_Z1])"></Constant>
+    <Constant name="FBCM_InnerRadius"    value="62.38*mm"><!--should be similar to pixel:Disc12--></Constant>
+    <Constant name="FBCM_OuterRadius"    value="255.101*mm"><!--should be similar to pixel:Disc12--></Constant>
+    
+     </ConstantsSection>
+ 
+ <SolidSection label="fbcmVol">
+  
+ <Polycone name="FbcmVolPlusZ" startPhi="0*deg" deltaPhi="360*deg" >
+  <ZSection z="[FBCM_Z1]"   rMin="[FBCM_InnerRadius]"  rMax="[FBCM_OuterRadius]" />
+  <ZSection z="[FBCM_Z2]"   rMin="[FBCM_InnerRadius]"  rMax="[FBCM_OuterRadius]" />
+ </Polycone> 
+
+ <Polycone name="FbcmVolMinusZ" startPhi="0*deg" deltaPhi="360*deg" >
+  <ZSection z="-[FBCM_Z1]"   rMin="[FBCM_InnerRadius]"  rMax="[FBCM_OuterRadius]" />
+  <ZSection z="-[FBCM_Z2]"   rMin="[FBCM_InnerRadius]"  rMax="[FBCM_OuterRadius]" />
+ </Polycone> 
+
+<UnionSolid name="FbcmVolume">
+	<rSolid name="FbcmVolPlusZ"/>
+	<rSolid name="FbcmVolMinusZ"/>
+	<Translation x="0*fm" y="0*fm" z="0*fm"/>
+</UnionSolid>
+
+	
+ </SolidSection>
+ 
+ <LogicalPartSection label="FbcmVolume">
+ 
+    <LogicalPart name="FbcmVolume" category="unspecified">
+       <rSolid name="FbcmVolume"/>
+       <rMaterial name="materials:Air"></rMaterial>
+   </LogicalPart>    
+   
+ </LogicalPartSection>
+ 
+  
+ <PosPartSection label="FbcmVolume">
+ 
+	<PosPart copyNumber="1">
+     <rParent name="cms:CMSE"/>
+     <rChild name="FbcmVolume"></rChild>
+     <Translation x="0*fm" y="0*fm" z="0*fm"/>
+    </PosPart>
+	  
+ </PosPartSection>
+ 
+</DDDefinition>
