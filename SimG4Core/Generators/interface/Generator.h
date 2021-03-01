@@ -44,6 +44,8 @@ private:
   bool fPtransCut;
   bool fEtaCuts;
   bool fPhiCuts;
+  //hack GA
+  bool fMIB;
   bool fFiductialCuts;
   double theMinPhiCut;
   double theMaxPhiCut;
