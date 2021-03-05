@@ -18,12 +18,11 @@ options.register ('filein',
 options.parseArguments()
 inputPath, theInputfile = os.path.split(options.filein)
 theInFileName = os.path.splitext(theInputfile)[0]
-outputFileName='DigiNoMix'+theInFileName.split('Sim')[1]+'.root' 
-fullOutputDir='/afs/cern.ch/work/m/msedghi/public/BeamInducedBackgrdFbcm/bibDIGI_NoMix/' + inputPath.split('/')[-1] + '/'
+outputFileName='DigiSelfMix'+theInFileName.split('Sim')[1]+'.root' 
+fullOutputDir='/afs/cern.ch/work/m/msedghi/public/BeamInducedBackgrdFbcm/bibDIGI_SelfMixed/' + inputPath.split('/')[-1] + '/'
 oututFilePathName='file:'+fullOutputDir+outputFileName
 print('file:'+options.filein)
 print(oututFilePathName)
-
 
 
 from Configuration.Eras.Era_Phase2_cff import Phase2
@@ -49,7 +48,6 @@ process.maxEvents = cms.untracked.PSet(
     output = cms.optional.untracked.allowed(cms.int32,cms.PSet)
 )
 
-# Input source
 process.source = cms.Source("PoolSource",
     dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
     fileNames = cms.untracked.vstring('file:'+options.filein),
@@ -74,6 +72,8 @@ process.source = cms.Source("PoolSource",
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
+
+#process.source = cms.Source("EmptySource")
 
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
@@ -124,9 +124,18 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
 # Additional output definition
 
 # Other statements
-#process.mix.bunchspace = cms.int32(25)
-#process.mix.minBunch = cms.int32(-3)
-#process.mix.maxBunch = cms.int32(3)
+process.mix.bunchspace = cms.int32(25)
+process.mix.minBunch = cms.int32(-3)
+process.mix.maxBunch = cms.int32(3)
+
+process.mix.input = cms.SecSource("EmbeddedRootSource",
+    fileNames = cms.untracked.vstring('file:'+options.filein),
+    nbPileupEvents = cms.PSet(
+        averageNumber = cms.double(1.0)
+    ),
+    sequential = cms.untracked.bool(False),
+    type = cms.string('poisson')
+)
 
 
 

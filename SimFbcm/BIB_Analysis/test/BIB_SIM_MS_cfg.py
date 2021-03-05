@@ -1,85 +1,78 @@
-# Auto generated configuration file
-# using: 
-# Revision: 1.19 
-# Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: BIB -s DIGI --mc --fileout file:BIB_SIM_DIGI.root --conditions auto:phase2_realistic --filein file:BIB_SIM.root --pileup=NoPileUp --era Phase2,fbcmDigi,OnlyfbcmDigi --datatier GEN-SIM-DIGI-RAW --geometry Extended2026D80 --eventcontent FEVTDEBUG --python_filename BIB_DIGI_cfg.py --customise SimFbcm/SiPadDigitizer/aging.no_aging,Configuration/DataProcessing/Utils.addMonitoring --nThreads 2 -n 2 --no_exe
 import FWCore.ParameterSet.Config as cms
-
-
 import os
+from Configuration.Eras.Era_Phase2_cff import Phase2
+from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
+
 from FWCore.ParameterSet.VarParsing import VarParsing
 options = VarParsing ('analysis')	  
 options.register ('filein',
-		  'SimBBBBBB_0.root', 
+		  'GenBBBBBB_0.root', 
                                  VarParsing.multiplicity.singleton,
                                  VarParsing.varType.string,
                   "The input fileName")				  
 
 options.parseArguments()
+
+
 inputPath, theInputfile = os.path.split(options.filein)
 theInFileName = os.path.splitext(theInputfile)[0]
-outputFileName='DigiNoMix'+theInFileName.split('Sim')[1]+'.root' 
-fullOutputDir='/afs/cern.ch/work/m/msedghi/public/BeamInducedBackgrdFbcm/bibDIGI_NoMix/' + inputPath.split('/')[-1] + '/'
+outputFileName='Sim'+theInFileName.split('Gen')[1]+'.root' 
+fullOutputDir='/afs/cern.ch/work/m/msedghi/public/BeamInducedBackgrdFbcm/bibSIM/' + inputPath.split('/')[-1] + '/'
 oututFilePathName='file:'+fullOutputDir+outputFileName
+
 print('file:'+options.filein)
 print(oututFilePathName)
 
-
-
-from Configuration.Eras.Era_Phase2_cff import Phase2
-from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
-from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
-
-process = cms.Process('DIGI',Phase2,fbcmDigi,OnlyfbcmDigi)
+process = cms.Process('SIM',Phase2)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
-process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.Geometry.GeometryExtended2026D80Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2026D80_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
-process.load('Configuration.StandardSequences.Digi_cff')
+#process.load('Configuration.StandardSequences.Generator_cff')
+#process.load('IOMC.EventVertexGenerators.VtxSmearedRealistic50ns13TeVCollision_cfi')
+#process.load('GeneratorInterface.Core.genFilterSummary_cff')
+process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
+
+# randomeze the seeds every time cmsRun is invoked
+from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
+randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
+randSvc.populate()
+
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1),
-    output = cms.optional.untracked.allowed(cms.int32,cms.PSet)
+    #output = cms.optional.untracked.allowed(cms.int32,cms.PSet)
 )
 
 # Input source
+#process.source = cms.Source("EmptySource")
 process.source = cms.Source("PoolSource",
-    dropDescendantsOfDroppedBranches = cms.untracked.bool(False),
-    fileNames = cms.untracked.vstring('file:'+options.filein),
-    inputCommands = cms.untracked.vstring(
-        'keep *', 
-        'drop *_genParticles_*_*', 
-        'drop *_genParticlesForJets_*_*', 
-        'drop *_kt4GenJets_*_*', 
-        'drop *_kt6GenJets_*_*', 
-        'drop *_iterativeCone5GenJets_*_*', 
-        'drop *_ak4GenJets_*_*', 
-        'drop *_ak7GenJets_*_*', 
-        'drop *_ak8GenJets_*_*', 
-        'drop *_ak4GenJetsNoNu_*_*', 
-        'drop *_ak8GenJetsNoNu_*_*', 
-        'drop *_genCandidatesForMET_*_*', 
-        'drop *_genParticlesForMETAllVisible_*_*', 
-        'drop *_genMetCalo_*_*', 
-        'drop *_genMetCaloAndNonPrompt_*_*', 
-        'drop *_genMetTrue_*_*', 
-        'drop *_genMetIC5GenJs_*_*'
-    ),
-    secondaryFileNames = cms.untracked.vstring()
+                            noEventSort = cms.untracked.bool(True),
+                            duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
+                            fileNames = cms.untracked.vstring(
+							'file:'+ options.filein,
+							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasOxygen/GenBeamGasOxygen_0.root',
+							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasHydrogen/GenBeamGasHydrogen_0.root',
+							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasCarbon/GenBeamGasCarbon_0.root',
+							),
+                            skipEvents = cms.untracked.uint32(0),
+							#eventsToProcess = cms.untracked.VEventRange("1:{}-1:{}".format(range_min, range_max))
 )
+
 
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
-    SkipEvent = cms.untracked.vstring(),
+    #SkipEvent = cms.untracked.vstring(),
+    SkipEvent = cms.untracked.vstring('ProductNotFound'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
     emptyRunLumiMode = cms.obsolete.untracked.string,
@@ -104,16 +97,25 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('BIB digi nevts:2'),
+    annotation = cms.untracked.string('BIB particle G4 simulation similar to MinBias'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
 
 # Output definition
 
+
+process.FEVTDEBUGEventContent.outputCommands = cms.untracked.vstring( (
+										'drop *',
+										'keep *_*_FBCMHits_*', ) )
+
+
 process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
+    #SelectEvents = cms.untracked.PSet(
+    #    SelectEvents = cms.vstring('generation_step')
+    #),
     dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('GEN-SIM-DIGI-RAW'),
+        dataTier = cms.untracked.string('GEN-SIM'),
         filterName = cms.untracked.string('')
     ),
     fileName = cms.untracked.string(oututFilePathName),
@@ -121,44 +123,66 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
     splitLevel = cms.untracked.int32(0)
 )
 
+
+ # process.FEVTDEBUGoutput.outputCommands=cms.untracked.vstring( (
+																# 'drop *',
+																# 'keep  FEDRawDataCollection_rawDataCollector_*_*'
+																# ))
+
+
 # Additional output definition
 
+import SimG4Core.Application.g4SimHits_cfi
+process.g4SimHits.Generator.ApplyEtaCuts  = cms.bool(False)
+process.g4SimHits.Generator.MinPCut  = cms.double(0.0001) #100keV
+process.g4SimHits.Generator.BeamBkgdEvent = cms.untracked.bool(True)
+process.g4SimHits.StackingAction.SaveFirstLevelSecondary = cms.untracked.bool(True)
+process.g4SimHits.StackingAction.SavePrimaryDecayProductsAndConversionsInCalo = cms.untracked.bool(True)
+process.g4SimHits.StackingAction.SavePrimaryDecayProductsAndConversionsInMuon = cms.untracked.bool(True)
+
+
+
 # Other statements
-#process.mix.bunchspace = cms.int32(25)
-#process.mix.minBunch = cms.int32(-3)
-#process.mix.maxBunch = cms.int32(3)
-
-
+#process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 
+# tuning SensitiveDetector module of FBCM
+#process.g4SimHits.FbcmSD.ZeroEnergyLoss = cms.bool(True) # by default it shoule be False
+process.g4SimHits.FbcmSD.EnergyThresholdForPersistencyInGeV =  cms.double(0.0001)
+
 # Path and EndPath definitions
-process.digitisation_step = cms.Path(process.pdigi)
+
+#process.simulation_step = cms.Path(process.psim+process.mix)
+process.simulation_step = cms.Path(process.psim)
+#process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.FEVTDEBUGoutput_step = cms.EndPath(process.FEVTDEBUGoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.digitisation_step,process.endjob_step,process.FEVTDEBUGoutput_step)
-from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
-associatePatAlgosToolsTask(process)
+process.schedule = cms.Schedule(#process.generation_step,
+								#process.genfiltersummary_step,
+								process.simulation_step,
+								process.endjob_step,
+								process.FEVTDEBUGoutput_step)
+
+#from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
+#associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(2)
+process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
 
+# filter all path with the production filter sequence
+#for path in process.paths:
+#	getattr(process,path).insert(0, process.ProductionFilterSequence)
+
 # customisation of the process.
-
-# Automatic addition of the customisation function from SimFbcm.SiPadDigitizer.aging
-from SimFbcm.SiPadDigitizer.aging import no_aging 
-
-#call to customisation function no_aging imported from SimFbcm.SiPadDigitizer.aging
-process = no_aging(process)
 
 # Automatic addition of the customisation function from Configuration.DataProcessing.Utils
 from Configuration.DataProcessing.Utils import addMonitoring 
-
 #call to customisation function addMonitoring imported from Configuration.DataProcessing.Utils
 process = addMonitoring(process)
 
