@@ -33,10 +33,10 @@ class SensorGroupInformation:
         self.nOnes = self.MakeHistoPerRho( 'nOnes' , 'number of Ones' )
         self.nUnknowns = self.MakeHistoPerRho('nUnknowns' , 'number of unknowns')
 
-        self.TofRho = self.Make2DHistoPerRho( 'TofRho' , ';Rho;ToF' , 300 , -150 , 150 )
-        self.BxTofRho = self.Make2DHistoPerRho( 'BxTofRho' , ';Rho;ToF' , 300 , -150 , 150 )
-        self.ToaRho = self.Make2DHistoPerRho( 'ToaRho' , ';Rho;ToA' , 300 , -150 , 150 )
-        self.TotRho = self.Make2DHistoPerRho( 'TotRho' , ';Rho;ToT' , 300 , -150 , 150 )
+        self.TofRho = self.Make2DHistoPerRho( 'TofRho' , ';Rho;ToF' , 2000 , -100. , 100. )
+        self.BxTofRho = self.Make2DHistoPerRho( 'BxTofRho' , ';Rho;ToF' , 300 , -15.0 , 15.0 )
+        self.ToaRho = self.Make2DHistoPerRho( 'ToaRho' , ';Rho;ToA' , 300 , -15. , 15. )
+        self.TotRho = self.Make2DHistoPerRho( 'TotRho' , ';Rho;ToT' , 2000 , 0.0 , 200 )
 
     def FillGeometry(self , geoTree ):
         for entry in geoTree:
@@ -137,7 +137,7 @@ def main():
     if opt.outfile == 'auto':
         opt.outfile = opt.outDir + 'hist' + os.path.basename( opt.infiles[0] )
     else: 
-        opt.outfile = opt.outDir + opt.outfile.split('.')[0] + '_pu' + opt.PU + '_.root'
+        opt.outfile = opt.outDir + opt.outfile.split('.')[0] + '_pu' + opt.PU + '.root'
         
     print( 'output will be stored in ' + opt.outfile )
     
