@@ -90,22 +90,41 @@ class SensorGroupInformation:
         self.TofRho.Write()
         self.BxTofRho.Write()
 
+def getPu(nameStr):
+    for pu in ['0', '0p5', '1' , '1p5' , '10' , '50' , '100' , '140' , '200']:
+        if  'pu'+pu in nameStr.split('_'):
+            return pu
+    return ''
+    
+
 def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument( '-i' , '--infile' , dest='infiles' , help='the name of the input files' , type=str , nargs="+" )
     parser.add_argument( '-p' , '--pu' , dest='PU' , default='auto' , help='the pu of the file' , type=str , choices=['auto' , '0p5', '1' , '1p5' , '10' , '50' , '100' , '140' , '200'])
     parser.add_argument( '-o' , '--outfile' , dest='outfile' , default='auto' , help='the name of the output file' , type=str )
+    parser.add_argument( '-d' , '--dest' , dest='outDir' , default='' , help='the output director' , type=str )
+    parser.add_argument( '-s' , '--src' , dest='srcDir' , default='' , help='the input director' , type=str )
 
     opt = parser.parse_args()
-    print(opt.infiles[0])
     
+    if opt.srcDir !='' :
+        FilesList = [opt.srcDir + "/" + f for f in os.listdir(opt.srcDir) if (f.find('Ntuple') != -1)]
+        opt.infiles = FilesList
+        opt.outDir=opt.srcDir+'/histResults/'
+
     if not opt.infiles:
         print('please specify the input file name using -i option')
         return 1
-    if opt.outfile == 'auto':
-        opt.outfile = os.path.basename( opt.infiles[0] )
-        print( 'output will be stored in ' + opt.outfile )
         
+    lstPu=getPu(opt.infiles[0])
+    for f in opt.infiles:
+        currPu=getPu(f)
+        #print(currPu)
+        if lstPu!=currPu :
+            print('please put the inputfiles only with the same pileup in the src directory or in the input file list')
+            return 1
+        lstPu=currPu
+
     if opt.PU == 'auto':
         for pu in ['0', '0p5', '1' , '1p5' , '10' , '50' , '100' , '140' , '200']:
             if  'pu'+pu in opt.infiles[0].split('_'):
@@ -115,9 +134,19 @@ def main():
     if opt.PU == 'auto':
         print('the filename has no appropriate pileup info in its name. Pls use _pu{}_')
 
+    if opt.outfile == 'auto':
+        opt.outfile = opt.outDir + 'hist' + os.path.basename( opt.infiles[0] )
+    else: 
+        opt.outfile = opt.outDir + opt.outfile.split('.')[0] + '_pu' + opt.PU + '_.root'
+        
+    print( 'output will be stored in ' + opt.outfile )
+    
+    #return 1
+    
     nEvents = 0
     allHits = ROOT.TChain("FbcmNtuple/PU{0}".format( opt.PU ) )
     for f in opt.infiles:
+        print(f)
         fIn = ROOT.TFile.Open( f )
         nEvents += fIn.Get("FbcmNtuple/hNEvents").GetBinContent( 1 )
         fIn.Close()
