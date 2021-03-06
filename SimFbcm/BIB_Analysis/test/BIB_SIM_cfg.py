@@ -1,6 +1,27 @@
 import FWCore.ParameterSet.Config as cms
+import os
 from Configuration.Eras.Era_Phase2_cff import Phase2
 from Configuration.Eras.Modifier_fbcmDigi_cff import fbcmDigi
+
+from FWCore.ParameterSet.VarParsing import VarParsing
+options = VarParsing ('analysis')	  
+options.register ('filein',
+		  'GenBBBBBB_0.root', 
+                                 VarParsing.multiplicity.singleton,
+                                 VarParsing.varType.string,
+                  "The input fileName")				  
+
+options.parseArguments()
+
+
+inputPath, theInputfile = os.path.split(options.filein)
+theInFileName = os.path.splitext(theInputfile)[0]
+outputFileName='Sim'+theInFileName.split('Gen')[1]+'.root' 
+fullOutputDir='/afs/cern.ch/work/m/msedghi/public/BeamInducedBackgrdFbcm/bibSIM/' + inputPath.split('/')[-1] + '/'
+oututFilePathName='file:'+fullOutputDir+outputFileName
+
+print('file:'+options.filein)
+print(oututFilePathName)
 
 process = cms.Process('SIM',Phase2)
 
@@ -36,7 +57,7 @@ process.source = cms.Source("PoolSource",
                             noEventSort = cms.untracked.bool(True),
                             duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
                             fileNames = cms.untracked.vstring(
-							'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamHalo/GenBeamHalo_0.root',
+							'file:'+ options.filein,
 							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasOxygen/GenBeamGasOxygen_0.root',
 							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasHydrogen/GenBeamGasHydrogen_0.root',
 							#'file:/afs/cern.ch/work/m/msedghi/public/bibGeneratorOutput/BeamGasCarbon/GenBeamGasCarbon_0.root',
@@ -44,6 +65,7 @@ process.source = cms.Source("PoolSource",
                             skipEvents = cms.untracked.uint32(0),
 							#eventsToProcess = cms.untracked.VEventRange("1:{}-1:{}".format(range_min, range_max))
 )
+
 
 process.options = cms.untracked.PSet(
     FailPath = cms.untracked.vstring(),
@@ -82,6 +104,12 @@ process.configurationMetadata = cms.untracked.PSet(
 
 # Output definition
 
+
+process.FEVTDEBUGEventContent.outputCommands = cms.untracked.vstring( (
+										'drop *',
+										'keep *_*_FBCMHits_*', ) )
+
+
 process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
     #SelectEvents = cms.untracked.PSet(
     #    SelectEvents = cms.vstring('generation_step')
@@ -90,10 +118,17 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
         dataTier = cms.untracked.string('GEN-SIM'),
         filterName = cms.untracked.string('')
     ),
-    fileName = cms.untracked.string('file:BIB_SIM.root'),
+    fileName = cms.untracked.string(oututFilePathName),
     outputCommands = process.FEVTDEBUGEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
+
+
+ # process.FEVTDEBUGoutput.outputCommands=cms.untracked.vstring( (
+																# 'drop *',
+																# 'keep  FEDRawDataCollection_rawDataCollector_*_*'
+																# ))
+
 
 # Additional output definition
 
@@ -136,7 +171,7 @@ process.schedule = cms.Schedule(#process.generation_step,
 #associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(8)
+process.options.numberOfThreads=cms.untracked.uint32(4)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
 

@@ -5,7 +5,7 @@ for FILE in $BASEDIR/* ; do
 echo $FILE; 
 
 cmsRun BIB_SIM_MS_cfg.py filein=$FILE
-break
+#break
 
 done
 
