@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+ <SpecParSection label="FbcmSpecs.xml" eval="true">
+ 
+  <SpecPar name="FbcmGeomFilter">
+   <PartSelector path="//FBCM"/>
+   <PartSelector path="//FBCM_Station"/>
+   <PartSelector path="//FBCM_SiliconDie.."/>
+   <PartSelector path="//FBCM_SensorCol.."/>
+   <PartSelector path="//FBCM_SensorPad."/>
+   <Parameter name="FbcmDDDGeom" value="FbcmTopLevelGeometry" eval="false"></Parameter>
+  </SpecPar>
+  
+  <SpecPar name="NumOfStationsPerEnd" eval="true">
+   <PartSelector path="//FBCM"/>
+   <Parameter name="nStations" value="[fbcm:NumOfStations]"/>
+  </SpecPar>
+  
+  
+  <SpecPar name="SiDiesPerRingStation" eval="true">
+   <PartSelector path="//FBCM_Station"/>
+   <Parameter name="nSiDiesPerStationPerRing" value="[fbcm:NumOfSiDiesPerStationPerRing]"/>
+   <Parameter name="nRingsPerStation" value="[fbcm:NumOfRingsPerStation]"/>
+  </SpecPar>
+    
+  <SpecPar name="SpecSiDie01" eval="true">
+   <PartSelector path="//FBCM_SiliconDie01"/>
+   <Parameter name="nCols" value="[fbcm:SiDie1_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie1_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie02" eval="true">
+   <PartSelector path="//FBCM_SiliconDie02"/>
+   <Parameter name="nCols" value="[fbcm:SiDie2_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie2_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie03" eval="true">
+   <PartSelector path="//FBCM_SiliconDie03"/>
+   <Parameter name="nCols" value="[fbcm:SiDie3_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie3_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie04" eval="true">
+   <PartSelector path="//FBCM_SiliconDie04"/>
+   <Parameter name="nCols" value="[fbcm:SiDie4_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie4_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie05" eval="true">
+   <PartSelector path="//FBCM_SiliconDie05"/>
+   <Parameter name="nCols" value="[fbcm:SiDie5_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie5_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie06" eval="true">
+   <PartSelector path="//FBCM_SiliconDie06"/>
+   <Parameter name="nCols" value="[fbcm:SiDie6_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie6_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie07" eval="true">
+   <PartSelector path="//FBCM_SiliconDie07"/>
+   <Parameter name="nCols" value="[fbcm:SiDie7_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie7_NumOfRowsR0]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie08" eval="true">
+   <PartSelector path="//FBCM_SiliconDie08"/>
+   <Parameter name="nCols" value="[fbcm:SiDie8_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie8_NumOfRowsR0]"/>
+  </SpecPar>
+  
+<SpecPar name="SpecSiDie11" eval="true">
+   <PartSelector path="//FBCM_SiliconDie11"/>
+   <Parameter name="nCols" value="[fbcm:SiDie1_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie1_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie12" eval="true">
+   <PartSelector path="//FBCM_SiliconDie12"/>
+   <Parameter name="nCols" value="[fbcm:SiDie2_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie2_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie13" eval="true">
+   <PartSelector path="//FBCM_SiliconDie13"/>
+   <Parameter name="nCols" value="[fbcm:SiDie3_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie3_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie14" eval="true">
+   <PartSelector path="//FBCM_SiliconDie14"/>
+   <Parameter name="nCols" value="[fbcm:SiDie4_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie4_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie15" eval="true">
+   <PartSelector path="//FBCM_SiliconDie15"/>
+   <Parameter name="nCols" value="[fbcm:SiDie5_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie5_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie16" eval="true">
+   <PartSelector path="//FBCM_SiliconDie16"/>
+   <Parameter name="nCols" value="[fbcm:SiDie6_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie6_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie17" eval="true">
+   <PartSelector path="//FBCM_SiliconDie17"/>
+   <Parameter name="nCols" value="[fbcm:SiDie7_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie7_NumOfRowsR1]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie18" eval="true">
+   <PartSelector path="//FBCM_SiliconDie18"/>
+   <Parameter name="nCols" value="[fbcm:SiDie8_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie8_NumOfRowsR1]"/>
+  </SpecPar>
+  
+  
+  <SpecPar name="SpecSiDie21" eval="true">
+   <PartSelector path="//FBCM_SiliconDie21"/>
+   <Parameter name="nCols" value="[fbcm:SiDie1_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie1_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie22" eval="true">
+   <PartSelector path="//FBCM_SiliconDie22"/>
+   <Parameter name="nCols" value="[fbcm:SiDie2_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie2_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie23" eval="true">
+   <PartSelector path="//FBCM_SiliconDie23"/>
+   <Parameter name="nCols" value="[fbcm:SiDie3_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie3_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie24" eval="true">
+   <PartSelector path="//FBCM_SiliconDie24"/>
+   <Parameter name="nCols" value="[fbcm:SiDie4_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie4_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie25" eval="true">
+   <PartSelector path="//FBCM_SiliconDie25"/>
+   <Parameter name="nCols" value="[fbcm:SiDie5_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie5_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie26" eval="true">
+   <PartSelector path="//FBCM_SiliconDie26"/>
+   <Parameter name="nCols" value="[fbcm:SiDie6_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie6_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie27" eval="true">
+   <PartSelector path="//FBCM_SiliconDie27"/>
+   <Parameter name="nCols" value="[fbcm:SiDie7_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie7_NumOfRowsR2]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie28" eval="true">
+   <PartSelector path="//FBCM_SiliconDie28"/>
+   <Parameter name="nCols" value="[fbcm:SiDie8_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie8_NumOfRowsR2]"/>
+  </SpecPar>
+  
+  
+  <SpecPar name="SpecSiDie31" eval="true">
+   <PartSelector path="//FBCM_SiliconDie31"/>
+   <Parameter name="nCols" value="[fbcm:SiDie1_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie1_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie32" eval="true">
+   <PartSelector path="//FBCM_SiliconDie32"/>
+   <Parameter name="nCols" value="[fbcm:SiDie2_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie2_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie33" eval="true">
+   <PartSelector path="//FBCM_SiliconDie33"/>
+   <Parameter name="nCols" value="[fbcm:SiDie3_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie3_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie34" eval="true">
+   <PartSelector path="//FBCM_SiliconDie34"/>
+   <Parameter name="nCols" value="[fbcm:SiDie4_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie4_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie35" eval="true">
+   <PartSelector path="//FBCM_SiliconDie35"/>
+   <Parameter name="nCols" value="[fbcm:SiDie5_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie5_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie36" eval="true">
+   <PartSelector path="//FBCM_SiliconDie36"/>
+   <Parameter name="nCols" value="[fbcm:SiDie6_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie6_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie37" eval="true">
+   <PartSelector path="//FBCM_SiliconDie37"/>
+   <Parameter name="nCols" value="[fbcm:SiDie7_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie7_NumOfRowsR3]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie38" eval="true">
+   <PartSelector path="//FBCM_SiliconDie38"/>
+   <Parameter name="nCols" value="[fbcm:SiDie8_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie8_NumOfRowsR3]"/>
+  </SpecPar>
+  
+  
+  <SpecPar name="SpecSiDie41" eval="true">
+   <PartSelector path="//FBCM_SiliconDie41"/>
+   <Parameter name="nCols" value="[fbcm:SiDie1_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie1_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie42" eval="true">
+   <PartSelector path="//FBCM_SiliconDie42"/>
+   <Parameter name="nCols" value="[fbcm:SiDie2_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie2_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie43" eval="true">
+   <PartSelector path="//FBCM_SiliconDie43"/>
+   <Parameter name="nCols" value="[fbcm:SiDie3_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie3_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie44" eval="true">
+   <PartSelector path="//FBCM_SiliconDie44"/>
+   <Parameter name="nCols" value="[fbcm:SiDie4_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie4_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie45" eval="true">
+   <PartSelector path="//FBCM_SiliconDie45"/>
+   <Parameter name="nCols" value="[fbcm:SiDie5_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie5_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie46" eval="true">
+   <PartSelector path="//FBCM_SiliconDie46"/>
+   <Parameter name="nCols" value="[fbcm:SiDie6_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie6_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie47" eval="true">
+   <PartSelector path="//FBCM_SiliconDie47"/>
+   <Parameter name="nCols" value="[fbcm:SiDie7_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie7_NumOfRowsR4]"/>
+  </SpecPar>
+  <SpecPar name="SpecSiDie48" eval="true">
+   <PartSelector path="//FBCM_SiliconDie48"/>
+   <Parameter name="nCols" value="[fbcm:SiDie8_NumOfCols]"/>
+   <Parameter name="nRows" value="[fbcm:SiDie8_NumOfRowsR4]"/>
+  </SpecPar>
+  
+
+  
+</SpecParSection>
+</DDDefinition>

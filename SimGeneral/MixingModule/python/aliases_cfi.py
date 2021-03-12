@@ -38,6 +38,13 @@ _pixelCommon = cms.VPSet(
 simSiPixelDigis = cms.EDAlias(
     mix = _pixelCommon
 ) 
+
+simFbcmDigis = cms.EDAlias(
+    mix = cms.VPSet(
+      cms.PSet(type = cms.string('SiPadDigiDataedmDetSetVector'))
+    )
+)
+
 simSiStripDigis = cms.EDAlias(
     mix = cms.VPSet(
       cms.PSet(type = cms.string('SiStripDigiedmDetSetVector')),

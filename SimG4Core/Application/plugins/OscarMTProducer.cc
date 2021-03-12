@@ -93,6 +93,7 @@ OscarMTProducer::OscarMTProducer(edm::ParameterSet const& p, const OscarMTMaster
   produces<edm::PSimHitContainer>("FP420SI");
   produces<edm::PSimHitContainer>("BSCHits");
   produces<edm::PSimHitContainer>("PLTHits");
+  produces<edm::PSimHitContainer>("FBCMHits");
   produces<edm::PSimHitContainer>("BCM1FHits");
   produces<edm::PSimHitContainer>("BHMHits");
   produces<edm::PSimHitContainer>("FastTimerHitsBarrel");

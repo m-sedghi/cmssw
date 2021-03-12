@@ -38,6 +38,7 @@ Tracker:
 (TFPX: Changed sensors spacing within all double-disks + Increased distance between Disks 6 and 7 + TBPX portcards between Disks 6 and 7.)
 * T22: Phase2 tilted tracker. Outer Tracker (v8.0.0): same as T21. Inner Tracker: Based on (v6.1.5) (T21), but with 50x50 pixel aspect ratio everywhere.
 * T23: Phase2 tilted tracker. Outer Tracker (v8.0.0): same as T21. Inner Tracker: Based on (v6.1.5) (T21), but with 3D sensors in TBPX L1 + TBPX L2 + TFPX R1.
+* T24: Phase2 tilted tracker. Outer Tracker (v8.0.0): same as T21. Tracker mother volume cut-out + shorten PixelForward mother volume, to leave space for FBCM (BRIL).
 
 Calorimeters:
 * C9: HGCal (v11 post TDR HGCal Geometry w/ corner centering for HE part) + Phase2 HCAL and EB + Tracker cables
@@ -65,6 +66,7 @@ The script also handles the common and forward elements of the geometry:
 * O5: same as O4 but with changes needed for new support structure 
 * O6: same as O5 with changes needed for new defintion of boundaries
 * O7: same as O6 with changes needed for new defintion of calorimeter boundaries
+* O8: same as O7 with additional definition of FBCM (BRIL) geometry
 * F2: modifications needed to accommodate detailed cavern, ZDC description is removed.
 * F3: same as F2 but changes due to HFNose
 * F4: same as F2 but with modifications needed to forward shield
@@ -86,5 +88,6 @@ Several detector combinations have been generated:
 * D72 = T21+C11+M6+I12+O5+F4
 * D73 = T21+C11+M6+I13+O5+F4
 * D74 = T21+C14+M9+I11+O7+F6
+* D80 = T24+C14+M9+I11+O8+F6
 
 D49 is the HLT TDR baseline.

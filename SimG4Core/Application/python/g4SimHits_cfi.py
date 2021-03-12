@@ -544,6 +544,18 @@ g4SimHits = cms.EDProducer("OscarMTProducer",
         EnergyThresholdForPersistencyInGeV = cms.double(0.010),
         EnergyThresholdForHistoryInGeV = cms.double(0.005)
     ),
+	FbcmSD = cms.PSet(
+        ZeroEnergyLoss = cms.bool(False),
+        PrintHits = cms.bool(False),
+        #ElectronicSigmaInNanoSeconds = cms.double(12.06),  # No need to split bins
+        NeverAccumulate = cms.bool(False),
+        EnergyThresholdForPersistencyInGeV = cms.double(0.2),
+        EnergyThresholdForHistoryInGeV = cms.double(0.05),
+		zMin = cms.double(2865.0), # in mm
+		zMax = cms.double(3000.0), # in mm
+		rMin = cms.double(60.0), # in mm
+		rMax = cms.double(300.0) # in mm
+    ),
     HcalTB02SD = cms.PSet(
         UseBirkLaw = cms.untracked.bool(False),
         BirkC1 = cms.untracked.double(0.013),

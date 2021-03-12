@@ -83,3 +83,7 @@ def _modifyEnableHcalHardcode( theProcess ):
 
 from Configuration.Eras.Modifier_hcalHardcodeConditions_cff import hcalHardcodeConditions
 modifyEnableHcalHardcode_ = hcalHardcodeConditions.makeProcessModifier( _modifyEnableHcalHardcode )
+
+pdigiFbcmTask = cms.Task(generatorSmeared,cms.TaskPlaceholder("randomEngineStateProducer"), cms.TaskPlaceholder("mix"),addPileupInfo)
+from Configuration.Eras.Modifier_OnlyfbcmDigi_cff import OnlyfbcmDigi
+OnlyfbcmDigi.toReplaceWith(pdigi,cms.Sequence(pdigiFbcmTask))

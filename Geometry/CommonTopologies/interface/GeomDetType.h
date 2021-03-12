@@ -35,7 +35,8 @@ public:
   bool isME0() const;
   bool isMuon() const;
   bool isTiming() const;
-
+  bool isFbcm() const;
+  
 private:
   std::string theName;
   SubDetector theSubDet;

@@ -50,6 +50,8 @@ std::ostream& operator<<(std::ostream& s, SubDetector m) {
     return s << "Phase2TimingBarrel";
   else if (m == TimingEndcap)
     return s << "Phase2TimingEndcap";
+  else if (m == FBCM)
+    return s << "Phase2Fbcm";
   else
     return s << "?";
 }
@@ -102,3 +104,5 @@ bool GeomDetEnumerators::isMuon(const GeomDetEnumerators::SubDetector subdet) {
 bool GeomDetEnumerators::isTiming(const GeomDetEnumerators::SubDetector subdet) {
   return (subdet == TimingBarrel || subdet == TimingEndcap);
 }
+
+bool GeomDetEnumerators::isFbcm(const GeomDetEnumerators::SubDetector subdet) { return (subdet == FBCM); } 

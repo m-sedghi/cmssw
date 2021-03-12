@@ -1,0 +1,16 @@
+<use name="root"/>
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="DataFormats/FbcmDigi"/>
+<use name="DataFormats/FbcmDetId"/>
+<use name="CommonTools/UtilAlgos"/>
+<use   name="Geometry/FbcmGeometry"/>
+<use   name="Geometry/FbcmGeometryBuilder"/>
+<use name="Geometry/Records"/>
+
+<library   file="*.cc" name="FbcmOutputRootFileTester">
+  <flags   EDM_PLUGIN="1"/>
+  <Flags CXXFLAGS="-g"/>
+</library>
+

@@ -1,0 +1,7 @@
+<use   name="DataFormats/Common"/>
+<use   name="FWCore/Utilities"/>
+<use   name="DataFormats/FbcmDetId"/>
+<use   name="SimDataFormats/EncodedEventId"/>
+<export>
+  <lib   name="1"/>
+</export>

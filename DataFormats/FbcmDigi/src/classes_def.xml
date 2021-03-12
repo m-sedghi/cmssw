@@ -1,0 +1,149 @@
+<lcgdict>
+  
+ 
+  <class name="SiPadDigiData" ClassVersion="10">
+  <version ClassVersion="10" checksum="268583949"/>
+  </class>
+
+ <class name="edm::DetSet<SiPadDigiData>" splitLevel="0" />
+ <class name="edm::Wrapper< edm::DetSet<SiPadDigiData> >"  splitLevel="0" />
+ 
+ <class name="std::vector<SiPadDigiData>" splitLevel="0" />
+ <class name="edm::Wrapper< std::vector<SiPadDigiData> >"  splitLevel="0" />
+ 
+ 
+ <class name="edm::DetSetVector<SiPadDigiData>" splitLevel="0" />
+ <class name="edm::Wrapper< edm::DetSetVector<SiPadDigiData>>"  splitLevel="0" />
+ 
+ <class name="std::vector<edm::DetSet<SiPadDigiData>>" splitLevel="0" />
+ <class name="edm::Wrapper< std::vector<edm::DetSet<SiPadDigiData> > >"  splitLevel="0" />
+ 
+ 
+ <class name="SiPadDigiDataCollection" ClassVersion="10">
+    <version ClassVersion="10" checksum="50478352"/>
+ </class>
+ <class name="edm::Wrapper<SiPadDigiDataCollection>"  splitLevel="0" />
+ 
+ 
+	
+    <class name="PSimHitInfo" ClassVersion="10">
+		<version ClassVersion="10" checksum="1326275126"/>
+    </class>
+   
+	<class name="edm::Wrapper<PSimHitInfo>"  splitLevel="0" /> 
+	
+    <class name="std::vector<PSimHitInfo>" splitLevel="0" />
+	<class name="edm::Wrapper<std::vector<PSimHitInfo>>"  splitLevel="0" />
+	
+	<class name="std::pair<float,PSimHitInfo>" splitLevel="0" />
+	<class name="edm::Wrapper<std::pair<float,PSimHitInfo>>"  splitLevel="0" />
+	
+	<class name="std::vector< std::pair<float,PSimHitInfo> >" splitLevel="0" />
+	<class name="edm::Wrapper<std::vector< std::pair<float,PSimHitInfo> > >"  splitLevel="0" />
+	
+	<class name="edm::DetSet<PSimHitInfo>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSet<PSimHitInfo> >"  splitLevel="0" />
+	 
+	<class name="edm::DetSetVector<PSimHitInfo>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSetVector<PSimHitInfo>>"  splitLevel="0" />
+	
+	<class name="std::vector<edm::DetSet<PSimHitInfo>>" splitLevel="0" />
+	<class name="edm::Wrapper< std::vector<edm::DetSet<PSimHitInfo> > >"  splitLevel="0" />
+
+
+
+
+
+
+
+    <class name="HitAnalysisInfo" ClassVersion="10">
+		<version ClassVersion="10" checksum="3447328645"/>
+    </class>
+	
+    <class name="edm::Wrapper< HitAnalysisInfo >"  splitLevel="0" />
+	
+	<class name="std::vector< HitAnalysisInfo >" splitLevel="0" /> 
+	<class name="edm::Wrapper< std::vector<HitAnalysisInfo> >"  splitLevel="0" />
+
+	<class name="edm::DetSet<HitAnalysisInfo>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSet<HitAnalysisInfo> >"  splitLevel="0" />
+	 
+	<class name="edm::DetSetVector<HitAnalysisInfo>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSetVector<HitAnalysisInfo>>"  splitLevel="0" />
+	
+	<class name="std::vector<edm::DetSet<HitAnalysisInfo>>" splitLevel="0" />
+	<class name="edm::Wrapper< std::vector<edm::DetSet<HitAnalysisInfo> > >"  splitLevel="0" />
+
+
+
+
+
+
+
+
+
+
+
+
+   <class name="ToaTotPair" ClassVersion="10">
+    <version ClassVersion="10" checksum="2402690252"/>
+   </class>
+   <class name="edm::Wrapper< ToaTotPair >"  splitLevel="0" />
+   
+   <class name="std::vector< ToaTotPair>" splitLevel="0" />
+   <class name="edm::Wrapper< std::vector<ToaTotPair> >"  splitLevel="0" />
+ 
+    <class name="edm::DetSet<ToaTotPair>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSet<ToaTotPair> >"  splitLevel="0" />
+	 
+	<class name="edm::DetSetVector<ToaTotPair>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSetVector<ToaTotPair>>"  splitLevel="0" />
+	
+	<class name="std::vector<edm::DetSet<ToaTotPair>>" splitLevel="0" />
+	<class name="edm::Wrapper< std::vector<edm::DetSet<ToaTotPair> > >"  splitLevel="0" />
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+    <class name="edm::Wrapper< HitStatus >"  splitLevel="0" />
+   
+   <class name="std::vector< HitStatus>" splitLevel="0" />
+   <class name="edm::Wrapper< std::vector<HitStatus> >"  splitLevel="0" />
+ 
+    <class name="edm::DetSet<HitStatus>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSet<HitStatus> >"  splitLevel="0" />
+	 
+	<class name="edm::DetSetVector<HitStatus>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSetVector<HitStatus>>"  splitLevel="0" />
+	
+	<class name="std::vector<edm::DetSet<HitStatus>>" splitLevel="0" />
+	<class name="edm::Wrapper< std::vector<edm::DetSet<HitStatus> > >"  splitLevel="0" />
+ 
+
+	
+	
+	 
+    <class name="edm::Wrapper< ToAStatus >"  splitLevel="0" />
+   
+   <class name="std::vector< ToAStatus>" splitLevel="0" />
+   <class name="edm::Wrapper< std::vector<ToAStatus> >"  splitLevel="0" />
+ 
+    <class name="edm::DetSet<ToAStatus>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSet<ToAStatus> >"  splitLevel="0" />
+	 
+	<class name="edm::DetSetVector<ToAStatus>" splitLevel="0" />
+	<class name="edm::Wrapper< edm::DetSetVector<ToAStatus>>"  splitLevel="0" />
+	
+	<class name="std::vector<edm::DetSet<ToAStatus>>" splitLevel="0" />
+	<class name="edm::Wrapper< std::vector<edm::DetSet<ToAStatus> > >"  splitLevel="0" />
+	
+ 
+ 
+
+
+ 
+</lcgdict> 

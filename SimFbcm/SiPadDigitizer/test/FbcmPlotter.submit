@@ -1,0 +1,12 @@
+executable            = /afs/cern.ch/user/h/hbakhshi/work/BRILPH2/CMSSW_11_2_0/src/SimFbcm/SiPadDigitizer/test/FbcmPlotter.sh
+output                = output/$(ClusterId).$(ProcId).out
+error                 = output/$(ClusterId).$(ProcId).err
+log                   = output/$(ClusterId).log
++JobFlavour           = "tomorrow"
+transfer_executable   = False
+stream_output	      = True
+stream_error	      = True
+
+arguments             = -i $(FILE)
+queue FILE matching /eos/cms/store/group/dpg_bril/comm_bril/phase2-sim/FBCM/NuGun/crab_FBCMnTuplePU*/*/*/*.root
+
